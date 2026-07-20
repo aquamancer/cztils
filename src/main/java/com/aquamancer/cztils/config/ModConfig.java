@@ -23,11 +23,6 @@ import java.util.Map;
 
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
-    @Override
-    public void validatePostLoad() {
-        this.textures.updateFlatMap();
-    }
-
     @ConfigEntry.Category("textures")
     @ConfigEntry.Gui.TransitiveObject
     public Textures textures = new Textures();
@@ -36,48 +31,30 @@ public class ModConfig implements ConfigData {
         public Textures() {}
 
         @AbilityIconMap
-        private EnumMap<Actives.Combo, AbilityIcon.Type> combo = new EnumMap<>(Actives.Combo.class);
-        @AbilityIconMap
-        private EnumMap<Actives.Right, AbilityIcon.Type> right = new EnumMap<>(Actives.Right.class);
-        @AbilityIconMap
-        private EnumMap<Actives.LeftShift, AbilityIcon.Type> leftShift = new EnumMap<>(Actives.LeftShift.class);
-        @AbilityIconMap
-        private EnumMap<Actives.RightShift, AbilityIcon.Type> rightShift = new EnumMap<>(Actives.RightShift.class);
-        @AbilityIconMap
-        private EnumMap<Actives.Wildcard, AbilityIcon.Type> wildcard = new EnumMap<>(Actives.Wildcard.class);
-        @AbilityIconMap
-        private EnumMap<Actives.Swap, AbilityIcon.Type> swap = new EnumMap<>(Actives.Swap.class);
-        @AbilityIconMap
-        private EnumMap<Actives.Lifeline, AbilityIcon.Type> lifeline = new EnumMap<>(Actives.Lifeline.class);
+        private EnumMap<Actives, AbilityIcon.Type> actives = new EnumMap<>(Actives.class);
         @AbilityIconMap
         private EnumMap<Passives, AbilityIcon.Type> passives = new EnumMap<>(Passives.class);
         @AbilityIconMap
-        private EnumMap<Gifts, AbilityIcon.Type> gifts = new EnumMap<>(Gifts.class);
-        @AbilityIconMap
         private EnumMap<Curse, AbilityIcon.Type> curses = new EnumMap<>(Curse.class);
+        @AbilityIconMap
+        private EnumMap<Gifts, AbilityIcon.Type> gifts = new EnumMap<>(Gifts.class);
 
-        @ConfigEntry.Gui.Excluded
-        public transient Map<Enum<?>, AbilityIcon.Type> flatMap = new HashMap<>();
-        private void updateFlatMap() {
-            flatMap.putAll(combo);
-            flatMap.putAll(right);
-            flatMap.putAll(leftShift);
-            flatMap.putAll(rightShift);
-            flatMap.putAll(wildcard);
-            flatMap.putAll(swap);
-            flatMap.putAll(lifeline);
-            flatMap.putAll(passives);
-            flatMap.putAll(gifts);
-            flatMap.putAll(curses);
+        private AbilityIcon.Type getIconType(Enum<?> ability) {
+            if (ability instanceof Actives) {
+                return actives.get(ability);
+            } else if (ability instanceof Passives) {
+                return passives.get(ability);
+            } else if (ability instanceof Curse) {
+                return curses.get(ability);
+            } else if (ability instanceof Gifts) {
+                return gifts.get(ability);
+            }
+            return null;
         }
     }
 
-    public void updateFlatMap() {
-        textures.updateFlatMap();
-    }
-
     public AbilityIcon.Type getIconType(Enum<?> ability) {
-        AbilityIcon.Type result = textures.flatMap.get(ability);
+        AbilityIcon.Type result = textures.getIconType(ability);
         return (result == null) ? AbilityIcon.Type.VANILLA : result;
     }
 
