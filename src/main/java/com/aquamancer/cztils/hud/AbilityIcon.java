@@ -1,6 +1,23 @@
 package com.aquamancer.cztils.hud;
 
+import com.aquamancer.czlib.api.abils.Rarity;
+
+import java.util.Map;
+
 public abstract class AbilityIcon extends HudElement {
+    public static final Map<Rarity, Integer> RARITY_COLORS = Map.of(
+            Rarity.COMMON, 0xff9f929c,
+            Rarity.UNCOMMON, 0xff70bc6d,
+            Rarity.RARE, 0xff705eca,
+            Rarity.EPIC, 0xffcd5eca,
+            Rarity.LEGENDARY, 0xffe49b20,
+            Rarity.TWISTED, 0xff703663
+    );
+    public static final int DEFAULT_BORDER_COLOR = 0xff444444;
+    public static final int CURSE_COLOR = 0xffc41300;
+    public static final int BACKGROUND_FILL = 0x88000000;
+
+
     public enum Type { VANILLA, UMM }
     protected Rectangle border;
     protected Rectangle texture;

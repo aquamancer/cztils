@@ -23,6 +23,10 @@ import java.util.Map;
 
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
+    @ConfigEntry.Category("icons")
+    @ConfigEntry.ColorPicker
+    public int grayedOut = 0x80000000;
+
     @ConfigEntry.Category("textures")
     @ConfigEntry.Gui.TransitiveObject
     public Textures textures = new Textures();
@@ -56,6 +60,14 @@ public class ModConfig implements ConfigData {
     public AbilityIcon.Type getIconType(Enum<?> ability) {
         AbilityIcon.Type result = textures.getIconType(ability);
         return (result == null) ? AbilityIcon.Type.VANILLA : result;
+    }
+
+    public int getBackgroundFill() {
+        return 0xFF000000;
+    }
+
+    public int getBorderWidth() {
+        return 1;
     }
 
     @Retention(RetentionPolicy.RUNTIME)

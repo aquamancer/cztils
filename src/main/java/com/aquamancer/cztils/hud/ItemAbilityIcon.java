@@ -23,13 +23,13 @@ public class ItemAbilityIcon extends AbilityIcon {
     public void render(DrawContext context) {
         context.fill(RenderLayer.getGuiOverlay(), border.x, border.y, border.x2, border.y2, borderColor);
         if (backgroundFill != 0) {
-            context.fill(texture.x, texture.y, texture.x2, texture.y2, backgroundFill);
+            context.fill(RenderLayer.getGuiOverlay(), texture.x, texture.y, texture.x2, texture.y2, backgroundFill);
         }
         MatrixStack matrices = context.getMatrices();
         matrices.push();
-        matrices.translate(x/scaleX, y/scaleY, 0);
+        matrices.translate(x, y, 0);
         matrices.scale(this.scaleX, this.scaleY, 1.0f);
-        context.drawItem(this.item, 0, 0);
+        context.drawItem(this.item, texture.x-x, texture.y-y);
         matrices.pop();
         if (grayedOut != 0) {
             context.fill(RenderLayer.getGuiOverlay(), texture.x, texture.y, texture.x2, texture.y2, grayedOut);

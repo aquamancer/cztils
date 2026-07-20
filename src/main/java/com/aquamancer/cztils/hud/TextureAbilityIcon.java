@@ -7,15 +7,6 @@ import net.minecraft.util.Identifier;
 import java.util.Map;
 
 public class TextureAbilityIcon extends AbilityIcon {
-    private static final Map<Rarity, Integer> COLORS = Map.of(
-            Rarity.COMMON, 0xff9f929c,
-            Rarity.UNCOMMON, 0xff70bc6d,
-            Rarity.RARE, 0xff705eca,
-            Rarity.EPIC, 0xffcd5eca,
-            Rarity.LEGENDARY, 0xffe49b20,
-            Rarity.TWISTED, 0xff703663
-    );
-    private static final Integer CURSE_COLOR = 0xffc41300;
 
     private Identifier identifier;
     private Rectangle sourceRegion;

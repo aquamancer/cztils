@@ -11,7 +11,7 @@ public class Nametag extends HudElement {
     private String name = "";
     private String spec = "";
     private double hp, hpMax, graveTimer;
-    private MutableText text;
+    private MutableText text = Text.literal("");
 
     public Nametag(int x, int y) {
         super(x, y);
