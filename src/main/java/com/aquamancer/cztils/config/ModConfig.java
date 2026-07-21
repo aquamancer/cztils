@@ -1,10 +1,8 @@
 package com.aquamancer.cztils.config;
 
-import com.aquamancer.czlib.api.abils.Actives;
-import com.aquamancer.czlib.api.abils.Curse;
-import com.aquamancer.czlib.api.abils.Gifts;
-import com.aquamancer.czlib.api.abils.Passives;
+import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.cztils.Cztils;
+import com.aquamancer.cztils.config.custom.SpecConfig;
 import com.aquamancer.cztils.hud.AbilityIcon;
 import com.aquamancer.cztils.hud.TextureInfo;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -17,15 +15,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
     @ConfigEntry.Category("icons")
-    @ConfigEntry.ColorPicker
     public int grayedOut = 0x80000000;
+
+    @ConfigEntry.Category("specs")
+    @SpecConfigs
+    public EnumMap<Spec, SpecConfig> specConfigs = new EnumMap<>(Spec.class);
 
     @ConfigEntry.Category("textures")
     @ConfigEntry.Gui.TransitiveObject
@@ -57,6 +56,7 @@ public class ModConfig implements ConfigData {
         }
     }
 
+
     public AbilityIcon.Type getIconType(Enum<?> ability) {
         AbilityIcon.Type result = textures.getIconType(ability);
         return (result == null) ? AbilityIcon.Type.VANILLA : result;
@@ -73,4 +73,8 @@ public class ModConfig implements ConfigData {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     public @interface AbilityIconMap {}
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface SpecConfigs {}
 }
