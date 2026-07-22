@@ -25,6 +25,7 @@ import org.joml.Vector2i;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Set;
 
 public class Cztils implements ModInitializer {
@@ -43,13 +44,13 @@ public class Cztils implements ModInitializer {
 		CustomAnnots.init();
 		ConfigDefaults.loadDefaults(config);
 
-		Player player = new Player(100, 100, new Vector2i(0, 10), new Vector2i(0, 100));
+		Player player = new Player(100, 100, new Vector2i(0, 10), new Vector2i(0, 28));
 		player.setName("riot games");
 		player.setSpec(Spec.FLAME);
 		player.setHp(15);
 		player.setHpMax(20).setGraveTimer(3.05);
 		player.setActives(
-				Set.of(
+				List.of(
 						new Active(Actives.WINDSWEPT, AbilitySpec.WIND, Rarity.TWISTED),
 						new Active(Actives.SOLAR_RAY, AbilitySpec.PRISMATIC, Rarity.COMMON),
 						new Active(Actives.FLAMESTRIKE, AbilitySpec.FLAME, Rarity.RARE),
@@ -57,6 +58,20 @@ public class Cztils implements ModInitializer {
 						new Active(Actives.RAPID_FIRE, AbilitySpec.STEEL, Rarity.COMMON),
 						new Active(Actives.EARTHQUAKE, AbilitySpec.EARTH, Rarity.UNCOMMON),
 						new Active(Actives.STEEL_STALLION, AbilitySpec.STEEL, Rarity.COMMON)
+				),
+				16
+		);
+		player.setCurses(
+				Set.of(Curse.DEATH, Curse.ARACHNOPHOBIA),
+				16
+		);
+		player.setPassives(
+				List.of(
+						new Passive(Passives.BULWARK, AbilitySpec.EARTH, Rarity.COMMON),
+						new Passive(Passives.SHARPSHOOTER, AbilitySpec.STEEL, Rarity.LEGENDARY),
+						new Passive(Passives.FROZEN_DOMAIN, AbilitySpec.FROST, Rarity.RARE),
+						new Passive(Passives.AEROMANCY, AbilitySpec.WIND, Rarity.RARE),
+						new Passive(Passives.PYROMANIA, AbilitySpec.FLAME, Rarity.RARE)
 				),
 				16
 		);

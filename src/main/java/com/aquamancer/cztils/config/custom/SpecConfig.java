@@ -50,13 +50,14 @@ public class SpecConfig {
     }
 
     @Nullable
-    public Comparator<? super Passive> getSorter(PassiveSorters type) {
-        return switch (type) {
+    public Comparator<Passive> getSorter(PassiveSorters type) {
+        Comparator<? super Passive> comparator = switch (type) {
             case SPEC -> new AbilitySpec.SpecComparator(this.specPriority);
             case SPEC_REVERSED -> new AbilitySpec.SpecComparator(this.specPriority).reversed();
             case RARITY -> new Rarity.RarityComparator().reversed();
             case RARITY_ASCENDING -> new Rarity.RarityComparator();
             case DISABLED -> null;
         };
+        return comparator == null ? null : comparator::compare;
     }
 }

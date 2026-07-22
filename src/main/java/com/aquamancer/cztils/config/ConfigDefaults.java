@@ -20,6 +20,7 @@ public final class ConfigDefaults {
             specConfig.alwaysShowSet.clear();
             specConfig.alwaysShow.forEach(s -> {
                 Optional<Enum<?>> ability = AbilityUtils.fromString(s);
+                if (ability.isEmpty() || ability.get() instanceof Curse || ability.get() instanceof Gifts) return;
                 if (ability.isPresent()) {
                     specConfig.alwaysShowSet.add(ability.get());
                 }

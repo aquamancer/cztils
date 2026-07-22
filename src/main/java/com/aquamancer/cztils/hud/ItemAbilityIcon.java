@@ -1,5 +1,6 @@
 package com.aquamancer.cztils.hud;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -27,9 +28,17 @@ public class ItemAbilityIcon extends AbilityIcon {
         }
         MatrixStack matrices = context.getMatrices();
         matrices.push();
-        matrices.translate(x, y, 0);
+        matrices.translate(texture.x, texture.y, 0);
         matrices.scale(this.scaleX, this.scaleY, 1.0f);
-        context.drawItem(this.item, texture.x-x, texture.y-y);
+        context.drawItem(this.item, 0, 0);
+        if (this.subscript != null) {
+            context.drawItemInSlot(
+                    MinecraftClient.getInstance().textRenderer,
+                    this.item,
+                    0, 0,
+                    this.subscript
+            );
+        }
         matrices.pop();
         if (grayedOut != 0) {
             context.fill(RenderLayer.getGuiOverlay(), texture.x, texture.y, texture.x2, texture.y2, grayedOut);

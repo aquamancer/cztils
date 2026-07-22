@@ -8,19 +8,24 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.joml.Vector2i;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class Player extends HudElement {
+    private static final int PASSIVE_GAP_PX = 4;
+
     private final Nametag nametag = new Nametag(0, 0);
     private Spec spec;
     private AbilityBar actives = new AbilityBar(0, 0, List.of());
     private AbilityBar curses = new AbilityBar(0, 0, List.of());
     private AbilityBar passives = new AbilityBar(0, 0, List.of());
     private AbilityBar gifts = new AbilityBar(0, 0, List.of());
+    private int curseIconWidth, passiveIconWidth, giftIconWidth;
 
     private Vector2i activesOffset, passivesOffset;
 
@@ -56,53 +61,100 @@ public class Player extends HudElement {
         return this;
     }
 
-    public Player setActives(Set<Active> actives, int iconSize) {
+    public Player setActives(List<Active> actives, int iconSize) {
         Map<Active, Boolean> combined = new HashMap<>();
-        Comparator<Active> sorter = null;
-        SpecConfig specConfig = Cztils.config.specConfigs.get(this.spec);
-        if (specConfig != null) {
-            specConfig.alwaysShowSet.forEach(e -> {
-                if (e instanceof Actives grayedOut) {
-                    Optional<AbilitySpec> grayedOutSpec = AbilitySpec.fromAbilityName(grayedOut.getDisplayName()); // giga jank
-                    if (grayedOutSpec.isEmpty()) return;
-                    combined.put(new Active(grayedOut, grayedOutSpec.get(), null), true);
-                }
-            });
 
-            for (SpecConfig.ActiveSorters activeSorter : specConfig.activeSortOrder) {
-                Comparator<Active> nextSorter = specConfig.getSorter(activeSorter);
-                if (nextSorter == null) continue;
-                if (sorter == null) {
-                    sorter = nextSorter;
-                } else {
-                    sorter = sorter.thenComparing(nextSorter);
-                }
-            }
+        Set<Actives> alwaysShow = Cztils.config.getAlwaysShow(Actives.class, this.spec);
+        for (Actives grayedOut : alwaysShow) {
+            Optional<AbilitySpec> grayedOutSpec = AbilitySpec.fromAbilityName(grayedOut.getDisplayName()); // giga jank
+            if (grayedOutSpec.isEmpty()) continue;
+            combined.put(new Active(grayedOut, grayedOutSpec.get(), null), true);
         }
         actives.forEach(a -> {
             combined.remove(a);  // put() on a dupe only replaces the value
             combined.put(a, false);
         });
 
-        Stream<Map.Entry<Active, Boolean>> sortedStream = combined.entrySet().stream();
-        if (sorter != null) {
-            sortedStream = sortedStream.sorted(Map.Entry.comparingByKey(sorter));
-        }
-        List<Map.Entry<Active, Boolean>> sorted = sortedStream.toList();
+        Comparator<Active> sorter = Cztils.config.getActiveSorter(this.spec);
+        List<Map.Entry<Active, Boolean>> sorted = (sorter == null) ? List.copyOf(combined.entrySet()) : combined.entrySet().stream().sorted(Map.Entry.comparingByKey(sorter)).toList();
 
         List<AbilityIcon> icons = new ArrayList<>();
         for (int i = 0; i < sorted.size(); i++) {
             Actives active = sorted.get(i).getKey().getAbility();
             Rarity rarity = sorted.get(i).getKey().getRarity();
             Boolean grayed = sorted.get(i).getValue();
-            AbilityIcon.Type iconType = Cztils.config.textures.getIconType(active);
+            // relative to ability bar
+            int iconX = i*(iconSize);
+            int iconY = 0;
+            // rarity == null if grayed
+            int borderColor = (rarity == null) ? AbilityIcon.DEFAULT_BORDER_COLOR : AbilityIcon.RARITY_COLORS.get(rarity);
+            icons.add(createIcon(iconX, iconY, iconSize, active, borderColor, grayed));
+        }
+
+        this.actives = new AbilityBar(activesOffset.x, activesOffset.y, icons);
+        return this;
+    }
+
+    public Player setCurses(Set<Curse> curseSet, int iconSize) {
+        this.curseIconWidth = iconSize;
+
+        List<AbilityIcon> icons = new ArrayList<>(curseSet.size());
+        int i = 0;
+        for (Curse curse : curseSet) {
+            icons.add(createIcon(i*iconSize, 0, iconSize, curse, AbilityIcon.CURSE_COLOR, false));
+            i++;
+        }
+        this.curses = new AbilityBar(passivesOffset.x, passivesOffset.y, icons);
+        return this;
+    }
+
+    public Player setGifts(Set<Gift> curseSet, int iconSize) {
+        this.giftIconWidth = iconSize;
+        return this;
+    }
+
+    public Player setPassives(List<Passive> passives, int iconSize) {
+        this.passiveIconWidth = iconSize;
+
+        Map<Passive, Boolean> combined = new HashMap<>();
+
+        Set<Passives> alwaysShow = Cztils.config.getAlwaysShow(Passives.class, this.spec);
+        for (Passives grayedOut : alwaysShow) {
+            Optional<AbilitySpec> grayedOutSpec = AbilitySpec.fromAbilityName(grayedOut.getDisplayName()); // giga jank
+            if (grayedOutSpec.isEmpty()) continue;
+            combined.put(new Passive(grayedOut, grayedOutSpec.get(), null), true);
+        }
+        passives.forEach(a -> {
+            combined.remove(a);  // put() on a dupe only replaces the value
+            combined.put(a, false);
+        });
+
+        Comparator<Passive> sorter = Cztils.config.getPassiveSorter(this.spec);
+        List<Map.Entry<Passive, Boolean>> sorted = (sorter == null) ? List.copyOf(combined.entrySet()) : combined.entrySet().stream().sorted(Map.Entry.comparingByKey(sorter)).toList();
+
+        List<AbilityIcon> icons = new ArrayList<>();
+        for (int i = 0; i < sorted.size(); i++) {
+            Passives passive = sorted.get(i).getKey().getAbility();
+            Rarity rarity = sorted.get(i).getKey().getRarity();
+            Boolean grayed = sorted.get(i).getValue();
 
             // relative to ability bar
             int iconX = i*(iconSize);
             int iconY = 0;
-            switch (iconType) {
-                case UMM:
-                    // todo do later
+            int borderColor = (rarity == null) ? AbilityIcon.DEFAULT_BORDER_COLOR : AbilityIcon.RARITY_COLORS.get(rarity);
+            icons.add(createIcon(iconX, iconY, iconSize, passive, borderColor, grayed));
+        }
+
+        this.passives = new AbilityBar(passivesOffset.x, passivesOffset.y, icons);
+        return this;
+    }
+
+    public static AbilityIcon createIcon(int x, int y, int iconSize, Enum<?> ability, int borderColor, boolean grayedOut) {
+        AbilityIcon.Type iconType = Cztils.config.textures.getIconType(ability);
+        switch (iconType) {
+            default:
+            case UMM:
+                // todo do later
 //                    icons.add(new TextureAbilityIcon(
 //                            iconX, iconY,
 //                            iconSize, iconSize,
@@ -111,57 +163,22 @@ public class Player extends HudElement {
 //
 //                            )
 //                    ))
-                case VANILLA:
-                    AbilityIcon icon = new ItemAbilityIcon(
-                            iconX, iconY,
-                            iconSize, iconSize,
-                            Cztils.config.getBorderWidth(),
-                            ZenithTextures.getItem(active).orElse(new ItemStack(Items.AIR))
-                    );
-                    icon.setBackgroundFill(AbilityIcon.BACKGROUND_FILL);
-                    if (grayed) {
-                        icon.setBorderColor(AbilityIcon.DEFAULT_BORDER_COLOR);
-                        icon.setGrayedOut(Cztils.config.grayedOut);
-                    } else {
-                        icon.setBorderColor(AbilityIcon.RARITY_COLORS.get(rarity));
-                    }
-                    icons.add(icon);
-            }
+            case VANILLA:
+                AbilityIcon icon = new ItemAbilityIcon(
+                        x, y,
+                        iconSize, iconSize,
+                        Cztils.config.getBorderWidth(),
+                        ZenithTextures.getItem(ability).orElse(new ItemStack(Items.AIR))
+                );
+                icon.setBackgroundFill(AbilityIcon.BACKGROUND_FILL);
+                if (grayedOut) {
+                    icon.setBorderColor(AbilityIcon.DEFAULT_BORDER_COLOR);
+                    icon.setGrayedOut(Cztils.config.grayedOut);
+                } else {
+                    icon.setBorderColor(borderColor);
+                }
+                return icon;
         }
-
-        this.actives = new AbilityBar(activesOffset.x, activesOffset.y, icons);
-        return this;
-    }
-
-    public Player setCurses(Set<Curse> curseSet, int iconSize) {
-        List<AbilityIcon> icons = createUniformAbilities(curseSet, iconSize, Cztils.config.getBackgroundFill(), AbilityIcon.CURSE_COLOR);
-        this.curses = new AbilityBar(passivesOffset.x, passivesOffset.y, icons);
-        return this;
-    }
-
-    public Player setGifts(Set<Gift> curseSet, int iconSize) {
-        return this;
-    }
-
-    public static <T extends Enum<?>> List<AbilityIcon> createUniformAbilities(Set<T> abilitySet, int iconSize, int backgroundFill, int borderColor) {
-        List<AbilityIcon> icons = new ArrayList<>(abilitySet.size());
-        List<T> abilities = new ArrayList<>(abilitySet);
-        for (int i = 0; i < abilities.size(); i++) {
-            T ability = abilities.get(i);
-            int iconX = i*iconSize;
-            int iconY = 0;
-
-            AbilityIcon icon = new ItemAbilityIcon(
-                    iconX, iconY,
-                    iconSize, iconSize,
-                    Cztils.config.getBorderWidth(),
-                    ZenithTextures.getItem(ability).orElse(new ItemStack(Items.AIR))
-            );
-            icon.setBackgroundFill(backgroundFill);
-            icon.setBorderColor(borderColor);
-            icons.add(icon);
-        }
-        return icons;
     }
 
     @Override
@@ -171,6 +188,11 @@ public class Player extends HudElement {
         matrices.translate(this.x, this.y, 0f);
         this.nametag.render(context);
         this.actives.render(context);
+        this.curses.render(context);
+        matrices.translate(this.curses.size()*this.curseIconWidth + PASSIVE_GAP_PX, 0f, 0f);
+        this.gifts.render(context);
+        matrices.translate(this.gifts.size()*this.giftIconWidth + PASSIVE_GAP_PX, 0f, 0f);
+        this.passives.render(context);
         matrices.pop();
     }
 }

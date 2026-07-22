@@ -10,6 +10,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import net.minecraft.util.ActionResult;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -63,6 +64,66 @@ public class ModConfig implements ConfigData {
 
     public int getBorderWidth() {
         return 1;
+    }
+
+    public <E extends Enum<E>> Set<E> getAlwaysShow(Class<E> abilityType, Spec spec) {
+        SpecConfig config = this.specConfigs.get(spec);
+        if (config == null) return Set.of();
+
+        Set<E> result = new HashSet<>();
+        for (Enum<?> e : config.alwaysShowSet) {
+            if (abilityType.isInstance(e)) {
+                result.add(abilityType.cast(e));
+            }
+        }
+        return result;
+    }
+
+    public <E extends Enum<E>> Set<E> getShowIfHas(Class<E> abilityType, Spec spec) {
+        SpecConfig config = this.specConfigs.get(spec);
+        if (config == null) return Set.of();
+
+        Set<E> result = new HashSet<>();
+        for (Enum<?> e : config.showIfHasSet) {
+            if (abilityType.isInstance(e)) {
+                result.add(abilityType.cast(e));
+            }
+        }
+        return result;
+    }
+
+    @Nullable
+    public Comparator<Active> getActiveSorter(Spec spec) {
+        SpecConfig config = this.specConfigs.get(spec);
+        Comparator<Active> sorter = null;
+
+        for (SpecConfig.ActiveSorters activeSorter : config.activeSortOrder) {
+            Comparator<Active> nextSorter = config.getSorter(activeSorter);
+            if (nextSorter == null) continue;
+            if (sorter == null) {
+                sorter = nextSorter;
+            } else {
+                sorter = sorter.thenComparing(nextSorter);
+            }
+        }
+        return sorter;
+    }
+
+    @Nullable
+    public Comparator<Passive> getPassiveSorter(Spec spec) {
+        SpecConfig config = this.specConfigs.get(spec);
+        Comparator<Passive> sorter = null;
+
+        for (SpecConfig.PassiveSorters passiveSorter : config.passiveSortOrder) {
+            Comparator<Passive> nextSorter = config.getSorter(passiveSorter);
+            if (nextSorter == null) continue;
+            if (sorter == null) {
+                sorter = nextSorter;
+            } else {
+                sorter = sorter.thenComparing(nextSorter);
+            }
+        }
+        return sorter;
     }
 
     @Retention(RetentionPolicy.RUNTIME)
