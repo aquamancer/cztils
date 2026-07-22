@@ -39,8 +39,6 @@ public class CustomAnnots {
                                 fillDefaults(values, keyType);
                             }
 
-                            ConfigEntryBuilder builder = ConfigEntryBuilder.create();
-
                             List<AbstractConfigListEntry> result = values.entrySet().stream().map(entry -> CustomEntries.textureEntry(entry.getKey(), values)).toList();
                             return List.of(ConfigEntryBuilder.create().startSubCategory(Text.literal(dropdownName), result).build());
                         },
@@ -59,29 +57,26 @@ public class CustomAnnots {
                             }
 
                             ConfigEntryBuilder builder = ConfigEntryBuilder.create();
+
+                            List<AbstractConfigListEntry> specs = new ArrayList<>();
                             for (Map.Entry<Spec, SpecConfig> pair : values.entrySet()) {
                                 Spec spec = pair.getKey();
                                 SpecConfig specConfig = pair.getValue();
 
-                                SpecConfig.fillDefaults(spec, specConfig);
+                                List<AbstractConfigListEntry> children = new ArrayList<>();
+                                children.add(builder.startStrField(Text.literal("Display name"), specConfig.name).setSaveConsumer(s -> specConfig.name = s).build());
+                                children.add(CustomEntries.teammatePriorityEntry("Teammate spec order", specConfig));
 
-                                List<AbstractConfigListEntry> result = new ArrayList<>();
-                                result.add(CustomEntries.teammatePriorityEntry("Teammate Spec Order", specConfig));
-                                result.add(CustomEntries.abilitySpecPriorityEntry("Ability Spec Order", specConfig));
-                                result.add(CustomEntries.activeSlotPriorityEntry("Active Slot Order", specConfig));
-                                result.add(CustomEntries.activeSortEntry("Active Sort Order", specConfig));
-                                result.add(CustomEntries.passiveSortEntry("Passive Sort Order", specConfig));
-                                result.add(builder.startStrList("Always Show Icons", specConfig.alwaysShow.stream().toList()))
+                                children.add(CustomEntries.abilitySpecPriorityEntry("Ability spec order", specConfig));
+                                children.add(CustomEntries.activeSlotPriorityEntry("Active slot order", specConfig));
+                                children.add(CustomEntries.activeSortEntry("Active sort order", specConfig));
+                                children.add(CustomEntries.passiveSortEntry("Passive sort order", specConfig));
+                                children.add(CustomEntries.enumListEntry("Always show icons", specConfig.alwaysShow, specConfig.alwaysShowSet));
+                                children.add(CustomEntries.enumListEntry("Show if has", specConfig.showIfHas, specConfig.showIfHasSet));
 
-
-
-
-
+                                specs.add(builder.startSubCategory(Text.literal(spec.name()), children).build());
                             }
-
-
-                            List<AbstractConfigListEntry> result = values.entrySet().stream().map(entry -> CustomEntries.textureEntry(entry.getKey(), values)).toList();
-                            return List.of(ConfigEntryBuilder.create().startSubCategory(Text.literal(dropdownName), result).build());
+                            return specs;
                         },
                         ModConfig.SpecConfigs.class
                 );

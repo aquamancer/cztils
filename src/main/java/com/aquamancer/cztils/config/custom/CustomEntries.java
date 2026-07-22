@@ -1,6 +1,7 @@
 package com.aquamancer.cztils.config.custom;
 
 import com.aquamancer.czlib.api.abils.AbilitySpec;
+import com.aquamancer.czlib.api.abils.AbilityUtils;
 import com.aquamancer.czlib.api.abils.ActiveSlot;
 import com.aquamancer.czlib.api.abils.Spec;
 import com.aquamancer.cztils.hud.AbilityIcon;
@@ -89,11 +90,11 @@ public class CustomEntries {
     public static AbstractConfigListEntry activeSortEntry(String dropdownName, SpecConfig config) {
         List<AbstractConfigListEntry> sortOrder = new ArrayList<>();
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
-        // don't create a line for "disabled"
         for (int i = 0; i < SpecConfig.ActiveSorters.values().length - 1; i++) {
             int finalI = i;
-            AbstractConfigListEntry entry = builder.startEnumSelector(Text.literal("Sort by #"+i+1), SpecConfig.ActiveSorters.class, config.activeSortOrder.get(i))
-                    .setSaveConsumer(e -> config.activeSortOrder.add(finalI, e))
+            String description = (i == 0) ? "Sort by" : "then by";
+            AbstractConfigListEntry entry = builder.startEnumSelector(Text.literal(description), SpecConfig.ActiveSorters.class, config.activeSortOrder.get(i))
+                    .setSaveConsumer(e -> config.activeSortOrder.set(finalI, e))
                     .build();
             sortOrder.add(entry);
         }
@@ -103,27 +104,30 @@ public class CustomEntries {
     public static AbstractConfigListEntry passiveSortEntry(String dropdownName, SpecConfig config) {
         List<AbstractConfigListEntry> sortOrder = new ArrayList<>();
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
-        // don't create a line for "disabled"
         for (int i = 0; i < SpecConfig.PassiveSorters.values().length - 1; i++) {
             int finalI = i;
-            AbstractConfigListEntry entry = builder.startEnumSelector(Text.literal("Sort by #"+i+1), SpecConfig.PassiveSorters.class, config.passiveSortOrder.get(i))
-                    .setSaveConsumer(e -> config.passiveSortOrder.add(finalI, e))
+            String description = (i == 0) ? "Sort by" : "then by";
+            AbstractConfigListEntry entry = builder.startEnumSelector(Text.literal(description), SpecConfig.PassiveSorters.class, config.passiveSortOrder.get(i))
+                    .setSaveConsumer(e -> config.passiveSortOrder.set(finalI, e))
                     .build();
             sortOrder.add(entry);
         }
         return builder.startSubCategory(Text.literal(dropdownName), sortOrder).build();
     }
 
-    public static AbstractConfigListEntry enumListEntry(String dropdownName, String listName, List<String> list, Set<Enum<?>> enumBacked) {
-        List<AbstractConfigListEntry> sortOrder = new ArrayList<>();
+    public static AbstractConfigListEntry enumListEntry(String listName, List<String> list, Set<Enum<?>> enumBacked) {
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
 
-        builder.startStrList(Text.literal(listName), list).setSaveConsumer(l -> {
+        return builder.startStrList(Text.literal(listName), list).setSaveConsumer(updated -> {
             list.clear();
-            list.addAll(l);
             enumBacked.clear();
-
-        })
-        return builder.startSubCategory(Text.literal(dropdownName), sortOrder).build();
+            updated.forEach(e -> {
+                Optional<Enum<?>> ability = AbilityUtils.fromString(e);
+                if (ability.isPresent()) {
+                    list.add(e);
+                    enumBacked.add(ability.get());
+                }
+            });
+        }).build();
     }
 }

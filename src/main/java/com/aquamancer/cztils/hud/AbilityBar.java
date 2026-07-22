@@ -13,6 +13,10 @@ public class AbilityBar extends HudElement {
         this.abilities = abilities;
     }
 
+    public int size() {
+        return this.abilities.size();
+    }
+
     @Override
     public void render(DrawContext context) {
         MatrixStack matrices = context.getMatrices();

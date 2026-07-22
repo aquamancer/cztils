@@ -1,9 +1,7 @@
 package com.aquamancer.cztils;
 
-import com.aquamancer.czlib.api.abils.AbilitySpec;
-import com.aquamancer.czlib.api.abils.Active;
-import com.aquamancer.czlib.api.abils.Actives;
-import com.aquamancer.czlib.api.abils.Rarity;
+import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.cztils.config.ConfigDefaults;
 import com.aquamancer.cztils.config.ModConfig;
 import com.aquamancer.cztils.config.custom.CustomAnnots;
 import com.aquamancer.cztils.hud.*;
@@ -43,13 +41,25 @@ public class Cztils implements ModInitializer {
 		ConfigHolder<ModConfig> configHolder = AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
 		config = configHolder.getConfig();
 		CustomAnnots.init();
+		ConfigDefaults.loadDefaults(config);
 
 		Player player = new Player(100, 100, new Vector2i(0, 10), new Vector2i(0, 100));
-		player.setActives(Set.of(new Active(Actives.SIDEARM, AbilitySpec.STEEL, Rarity.RARE)), Set.of(new Active(Actives.RAPID_FIRE, null, null), new Active(Actives.AEROBLAST, null, null), new Active(Actives.BEASTS_CLAW, null, null)), 16);
 		player.setName("riot games");
-		player.setSpec("steel");
+		player.setSpec(Spec.FLAME);
 		player.setHp(15);
 		player.setHpMax(20).setGraveTimer(3.05);
+		player.setActives(
+				Set.of(
+						new Active(Actives.WINDSWEPT, AbilitySpec.WIND, Rarity.TWISTED),
+						new Active(Actives.SOLAR_RAY, AbilitySpec.PRISMATIC, Rarity.COMMON),
+						new Active(Actives.FLAMESTRIKE, AbilitySpec.FLAME, Rarity.RARE),
+						new Active(Actives.IGNEOUS_RUNE, AbilitySpec.FLAME, Rarity.LEGENDARY),
+						new Active(Actives.RAPID_FIRE, AbilitySpec.STEEL, Rarity.COMMON),
+						new Active(Actives.EARTHQUAKE, AbilitySpec.EARTH, Rarity.UNCOMMON),
+						new Active(Actives.STEEL_STALLION, AbilitySpec.STEEL, Rarity.COMMON)
+				),
+				16
+		);
 //		AbilityIcon icon = new ItemAbilityIcon(
 //				Identifier.of("minecraft", "textures/item/bell.png"),
 //				Identifier.of("unofficial-monumenta-mod", "textures/abilities/dawnbringer/radiant_blessing.png"),
