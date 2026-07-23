@@ -1,10 +1,8 @@
 package com.aquamancer.cztils.config.custom;
 
-import com.aquamancer.czlib.api.abils.Actives;
 import com.aquamancer.czlib.api.abils.Spec;
 import com.aquamancer.cztils.config.ModConfig;
 import com.aquamancer.cztils.hud.AbilityIcon;
-import com.aquamancer.cztils.hud.TextureInfo;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -14,7 +12,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +70,7 @@ public class CustomAnnots {
                                 children.add(CustomEntries.passiveSortEntry("Passive sort order", specConfig));
                                 children.add(CustomEntries.enumListEntry(CustomEntries.EnumListType.ALWAYS_SHOW, spec, specConfig.alwaysShow, specConfig.alwaysShowSet));
                                 children.add(CustomEntries.enumListEntry(CustomEntries.EnumListType.SHOW_IF_SPEC, spec, specConfig.showIfHasSpec, specConfig.showIfHasSpecSet));
-                                children.add(CustomEntries.enumListEntry(CustomEntries.EnumListType.SHOW_IF_HAS, spec, specConfig.showIfHas, specConfig.showIfHasSet));
+                                children.add(CustomEntries.enumListEntry(CustomEntries.EnumListType.SHOW_IF_HAS, spec, specConfig.showIfHas, specConfig.iconSet));
 
                                 specs.add(builder.startSubCategory(Text.literal(spec.name()), children).build());
                             }

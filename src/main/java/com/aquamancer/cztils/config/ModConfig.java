@@ -4,12 +4,9 @@ import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.cztils.Cztils;
 import com.aquamancer.cztils.config.custom.SpecConfig;
 import com.aquamancer.cztils.hud.AbilityIcon;
-import com.aquamancer.cztils.hud.TextureInfo;
-import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import net.minecraft.util.ActionResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.ElementType;
@@ -20,6 +17,13 @@ import java.util.*;
 
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
+    public ModConfig() {
+        for (Spec spec : Spec.values()) {
+            SpecConfig defaultConfig = new SpecConfig();
+            ConfigDefaults.loadSpecConfig(spec, defaultConfig);
+            specConfigs.put(spec, defaultConfig);
+        }
+    }
     @ConfigEntry.Category("icons")
     @ConfigEntry.ColorPicker(allowAlpha = true)
     public int grayedOut = 0x80000000;
@@ -84,7 +88,7 @@ public class ModConfig implements ConfigData {
         if (config == null) return Set.of();
 
         Set<E> result = new HashSet<>();
-        for (Enum<?> e : config.showIfHasSet) {
+        for (Enum<?> e : config.iconSet) {
             if (abilityType.isInstance(e)) {
                 result.add(abilityType.cast(e));
             }

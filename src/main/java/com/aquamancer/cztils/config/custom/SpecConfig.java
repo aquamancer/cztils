@@ -5,8 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.aquamancer.czlib.api.abils.AbilitySpec.STEEL;
-
 public class SpecConfig {
     public enum ActiveSorters {
         SPEC, SPEC_REVERSED,
@@ -20,6 +18,10 @@ public class SpecConfig {
         DISABLED
     }
 
+    public enum IconListMode {
+        ALLOWLIST, BLOCKLIST
+    }
+
     public String name;
     public Map<Spec, Integer> teammatePriority = new EnumMap<>(Spec.class);
     public Map<AbilitySpec, Integer> specPriority = new EnumMap<>(AbilitySpec.class);
@@ -29,15 +31,24 @@ public class SpecConfig {
     // using lists for autoconfig compatibility
     public List<String> alwaysShow = new ArrayList<>();
     public List<String> showIfHasSpec = new ArrayList<>();
-    public List<String> showIfHas = new ArrayList<>();
-    // set view of the above, actually used
+
+    public IconListMode activeListMode;
+    public IconListMode passiveListMode;
+    public IconListMode giftListMode;
+    public IconListMode curseListMode;
+    public List<String> activeList;
+    public List<String> passiveList;
+    public List<String> giftList;
+    public List<String> curseList;
+    // set view of the above, actually used in code
     public transient Set<Enum<?>> alwaysShowSet = new HashSet<>();
     public transient Set<Enum<?>> showIfHasSpecSet = new HashSet<>();
-    public transient Set<Enum<?>> showIfHasSet = new HashSet<>();
+    public transient Set<Actives> activeSet;
+    public transient Set<Passives> passiveSet;
+    public transient Set<Gifts> giftSet;
+    public transient Set<Curse> curseSet;
 
-    public SpecConfig() {
-
-    }
+    public SpecConfig() {}
 
     @Nullable
     public Comparator<Active> getSorter(ActiveSorters type) {

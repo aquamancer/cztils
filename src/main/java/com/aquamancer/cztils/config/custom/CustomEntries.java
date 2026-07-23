@@ -117,38 +117,26 @@ public class CustomEntries {
         return builder.startSubCategory(Text.literal(dropdownName), sortOrder).build();
     }
 
-    public enum EnumListType { ALWAYS_SHOW, SHOW_IF_SPEC, SHOW_IF_HAS }
-    public static AbstractConfigListEntry enumListEntry(EnumListType type, @NotNull Spec spec, List<String> list, Set<Enum<?>> enumBacked) {
+    public static AbstractConfigListEntry enumListEntry(String listName, List<String> configRef, Set<Enum<?>> enumBacked, List<String> defaultValue) {
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
 
-        String listName;
-        List<String> defaultValues;
-        switch (type) {
-            default:
-            case ALWAYS_SHOW:
-                listName = "Always show icons";
-                defaultValues = ConfigDefaults.alwaysShow.get(spec);
-                break;
-            case SHOW_IF_SPEC:
-                listName = "Always show icon if has spec";
-                defaultValues = ConfigDefaults.alwaysShowIfHasSpec.get(spec);
-                break;
-            case SHOW_IF_HAS:
-                listName = "Show icon if has";
-                defaultValues = ConfigDefaults.showIfHas.get(spec);
-                break;
-        }
-
-        return builder.startStrList(Text.literal(listName), list).setSaveConsumer(updated -> {
-            list.clear();
+        return builder.startStrList(Text.literal(listName), configRef).setSaveConsumer(updated -> {
+            configRef.clear();
             enumBacked.clear();
             updated.forEach(e -> {
                 Optional<Enum<?>> ability = AbilityUtils.fromString(e);
                 if (ability.isPresent()) {
-                    list.add(e);
+                    configRef.add(e);
                     enumBacked.add(ability.get());
                 }
             });
-        }).setDefaultValue(defaultValues).build();
+        }).setDefaultValue(defaultValue).build();
+    }
+
+    public static AbstractConfigListEntry iconListDropdownEntry(String dropdownName, SpecConfig configRef) {
+        List<AbstractConfigListEntry> children = new ArrayList<>();
+        ConfigEntryBuilder builder = ConfigEntryBuilder.create();
+
+        children.add(builder.startEnumSelector(Text.literal("List mode for actives"), SpecConfig.IconListMode.class), )
     }
 }
