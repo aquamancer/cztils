@@ -108,8 +108,20 @@ public class Player extends HudElement {
         return this;
     }
 
-    public Player setGifts(Set<Gift> curseSet, int iconSize) {
+    public Player setGifts(Set<Gift> giftSet, int iconSize) {
         this.giftIconWidth = iconSize;
+
+        List<AbilityIcon> icons = new ArrayList<>(giftSet.size());
+        int i = 0;
+        for (Gift gift : giftSet) {
+            AbilityIcon icon = createIcon(i*iconSize, 0, iconSize, gift.getGift(), AbilityIcon.PRISMATIC_COLOR, false);
+            String counter = (gift.getCounter() == 0) ? null : String.valueOf(gift.getCounter());
+            icon.setSubscript(counter);
+            icons.add(icon);
+            i++;
+        }
+
+        this.gifts = new AbilityBar(passivesOffset.x, passivesOffset.y, icons);
         return this;
     }
 

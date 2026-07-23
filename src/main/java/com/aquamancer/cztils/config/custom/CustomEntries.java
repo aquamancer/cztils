@@ -4,11 +4,13 @@ import com.aquamancer.czlib.api.abils.AbilitySpec;
 import com.aquamancer.czlib.api.abils.AbilityUtils;
 import com.aquamancer.czlib.api.abils.ActiveSlot;
 import com.aquamancer.czlib.api.abils.Spec;
+import com.aquamancer.cztils.config.ConfigDefaults;
 import com.aquamancer.cztils.hud.AbilityIcon;
 import com.aquamancer.cztils.hud.TextureInfo;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -115,8 +117,27 @@ public class CustomEntries {
         return builder.startSubCategory(Text.literal(dropdownName), sortOrder).build();
     }
 
-    public static AbstractConfigListEntry enumListEntry(String listName, List<String> list, Set<Enum<?>> enumBacked) {
+    public enum EnumListType { ALWAYS_SHOW, SHOW_IF_SPEC, SHOW_IF_HAS }
+    public static AbstractConfigListEntry enumListEntry(EnumListType type, @NotNull Spec spec, List<String> list, Set<Enum<?>> enumBacked) {
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
+
+        String listName;
+        List<String> defaultValues;
+        switch (type) {
+            default:
+            case ALWAYS_SHOW:
+                listName = "Always show icons";
+                defaultValues = ConfigDefaults.alwaysShow.get(spec);
+                break;
+            case SHOW_IF_SPEC:
+                listName = "Always show icon if has spec";
+                defaultValues = ConfigDefaults.alwaysShowIfHasSpec.get(spec);
+                break;
+            case SHOW_IF_HAS:
+                listName = "Show icon if has";
+                defaultValues = ConfigDefaults.showIfHas.get(spec);
+                break;
+        }
 
         return builder.startStrList(Text.literal(listName), list).setSaveConsumer(updated -> {
             list.clear();
@@ -128,6 +149,6 @@ public class CustomEntries {
                     enumBacked.add(ability.get());
                 }
             });
-        }).build();
+        }).setDefaultValue(defaultValues).build();
     }
 }

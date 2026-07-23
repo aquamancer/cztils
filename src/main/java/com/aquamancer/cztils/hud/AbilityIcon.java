@@ -2,6 +2,7 @@ package com.aquamancer.cztils.hud;
 
 import com.aquamancer.czlib.api.abils.Rarity;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
 import java.util.Map;
@@ -17,6 +18,7 @@ public abstract class AbilityIcon extends HudElement {
     );
     public static final int DEFAULT_BORDER_COLOR = 0xff444444;
     public static final int CURSE_COLOR = 0xffc41300;
+    public static final int PRISMATIC_COLOR = 0xff25f6f5;
     public static final int BACKGROUND_FILL = 0x88000000;
 
     public enum Type { VANILLA, UMM }
@@ -25,7 +27,7 @@ public abstract class AbilityIcon extends HudElement {
     protected int borderColor = 0xFF000000;
     protected int backgroundFill = 0x0;
     protected int grayedOut = 0x0;
-    protected String subscript = "12";
+    protected @Nullable String subscript;
 
     public AbilityIcon(int x, int y, int w, int h, int borderWidth) {
         super(x, y);
@@ -48,7 +50,7 @@ public abstract class AbilityIcon extends HudElement {
         return this;
     }
 
-    public AbilityIcon setSubscript(String text) {
+    public AbilityIcon setSubscript(@Nullable String text) {
         this.subscript = text;
         return this;
     }

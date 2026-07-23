@@ -71,7 +71,15 @@ public class Cztils implements ModInitializer {
 						new Passive(Passives.SHARPSHOOTER, AbilitySpec.STEEL, Rarity.LEGENDARY),
 						new Passive(Passives.FROZEN_DOMAIN, AbilitySpec.FROST, Rarity.RARE),
 						new Passive(Passives.AEROMANCY, AbilitySpec.WIND, Rarity.RARE),
-						new Passive(Passives.PYROMANIA, AbilitySpec.FLAME, Rarity.RARE)
+						new Passive(Passives.PYROMANIA, AbilitySpec.FLAME, Rarity.RARE),
+						new Passive(Passives.REBIRTH, AbilitySpec.PRISMATIC, Rarity.COMMON)
+				),
+				16
+		);
+		player.setGifts(
+				Set.of(
+						new Gift(Spec.STEEL),
+						new Gift(Gifts.CRACKED_IDOL)
 				),
 				16
 		);

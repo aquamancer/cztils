@@ -71,8 +71,9 @@ public class CustomAnnots {
                                 children.add(CustomEntries.activeSlotPriorityEntry("Active slot order", specConfig));
                                 children.add(CustomEntries.activeSortEntry("Active sort order", specConfig));
                                 children.add(CustomEntries.passiveSortEntry("Passive sort order", specConfig));
-                                children.add(CustomEntries.enumListEntry("Always show icons", specConfig.alwaysShow, specConfig.alwaysShowSet));
-                                children.add(CustomEntries.enumListEntry("Show if has", specConfig.showIfHas, specConfig.showIfHasSet));
+                                children.add(CustomEntries.enumListEntry(CustomEntries.EnumListType.ALWAYS_SHOW, spec, specConfig.alwaysShow, specConfig.alwaysShowSet));
+                                children.add(CustomEntries.enumListEntry(CustomEntries.EnumListType.SHOW_IF_SPEC, spec, specConfig.showIfHasSpec, specConfig.showIfHasSpecSet));
+                                children.add(CustomEntries.enumListEntry(CustomEntries.EnumListType.SHOW_IF_HAS, spec, specConfig.showIfHas, specConfig.showIfHasSet));
 
                                 specs.add(builder.startSubCategory(Text.literal(spec.name()), children).build());
                             }

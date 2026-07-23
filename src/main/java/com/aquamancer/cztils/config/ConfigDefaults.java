@@ -4,10 +4,134 @@ import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.cztils.config.custom.SpecConfig;
 import com.aquamancer.cztils.hud.AbilityIcon;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public final class ConfigDefaults {
+    public static final Map<Spec, List<String>> alwaysShow = new EnumMap<>(Spec.class);
+    public static final Map<Spec, List<String>> alwaysShowIfHasSpec = new EnumMap<>(Spec.class);
+    public static final Map<Spec, List<String>> showIfHas = new EnumMap<>(Spec.class);
+    static {
+    for (Spec spec : Spec.values()) {
+        List<String> alwaysShow = new ArrayList<>();
+        List<String> showIfHasSpec = new ArrayList<>();
+        List<String> showIfHas = new ArrayList<>();
+
+        Arrays.stream(Curse.values()).forEach(curse -> showIfHas.add(curse.getDisplayName()));
+        Arrays.stream(Gifts.values()).forEach(gift -> showIfHas.add(gift.getDisplayName()));
+
+        showIfHasSpec.add("Skyhook");
+
+        showIfHas.add("Steel Stallion");
+        showIfHas.add("Escape Artist");
+        showIfHas.add("Apocalypse");
+        showIfHas.add("Cryobox");
+        showIfHas.add("Last Breath");
+        showIfHas.add("Eternal Savior");
+
+        showIfHas.add("Generosity");
+        showIfHas.add("Multiplicity");
+        showIfHas.add("Rebirth");
+
+        showIfHas.add("Wind Walk");
+        showIfHas.add("Rapid Fire");
+
+        switch (spec) {
+            case STEEL:
+                alwaysShow.add("Sidearm");
+                alwaysShow.add("Scrapshot");
+                alwaysShow.add("Rapid Fire");
+                alwaysShow.add("Sharpshooter");
+                showIfHas.add("Focused Combos");
+                showIfHas.add("Firework Blast");
+                showIfHas.add("Volley");
+                showIfHas.add("Gravity Bomb");
+                showIfHas.add("Split Arrow");
+                showIfHasSpec.add("Dethroner");
+                showIfHasSpec.add("Primordial Mastery");
+                break;
+            case SHADOW:
+                alwaysShow.add("Advancing Shadows");
+                alwaysShow.add("Blade Flurry");
+                alwaysShow.add("Cloak of Shadows");
+                alwaysShow.add("Chaos Dagger");
+                alwaysShow.add("Deadly Strike");
+                alwaysShow.add("Brutalize");
+                alwaysShow.add("Dethroner");
+                showIfHas.add("Dark Combos");
+                showIfHas.add("Phantom Force");
+                showIfHas.add("Dummy Decoy");
+                showIfHasSpec.add("Windswept Combos");
+                break;
+            case FLAME:
+                alwaysShow.add("Igneous Rune");
+                alwaysShow.add("Flamestrike");
+                alwaysShow.add("Volcanic Meteor");
+                alwaysShow.add("Detonation");
+                alwaysShow.add("Primordial Mastery");
+                showIfHas.add("Volcanic Combos");
+                showIfHas.add("Fireball");
+                showIfHas.add("Flame Spirit");
+                showIfHas.add("Pyroblast");
+                showIfHas.add("Solar Ray");
+                showIfHasSpec.add("Dethroner");
+                break;
+            case FROST:
+                alwaysShow.add("Snowstorm");
+                alwaysShow.add("Avalanche");
+                alwaysShow.add("Frozen Domain");
+                alwaysShow.add("Icebreaker");
+                showIfHas.add("Frigid Combos");
+                showIfHas.add("Ice Lance");
+                showIfHas.add("Ice Barrier");
+                showIfHas.add("Permafrost");
+                showIfHas.add("Piercing Cold");
+                showIfHas.add("Solar Ray");
+                showIfHasSpec.add("Dethroner");
+                showIfHasSpec.add("Detonation");
+                showIfHasSpec.add("Primordial Mastery");
+                break;
+            case WIND:
+                alwaysShow.add("Guarding Bolt");
+                alwaysShow.add("Aeroblast");
+                alwaysShow.add("Thundercloud Form");
+                alwaysShow.add("Skyhook");
+                alwaysShow.add("Aeromancy");
+                showIfHas.add("Windswept Combos");
+                showIfHas.add("Wind Walk");
+                showIfHas.add("Whirlwind");
+                showIfHasSpec.add("Dethroner");
+                showIfHasSpec.add("Detonation");
+                showIfHasSpec.add("Primordial Mastery");
+                break;
+            case EARTH:
+                alwaysShow.add("Beast's Claw");
+                alwaysShow.add("Iron Grip");
+                alwaysShow.add("Taunt");
+                alwaysShow.add("Earthen Wrath");
+                showIfHas.add("Earthen Combos");
+                showIfHas.add("Entrench");
+                showIfHas.add("Earthquake");
+                showIfHasSpec.add("Dethroner");
+                break;
+            case DAWN:
+                alwaysShow.add("Soothing Combos");
+                alwaysShow.add("Radiant Blessing");
+                alwaysShow.add("Spark of Inspiration");
+                alwaysShow.add("Sundrops");
+                showIfHas.add("Ward of Light");
+                showIfHas.add("Bottled Sunlight");
+                showIfHas.add("Ward of Light");
+                showIfHas.add("Lightning Bottle");
+                showIfHas.add("Divine Beam");
+                break;
+        }
+
+        ConfigDefaults.alwaysShow.put(spec, alwaysShow);
+        ConfigDefaults.alwaysShowIfHasSpec.put(spec, showIfHasSpec);
+        ConfigDefaults.showIfHas.put(spec, showIfHas);
+    }
+}
+
     public static void loadDefaults(ModConfig config) {
         loadTextures(config.textures);
 

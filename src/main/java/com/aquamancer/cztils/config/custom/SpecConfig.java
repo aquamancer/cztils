@@ -28,12 +28,16 @@ public class SpecConfig {
     public List<PassiveSorters> passiveSortOrder = new ArrayList<>();
     // using lists for autoconfig compatibility
     public List<String> alwaysShow = new ArrayList<>();
+    public List<String> showIfHasSpec = new ArrayList<>();
     public List<String> showIfHas = new ArrayList<>();
     // set view of the above, actually used
     public transient Set<Enum<?>> alwaysShowSet = new HashSet<>();
+    public transient Set<Enum<?>> showIfHasSpecSet = new HashSet<>();
     public transient Set<Enum<?>> showIfHasSet = new HashSet<>();
 
-    public SpecConfig() {}
+    public SpecConfig() {
+
+    }
 
     @Nullable
     public Comparator<Active> getSorter(ActiveSorters type) {
