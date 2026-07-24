@@ -42,7 +42,6 @@ public class Cztils implements ModInitializer {
 		ConfigHolder<ModConfig> configHolder = AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
 		config = configHolder.getConfig();
 		CustomAnnots.init();
-		ConfigDefaults.loadDefaults(config);
 
 		Player player = new Player(100, 100, new Vector2i(0, 10), new Vector2i(0, 28));
 		player.setName("riot games");

@@ -7,6 +7,7 @@ import com.aquamancer.cztils.hud.AbilityIcon;
 import java.util.*;
 
 public final class ConfigDefaults {
+    public static final int grayedOutColor = 0x80000000;
     public static final Map<Spec, String> names = new EnumMap<>(Spec.class);
     public static final Map<Spec, Map<Spec, Integer>> teammatePriority = new EnumMap<>(Spec.class);
     public static final Map<Spec, Map<AbilitySpec, Integer>> specPriority = new EnumMap<>(Spec.class);
@@ -15,7 +16,7 @@ public final class ConfigDefaults {
     public static final Map<Spec, List<SpecConfig.PassiveSorters>> passiveSortOrder = new EnumMap<>(Spec.class);
 
     public static final Map<Spec, List<String>> alwaysShow = new EnumMap<>(Spec.class);
-    public static final Map<Spec, List<String>> alwaysShowIfHasSpec = new EnumMap<>(Spec.class);
+    public static final Map<Spec, List<String>> showIfHasSpec = new EnumMap<>(Spec.class);
     public static final Map<Spec, SpecConfig.IconListMode> activeListMode = new EnumMap<>(Spec.class);
     public static final Map<Spec, SpecConfig.IconListMode> passiveListMode = new EnumMap<>(Spec.class);
     public static final Map<Spec, SpecConfig.IconListMode> giftListMode = new EnumMap<>(Spec.class);
@@ -282,7 +283,7 @@ public final class ConfigDefaults {
             }
 
             alwaysShow.put(spec, always);
-            alwaysShowIfHasSpec.put(spec, ifHasSpec);
+            showIfHasSpec.put(spec, ifHasSpec);
 
             activeListMode.put(spec, activeMode);
             activeList.put(spec, actives);
@@ -295,31 +296,34 @@ public final class ConfigDefaults {
         }
     }
 
-    public static void loadDefaults(ModConfig config) {
-        loadTextures(config.textures);
-
+    public static Map<Spec, SpecConfig> createDefaultSpecConfigs() {
+        Map<Spec, SpecConfig> result = new EnumMap<>(Spec.class);
         for (Spec spec : Spec.values()) {
-            SpecConfig specConfig = config.specConfigs.computeIfAbsent(spec, (k) -> {
-                SpecConfig defaultConfig = new SpecConfig();
-                loadSpecConfig(spec, defaultConfig);
-                return defaultConfig;
-            });
-            specConfig.alwaysShowSet.clear();
-            specConfig.alwaysShow.forEach(s -> {
-                Optional<Enum<?>> ability = AbilityUtils.fromString(s);
-                if (ability.isEmpty() || ability.get() instanceof Curse || ability.get() instanceof Gifts) return;
-                if (ability.isPresent()) {
-                    specConfig.alwaysShowSet.add(ability.get());
-                }
-            });
-            specConfig.iconSet.clear();
-            specConfig.showIfHas.forEach(s -> {
-                Optional<Enum<?>> ability = AbilityUtils.fromString(s);
-                if (ability.isPresent()) {
-                    specConfig.iconSet.add(ability.get());
-                }
-            });
+            result.put(spec, createDefaultSpecConfig(spec));
         }
+        return result;
+    }
+
+    private static SpecConfig createDefaultSpecConfig(Spec spec) {
+        SpecConfig config = new SpecConfig();
+        config.name = names.get(spec);
+        config.teammatePriority = new EnumMap<>(teammatePriority.get(spec));
+        config.specPriority = new EnumMap<>(specPriority.get(spec));
+        config.slotPriority = new EnumMap<>(slotPriority.get(spec));
+        config.activeSortOrder = new ArrayList<>(activeSortOrder.get(spec));
+        config.passiveSortOrder = new ArrayList<>(passiveSortOrder.get(spec));
+        config.alwaysShow = new ArrayList<>(alwaysShow.get(spec));
+        config.showIfHasSpec = new ArrayList<>(showIfHasSpec.get(spec));
+        config.activeListMode = activeListMode.get(spec);
+        config.passiveListMode = passiveListMode.get(spec);
+        config.giftListMode = giftListMode.get(spec);
+        config.curseListMode = curseListMode.get(spec);
+        config.activeList = new ArrayList<>(activeList.get(spec));
+        config.passiveList = new ArrayList<>(passiveList.get(spec));
+        config.giftList = new ArrayList<>(giftList.get(spec));
+        config.curseList = new ArrayList<>(curseList.get(spec));
+        config.updateEnumSets();
+        return config;
     }
 
     private static void loadTextures(ModConfig.Textures textures) {
@@ -332,142 +336,6 @@ public final class ConfigDefaults {
     private static <T extends Enum<?>> void loadEnumMap(T[] values, Map<T, AbilityIcon.Type> map) {
         for (T key : values) {
             map.putIfAbsent(key, AbilityIcon.Type.VANILLA);
-        }
-    }
-
-    public static void loadSpecConfig(Spec spec, SpecConfig config) {
-        if (config.name == null) {
-            switch (spec) {
-                case STEEL:
-                    config.name = "Steelsage";
-                    break;
-                case SHADOW:
-                    config.name = "Shadow";
-                    break;
-                case FLAME:
-                    config.name = "Flame";
-                    break;
-                case FROST:
-                    config.name = "Frost";
-                    break;
-                case WIND:
-                    config.name = "Wind";
-                    break;
-                case EARTH:
-                    config.name = "Earth";
-                    break;
-                case DAWN:
-                    config.name = "Dawn";
-                    break;
-            }
-        }
-
-        config.teammatePriority.putIfAbsent(Spec.STEEL, 0);
-        config.teammatePriority.putIfAbsent(Spec.SHADOW, 0);
-        config.teammatePriority.putIfAbsent(Spec.FLAME, 1);
-        config.teammatePriority.putIfAbsent(Spec.FROST, 1);
-        config.teammatePriority.putIfAbsent(Spec.WIND, 2);
-        config.teammatePriority.putIfAbsent(Spec.EARTH, 3);
-        config.teammatePriority.putIfAbsent(Spec.DAWN, 5);
-
-        switch (spec) {
-            case STEEL:
-                config.specPriority.putIfAbsent(AbilitySpec.STEEL, 0);
-                config.specPriority.putIfAbsent(AbilitySpec.WIND, 1);
-                config.specPriority.putIfAbsent(AbilitySpec.EARTH, 2);
-                config.specPriority.putIfAbsent(AbilitySpec.DAWN, 3);
-                config.specPriority.putIfAbsent(AbilitySpec.SHADOW, 4);
-                config.specPriority.putIfAbsent(AbilitySpec.FLAME, 7);
-                config.specPriority.putIfAbsent(AbilitySpec.FROST, 8);
-                config.specPriority.putIfAbsent(AbilitySpec.PRISMATIC, 9);
-                break;
-            case SHADOW:
-                config.specPriority.putIfAbsent(AbilitySpec.SHADOW, 0);
-                config.specPriority.putIfAbsent(AbilitySpec.WIND, 1);
-                config.specPriority.putIfAbsent(AbilitySpec.EARTH, 2);
-                config.specPriority.putIfAbsent(AbilitySpec.STEEL, 5);
-                config.specPriority.putIfAbsent(AbilitySpec.FLAME, 6);
-                config.specPriority.putIfAbsent(AbilitySpec.DAWN, 7);
-                config.specPriority.putIfAbsent(AbilitySpec.FROST, 8);
-                config.specPriority.putIfAbsent(AbilitySpec.PRISMATIC, 9);
-                break;
-            case FLAME:
-                config.specPriority.putIfAbsent(AbilitySpec.FLAME, 0);
-                config.specPriority.putIfAbsent(AbilitySpec.WIND, 1);
-                config.specPriority.putIfAbsent(AbilitySpec.EARTH, 2);
-                config.specPriority.putIfAbsent(AbilitySpec.DAWN, 3);
-                config.specPriority.putIfAbsent(AbilitySpec.FROST, 6);
-                config.specPriority.putIfAbsent(AbilitySpec.STEEL, 7);
-                config.specPriority.putIfAbsent(AbilitySpec.SHADOW, 8);
-                config.specPriority.putIfAbsent(AbilitySpec.PRISMATIC, 9);
-                break;
-            case FROST:
-                config.specPriority.putIfAbsent(AbilitySpec.FROST, 0);
-                config.specPriority.putIfAbsent(AbilitySpec.WIND, 1);
-                config.specPriority.putIfAbsent(AbilitySpec.FLAME, 2);
-                config.specPriority.putIfAbsent(AbilitySpec.EARTH, 3);
-                config.specPriority.putIfAbsent(AbilitySpec.STEEL, 5);
-                config.specPriority.putIfAbsent(AbilitySpec.DAWN, 6);
-                config.specPriority.putIfAbsent(AbilitySpec.SHADOW, 8);
-                config.specPriority.putIfAbsent(AbilitySpec.PRISMATIC, 9);
-                break;
-            case WIND:
-                config.specPriority.putIfAbsent(AbilitySpec.WIND, 0);
-                config.specPriority.putIfAbsent(AbilitySpec.EARTH, 1);
-                config.specPriority.putIfAbsent(AbilitySpec.FLAME, 9);
-                config.specPriority.putIfAbsent(AbilitySpec.DAWN, 9);
-                config.specPriority.putIfAbsent(AbilitySpec.STEEL, 9);
-                config.specPriority.putIfAbsent(AbilitySpec.SHADOW, 9);
-                config.specPriority.putIfAbsent(AbilitySpec.FROST, 9);
-                config.specPriority.putIfAbsent(AbilitySpec.PRISMATIC, 9);
-                break;
-            case EARTH:
-                config.specPriority.putIfAbsent(AbilitySpec.EARTH, 0);
-                config.specPriority.putIfAbsent(AbilitySpec.WIND, 1);
-                config.specPriority.putIfAbsent(AbilitySpec.SHADOW, 2);
-                config.specPriority.putIfAbsent(AbilitySpec.DAWN, 3);
-                config.specPriority.putIfAbsent(AbilitySpec.STEEL, 6);
-                config.specPriority.putIfAbsent(AbilitySpec.FROST, 7);
-                config.specPriority.putIfAbsent(AbilitySpec.FLAME, 8);
-                config.specPriority.putIfAbsent(AbilitySpec.PRISMATIC, 9);
-                break;
-            case DAWN:
-                config.specPriority.putIfAbsent(AbilitySpec.DAWN, 0);
-                config.specPriority.putIfAbsent(AbilitySpec.WIND, 1);
-                config.specPriority.putIfAbsent(AbilitySpec.EARTH, 2);
-                config.specPriority.putIfAbsent(AbilitySpec.STEEL, 3);
-                config.specPriority.putIfAbsent(AbilitySpec.FROST, 6);
-                config.specPriority.putIfAbsent(AbilitySpec.FLAME, 7);
-                config.specPriority.putIfAbsent(AbilitySpec.SHADOW, 9);
-                config.specPriority.putIfAbsent(AbilitySpec.PRISMATIC, 9);
-                break;
-        }
-
-        config.slotPriority.putIfAbsent(ActiveSlot.COMBO, 0);
-        config.slotPriority.putIfAbsent(ActiveSlot.RIGHT, 1);
-        config.slotPriority.putIfAbsent(ActiveSlot.LEFT_SHIFT, 2);
-        config.slotPriority.putIfAbsent(ActiveSlot.RIGHT_SHIFT, 3);
-        config.slotPriority.putIfAbsent(ActiveSlot.SWAP, 4);
-        config.slotPriority.putIfAbsent(ActiveSlot.WILDCARD, 5);
-        config.slotPriority.putIfAbsent(ActiveSlot.BOW, 6);
-        config.slotPriority.putIfAbsent(ActiveSlot.LIFELINE, 7);
-
-        if (config.activeSortOrder.size() != SpecConfig.ActiveSorters.values().length - 1) {
-            config.activeSortOrder.clear();
-            config.activeSortOrder.add(SpecConfig.ActiveSorters.SLOT);
-            config.activeSortOrder.add(SpecConfig.ActiveSorters.SPEC);
-            config.activeSortOrder.add(SpecConfig.ActiveSorters.DISABLED);
-            config.activeSortOrder.add(SpecConfig.ActiveSorters.DISABLED);
-            config.activeSortOrder.add(SpecConfig.ActiveSorters.DISABLED);
-            config.activeSortOrder.add(SpecConfig.ActiveSorters.DISABLED);
-        }
-
-        if (config.passiveSortOrder.size() != SpecConfig.PassiveSorters.values().length - 1) {
-            config.passiveSortOrder.clear();
-            config.passiveSortOrder.add(SpecConfig.PassiveSorters.SPEC);
-            config.passiveSortOrder.add(SpecConfig.PassiveSorters.DISABLED);
-            config.passiveSortOrder.add(SpecConfig.PassiveSorters.DISABLED);
-            config.passiveSortOrder.add(SpecConfig.PassiveSorters.DISABLED);
         }
     }
 

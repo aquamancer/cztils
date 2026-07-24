@@ -117,7 +117,7 @@ public class CustomEntries {
         return builder.startSubCategory(Text.literal(dropdownName), sortOrder).build();
     }
 
-    public static AbstractConfigListEntry enumListEntry(String listName, List<String> configRef, Set<Enum<?>> enumBacked, List<String> defaultValue) {
+    public static <E extends Enum<?>> AbstractConfigListEntry enumListEntry(String listName, List<String> configRef, Set<E> enumBacked, List<String> defaultValue) {
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
 
         return builder.startStrList(Text.literal(listName), configRef).setSaveConsumer(updated -> {
@@ -125,7 +125,7 @@ public class CustomEntries {
             enumBacked.clear();
             updated.forEach(e -> {
                 Optional<Enum<?>> ability = AbilityUtils.fromString(e);
-                if (ability.isPresent()) {
+                if (ability.isPresent() && ability.get() instanceof E) {
                     configRef.add(e);
                     enumBacked.add(ability.get());
                 }
@@ -133,10 +133,16 @@ public class CustomEntries {
         }).setDefaultValue(defaultValue).build();
     }
 
-    public static AbstractConfigListEntry iconListDropdownEntry(String dropdownName, SpecConfig configRef) {
+    public static AbstractConfigListEntry iconListDropdownEntry(String dropdownName, SpecConfig configRef, Spec spec) {
         List<AbstractConfigListEntry> children = new ArrayList<>();
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
 
-        children.add(builder.startEnumSelector(Text.literal("List mode for actives"), SpecConfig.IconListMode.class), )
+        children.add(builder.startEnumSelector(Text.literal("List mode for actives"), SpecConfig.IconListMode.class, configRef.activeListMode)
+                .setDefaultValue(ConfigDefaults.activeListMode.get(spec))
+                .setSaveConsumer(mode -> {
+                    configRef.activeListMode = mode;
+                    configRef.updateEnumSets();
+                }).build());
+        children.add(enumListEntry("Actives", configRef.activeList, configRef.activeSet, ConfigDefaults.activeList.get(spec)))
     }
 }

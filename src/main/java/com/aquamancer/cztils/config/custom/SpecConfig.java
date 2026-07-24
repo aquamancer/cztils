@@ -4,6 +4,7 @@ import com.aquamancer.czlib.api.abils.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class SpecConfig {
     public enum ActiveSorters {
@@ -23,14 +24,14 @@ public class SpecConfig {
     }
 
     public String name;
-    public Map<Spec, Integer> teammatePriority = new EnumMap<>(Spec.class);
-    public Map<AbilitySpec, Integer> specPriority = new EnumMap<>(AbilitySpec.class);
-    public Map<ActiveSlot, Integer> slotPriority = new EnumMap<>(ActiveSlot.class);
-    public List<ActiveSorters> activeSortOrder = new ArrayList<>();
-    public List<PassiveSorters> passiveSortOrder = new ArrayList<>();
+    public Map<Spec, Integer> teammatePriority;
+    public Map<AbilitySpec, Integer> specPriority;
+    public Map<ActiveSlot, Integer> slotPriority;
+    public List<ActiveSorters> activeSortOrder;
+    public List<PassiveSorters> passiveSortOrder;
     // using lists for autoconfig compatibility
-    public List<String> alwaysShow = new ArrayList<>();
-    public List<String> showIfHasSpec = new ArrayList<>();
+    public List<String> alwaysShow;
+    public List<String> showIfHasSpec;
 
     public IconListMode activeListMode;
     public IconListMode passiveListMode;
@@ -41,14 +42,47 @@ public class SpecConfig {
     public List<String> giftList;
     public List<String> curseList;
     // set view of the above, actually used in code
-    public transient Set<Enum<?>> alwaysShowSet = new HashSet<>();
-    public transient Set<Enum<?>> showIfHasSpecSet = new HashSet<>();
+    public transient Set<Enum<?>> alwaysShowSet;
+    public transient Set<Enum<?>> showIfHasSpecSet;
     public transient Set<Actives> activeSet;
     public transient Set<Passives> passiveSet;
     public transient Set<Gifts> giftSet;
     public transient Set<Curse> curseSet;
 
     public SpecConfig() {}
+
+    public void updateEnumSets() {
+        this.alwaysShowSet = fillAbilitySet(this.alwaysShow, e -> (e instanceof Curse || e instanceof Gifts));
+        this.showIfHasSpecSet = fillAbilitySet(this.showIfHasSpec, e -> (e instanceof Curse || e instanceof Gifts));
+        this.activeSet = fillAbilitySet(this.activeList, Actives.class, activeListMode == IconListMode.BLOCKLIST);
+        this.passiveSet = fillAbilitySet(this.passiveList, Passives.class, passiveListMode == IconListMode.BLOCKLIST);
+        this.giftSet = fillAbilitySet(this.giftList, Gifts.class, giftListMode == IconListMode.BLOCKLIST);
+        this.curseSet = fillAbilitySet(this.curseList, Curse.class, curseListMode == IconListMode.BLOCKLIST);
+    }
+
+    private static Set<Enum<?>> fillAbilitySet(List<String> names, Function<Enum<?>, Boolean> excludeIf) {
+        Set<Enum<?>> set = new HashSet<>();
+        for (String name : names) {
+            Optional<Enum<?>> ability = AbilityUtils.fromString(name);
+            if (ability.isEmpty()) continue;
+            if (!excludeIf.apply(ability.get())) {
+                set.add(ability.get());
+            }
+        }
+        return set;
+    }
+
+    private static <E extends Enum<E>> Set<E> fillAbilitySet(List<String> names, Class<E> type, boolean invert) {
+        EnumSet<E> result = EnumSet.noneOf(type);
+        for (String name : names) {
+            Optional<Enum<?>> ability = AbilityUtils.fromString(name);
+            if (ability.isEmpty()) continue;
+            if (type.isInstance(ability.get())) {
+                result.add(type.cast(ability.get()));
+            }
+        }
+        return (invert) ? EnumSet.complementOf(result) : result;
+    }
 
     @Nullable
     public Comparator<Active> getSorter(ActiveSorters type) {

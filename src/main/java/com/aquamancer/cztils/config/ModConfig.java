@@ -17,20 +17,15 @@ import java.util.*;
 
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
-    public ModConfig() {
-        for (Spec spec : Spec.values()) {
-            SpecConfig defaultConfig = new SpecConfig();
-            ConfigDefaults.loadSpecConfig(spec, defaultConfig);
-            specConfigs.put(spec, defaultConfig);
-        }
-    }
+    public ModConfig() {}
+
     @ConfigEntry.Category("icons")
     @ConfigEntry.ColorPicker(allowAlpha = true)
-    public int grayedOut = 0x80000000;
+    public int grayedOut = ConfigDefaults.grayedOutColor;
 
     @ConfigEntry.Category("specs")
     @SpecConfigs
-    public Map<Spec, SpecConfig> specConfigs = new HashMap<>();
+    public Map<Spec, SpecConfig> specConfigs = ConfigDefaults.createDefaultSpecConfigs();
 
     @ConfigEntry.Category("textures")
     @ConfigEntry.Gui.TransitiveObject
@@ -76,19 +71,6 @@ public class ModConfig implements ConfigData {
 
         Set<E> result = new HashSet<>();
         for (Enum<?> e : config.alwaysShowSet) {
-            if (abilityType.isInstance(e)) {
-                result.add(abilityType.cast(e));
-            }
-        }
-        return result;
-    }
-
-    public <E extends Enum<E>> Set<E> getShowIfHas(Class<E> abilityType, Spec spec) {
-        SpecConfig config = this.specConfigs.get(spec);
-        if (config == null) return Set.of();
-
-        Set<E> result = new HashSet<>();
-        for (Enum<?> e : config.iconSet) {
             if (abilityType.isInstance(e)) {
                 result.add(abilityType.cast(e));
             }
