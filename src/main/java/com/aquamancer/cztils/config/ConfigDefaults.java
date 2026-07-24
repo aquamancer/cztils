@@ -8,6 +8,7 @@ import java.util.*;
 
 public final class ConfigDefaults {
     public static final int grayedOutColor = 0x80000000;
+    public static final int borderWidth = 1;
     public static final Map<Spec, String> names = new EnumMap<>(Spec.class);
     public static final Map<Spec, Map<Spec, Integer>> teammatePriority = new EnumMap<>(Spec.class);
     public static final Map<Spec, Map<AbilitySpec, Integer>> specPriority = new EnumMap<>(Spec.class);
@@ -326,16 +327,22 @@ public final class ConfigDefaults {
         return config;
     }
 
-    private static void loadTextures(ModConfig.Textures textures) {
+    public static ModConfig.Textures createDefaultTextures() {
+        ModConfig.Textures textures = new ModConfig.Textures();
+        textures.actives = new EnumMap<>(Actives.class);
+        textures.passives = new EnumMap<>(Passives.class);
+        textures.curses = new EnumMap<>(Curse.class);
+        textures.gifts = new EnumMap<>(Gifts.class);
         loadEnumMap(Actives.values(), textures.actives);
         loadEnumMap(Passives.values(), textures.passives);
         loadEnumMap(Curse.values(), textures.curses);
         loadEnumMap(Gifts.values(), textures.gifts);
+        return textures;
     }
 
     private static <T extends Enum<?>> void loadEnumMap(T[] values, Map<T, AbilityIcon.Type> map) {
         for (T key : values) {
-            map.putIfAbsent(key, AbilityIcon.Type.VANILLA);
+            map.put(key, AbilityIcon.Type.VANILLA);
         }
     }
 

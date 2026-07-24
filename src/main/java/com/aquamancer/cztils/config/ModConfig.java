@@ -23,25 +23,28 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.ColorPicker(allowAlpha = true)
     public int grayedOut = ConfigDefaults.grayedOutColor;
 
+    @ConfigEntry.Category("icons")
+    public int borderWidth = ConfigDefaults.borderWidth;
+
     @ConfigEntry.Category("specs")
     @SpecConfigs
     public Map<Spec, SpecConfig> specConfigs = ConfigDefaults.createDefaultSpecConfigs();
 
     @ConfigEntry.Category("textures")
     @ConfigEntry.Gui.TransitiveObject
-    public Textures textures = new Textures();
+    public Textures textures = ConfigDefaults.createDefaultTextures();
 
     public static class Textures {
         public Textures() {}
 
         @AbilityIconMap
-        public Map<Actives, AbilityIcon.Type> actives = new EnumMap<>(Actives.class);
+        public Map<Actives, AbilityIcon.Type> actives;
         @AbilityIconMap
-        public Map<Passives, AbilityIcon.Type> passives = new EnumMap<>(Passives.class);
+        public Map<Passives, AbilityIcon.Type> passives;
         @AbilityIconMap
-        public Map<Curse, AbilityIcon.Type> curses = new EnumMap<>(Curse.class);
+        public Map<Curse, AbilityIcon.Type> curses;
         @AbilityIconMap
-        public Map<Gifts, AbilityIcon.Type> gifts = new EnumMap<>(Gifts.class);
+        public Map<Gifts, AbilityIcon.Type> gifts;
 
         public AbilityIcon.Type getIconType(Enum<?> ability) {
             if (ability instanceof Actives) {
@@ -55,14 +58,6 @@ public class ModConfig implements ConfigData {
             }
             return AbilityIcon.Type.VANILLA;
         }
-    }
-
-    public int getBackgroundFill() {
-        return 0xFF000000;
-    }
-
-    public int getBorderWidth() {
-        return 1;
     }
 
     public <E extends Enum<E>> Set<E> getAlwaysShow(Class<E> abilityType, Spec spec) {

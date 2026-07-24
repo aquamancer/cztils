@@ -1,9 +1,6 @@
 package com.aquamancer.cztils.config.custom;
 
-import com.aquamancer.czlib.api.abils.AbilitySpec;
-import com.aquamancer.czlib.api.abils.AbilityUtils;
-import com.aquamancer.czlib.api.abils.ActiveSlot;
-import com.aquamancer.czlib.api.abils.Spec;
+import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.cztils.config.ConfigDefaults;
 import com.aquamancer.cztils.hud.AbilityIcon;
 import com.aquamancer.cztils.hud.TextureInfo;
@@ -117,19 +114,18 @@ public class CustomEntries {
         return builder.startSubCategory(Text.literal(dropdownName), sortOrder).build();
     }
 
-    public static <E extends Enum<?>> AbstractConfigListEntry enumListEntry(String listName, List<String> configRef, Set<E> enumBacked, List<String> defaultValue) {
+    public static AbstractConfigListEntry enumListEntry(String listName, List<String> configRef, Runnable setUpdateCallback, List<String> defaultValue) {
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
 
         return builder.startStrList(Text.literal(listName), configRef).setSaveConsumer(updated -> {
             configRef.clear();
-            enumBacked.clear();
             updated.forEach(e -> {
                 Optional<Enum<?>> ability = AbilityUtils.fromString(e);
-                if (ability.isPresent() && ability.get() instanceof E) {
+                if (ability.isPresent()) {
                     configRef.add(e);
-                    enumBacked.add(ability.get());
                 }
             });
+            setUpdateCallback.run();
         }).setDefaultValue(defaultValue).build();
     }
 
@@ -143,6 +139,29 @@ public class CustomEntries {
                     configRef.activeListMode = mode;
                     configRef.updateEnumSets();
                 }).build());
-        children.add(enumListEntry("Actives", configRef.activeList, configRef.activeSet, ConfigDefaults.activeList.get(spec)))
+        children.add(enumListEntry("Actives", configRef.activeList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.activeList.get(spec))));
+        children.add(builder.startEnumSelector(Text.literal("List mode for passives"), SpecConfig.IconListMode.class, configRef.passiveListMode)
+                .setDefaultValue(ConfigDefaults.passiveListMode.get(spec))
+                .setSaveConsumer(mode -> {
+                    configRef.passiveListMode = mode;
+                    configRef.updateEnumSets();
+                }).build());
+        children.add(enumListEntry("Passives", configRef.passiveList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.passiveList.get(spec))));
+        children.add(builder.startEnumSelector(Text.literal("List mode for gifts"), SpecConfig.IconListMode.class, configRef.giftListMode)
+                .setDefaultValue(ConfigDefaults.giftListMode.get(spec))
+                .setSaveConsumer(mode -> {
+                    configRef.giftListMode = mode;
+                    configRef.updateEnumSets();
+                }).build());
+        children.add(enumListEntry("Gifts", configRef.giftList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.giftList.get(spec))));
+        children.add(builder.startEnumSelector(Text.literal("List mode for curses"), SpecConfig.IconListMode.class, configRef.curseListMode)
+                .setDefaultValue(ConfigDefaults.curseListMode.get(spec))
+                .setSaveConsumer(mode -> {
+                    configRef.curseListMode = mode;
+                    configRef.updateEnumSets();
+                }).build());
+        children.add(enumListEntry("Curses", configRef.curseList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.curseList.get(spec))));
+
+        return builder.startSubCategory(Text.literal(dropdownName), children).build();
     }
 }

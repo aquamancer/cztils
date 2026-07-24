@@ -179,7 +179,7 @@ public class Player extends HudElement {
                 AbilityIcon icon = new ItemAbilityIcon(
                         x, y,
                         iconSize, iconSize,
-                        Cztils.config.getBorderWidth(),
+                        Cztils.config.borderWidth,
                         ZenithTextures.getItem(ability).orElse(new ItemStack(Items.AIR))
                 );
                 icon.setBackgroundFill(AbilityIcon.BACKGROUND_FILL);
