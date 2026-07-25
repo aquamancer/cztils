@@ -84,6 +84,60 @@ public class SpecConfig {
         return (invert) ? EnumSet.complementOf(result) : result;
     }
 
+    public <E extends Enum<E>> Set<E> getAlwaysShow(Class<E> abilityType) {
+        Set<E> result = new HashSet<>();
+        for (Enum<?> e : this.alwaysShowSet) {
+            if (abilityType.isInstance(e)) {
+                result.add(abilityType.cast(e));
+            }
+        }
+        return result;
+    }
+
+    public <E extends Enum<E>> Set<E> getShowIfHasSpec(Class<E> abilityType) {
+        Set<E> result = new HashSet<>();
+        for (Enum<?> e : this.showIfHasSpecSet) {
+            if (abilityType.isInstance(e)) {
+                result.add(abilityType.cast(e));
+            }
+        }
+        return result;
+    }
+
+    @Nullable
+    public Comparator<Active> getActiveSorter() {
+        Comparator<Active> sorter = null;
+
+        for (SpecConfig.ActiveSorters activeSorter : this.activeSortOrder) {
+            Comparator<Active> nextSorter = this.getSorter(activeSorter);
+            if (nextSorter == null) continue;
+            if (sorter == null) {
+                sorter = nextSorter;
+            } else {
+                sorter = sorter.thenComparing(nextSorter);
+            }
+        }
+        return sorter;
+    }
+
+    @Nullable
+    public Comparator<Passive> getPassiveSorter() {
+        Comparator<Passive> sorter = null;
+
+        for (SpecConfig.PassiveSorters passiveSorter : this.passiveSortOrder) {
+            Comparator<Passive> nextSorter = this.getSorter(passiveSorter);
+            if (nextSorter == null) continue;
+            if (sorter == null) {
+                sorter = nextSorter;
+            } else {
+                sorter = sorter.thenComparing(nextSorter);
+            }
+        }
+        return sorter;
+    }
+
+
+
     @Nullable
     public Comparator<Active> getSorter(ActiveSorters type) {
         Comparator<? super Active> comparator = switch (type) {

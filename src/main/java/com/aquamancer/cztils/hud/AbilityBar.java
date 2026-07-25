@@ -17,12 +17,17 @@ public class AbilityBar extends HudElement {
         return this.abilities.size();
     }
 
+    List<AbilityIcon> getAbilities() {
+        return this.abilities;
+    }
+
     @Override
     public void render(DrawContext context) {
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(this.x, this.y, 0f);
         for (AbilityIcon icon : abilities) {
+
             icon.render(context);
         }
         matrices.pop();

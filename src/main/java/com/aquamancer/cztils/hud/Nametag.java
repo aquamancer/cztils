@@ -17,7 +17,7 @@ public class Nametag extends HudElement {
         super(x, y);
     }
 
-    private void rebuild() {
+    void rebuild() {
         this.text = Text.literal(name).append(" (").append(spec).append(", ").append(String.valueOf(graveTimer)).append("s): ").append(String.valueOf(hp)).append("/").append(String.valueOf(hpMax));
     }
 

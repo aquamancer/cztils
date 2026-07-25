@@ -17,6 +17,7 @@ public abstract class AbilityIcon extends HudElement {
             Rarity.TWISTED, 0xff703663
     );
     public static final int DEFAULT_BORDER_COLOR = 0xff444444;
+//    public static final int DEFAULT_BORDER_COLOR = 0;
     public static final int CURSE_COLOR = 0xffc41300;
     public static final int PRISMATIC_COLOR = 0xff25f6f5;
     public static final int BACKGROUND_FILL = 0x88000000;
@@ -24,9 +25,9 @@ public abstract class AbilityIcon extends HudElement {
     public enum Type { VANILLA, UMM }
     protected Rectangle border;
     protected Rectangle texture;
-    protected int borderColor = 0xFF000000;
-    protected int backgroundFill = 0x0;
-    protected int grayedOut = 0x0;
+    protected int borderColor;
+    protected int backgroundFill;
+    protected int grayedOut;
     protected @Nullable String subscript;
 
     public AbilityIcon(int x, int y, int w, int h, int borderWidth) {

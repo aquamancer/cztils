@@ -34,7 +34,6 @@ public class CustomAnnots {
                             String dropdownName = "null";
                             if (keyType != null) {
                                 dropdownName = keyType.getSimpleName();
-                                fillDefaults(values, keyType);
                             }
 
                             List<AbstractConfigListEntry> result = values.entrySet().stream().map(entry -> CustomEntries.textureEntry(entry.getKey(), values)).toList();
@@ -59,6 +58,7 @@ public class CustomAnnots {
                             List<AbstractConfigListEntry> specs = new ArrayList<>();
                             for (Map.Entry<Spec, SpecConfig> pair : values.entrySet()) {
                                 Spec spec = pair.getKey();
+                                if (spec == null) continue;
                                 SpecConfig specConfig = pair.getValue();
 
                                 List<AbstractConfigListEntry> children = new ArrayList<>();
@@ -69,8 +69,8 @@ public class CustomAnnots {
                                 children.add(CustomEntries.activeSlotPriorityEntry("Active slot order", specConfig));
                                 children.add(CustomEntries.activeSortEntry("Active sort order", specConfig));
                                 children.add(CustomEntries.passiveSortEntry("Passive sort order", specConfig));
-                                children.add(CustomEntries.enumListEntry("Always show icons", specConfig.alwaysShow, specConfig::updateEnumSets, new ArrayList<>(ConfigDefaults.alwaysShow.get(spec))));
-                                children.add(CustomEntries.enumListEntry("Always show icons if has spec", specConfig.showIfHasSpec, specConfig::updateEnumSets, new ArrayList<>(ConfigDefaults.showIfHasSpec.get(spec))));
+                                children.add(CustomEntries.enumListEntry("Always shown icons", specConfig.alwaysShow, specConfig::updateEnumSets, new ArrayList<>(ConfigDefaults.alwaysShow.get(spec))));
+                                children.add(CustomEntries.enumListEntry("Always shown icons if has spec", specConfig.showIfHasSpec, specConfig::updateEnumSets, new ArrayList<>(ConfigDefaults.showIfHasSpec.get(spec))));
                                 children.add(CustomEntries.iconListDropdownEntry("Icons to show", specConfig, spec));
 
                                 specs.add(builder.startSubCategory(Text.literal(spec.name()), children).build());
@@ -93,11 +93,5 @@ public class CustomAnnots {
         }
 
         return null;
-    }
-
-    private static void fillDefaults(Map<Enum<?>, AbilityIcon.Type> map, Class<? extends Enum<?>> enumClass) {
-        for (Enum<?> key : enumClass.getEnumConstants()) {
-            map.putIfAbsent(key, AbilityIcon.Type.VANILLA);
-        }
     }
 }

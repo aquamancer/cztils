@@ -5,30 +5,32 @@ import com.aquamancer.cztils.config.custom.SpecConfig;
 import com.aquamancer.cztils.hud.AbilityIcon;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class ConfigDefaults {
-    public static final int grayedOutColor = 0x80000000;
+    public static final int iconSize = 16;
+    public static final int grayedOutColor = 0x80888888;
     public static final int borderWidth = 1;
-    public static final Map<Spec, String> names = new EnumMap<>(Spec.class);
-    public static final Map<Spec, Map<Spec, Integer>> teammatePriority = new EnumMap<>(Spec.class);
-    public static final Map<Spec, Map<AbilitySpec, Integer>> specPriority = new EnumMap<>(Spec.class);
-    public static final Map<Spec, Map<ActiveSlot, Integer>> slotPriority = new EnumMap<>(Spec.class);
-    public static final Map<Spec, List<SpecConfig.ActiveSorters>> activeSortOrder = new EnumMap<>(Spec.class);
-    public static final Map<Spec, List<SpecConfig.PassiveSorters>> passiveSortOrder = new EnumMap<>(Spec.class);
+    public static final Map<Spec, String> names = new HashMap<>();
+    public static final Map<Spec, Map<Spec, Integer>> teammatePriority = new HashMap<>();
+    public static final Map<Spec, Map<AbilitySpec, Integer>> specPriority = new HashMap<>();
+    public static final Map<Spec, Map<ActiveSlot, Integer>> slotPriority = new HashMap<>();
+    public static final Map<Spec, List<SpecConfig.ActiveSorters>> activeSortOrder = new HashMap<>();
+    public static final Map<Spec, List<SpecConfig.PassiveSorters>> passiveSortOrder = new HashMap<>();
 
-    public static final Map<Spec, List<String>> alwaysShow = new EnumMap<>(Spec.class);
-    public static final Map<Spec, List<String>> showIfHasSpec = new EnumMap<>(Spec.class);
-    public static final Map<Spec, SpecConfig.IconListMode> activeListMode = new EnumMap<>(Spec.class);
-    public static final Map<Spec, SpecConfig.IconListMode> passiveListMode = new EnumMap<>(Spec.class);
-    public static final Map<Spec, SpecConfig.IconListMode> giftListMode = new EnumMap<>(Spec.class);
-    public static final Map<Spec, SpecConfig.IconListMode> curseListMode = new EnumMap<>(Spec.class);
-    public static final Map<Spec, List<String>> activeList = new EnumMap<>(Spec.class);
-    public static final Map<Spec, List<String>> passiveList = new EnumMap<>(Spec.class);
-    public static final Map<Spec, List<String>> giftList = new EnumMap<>(Spec.class);
-    public static final Map<Spec, List<String>> curseList = new EnumMap<>(Spec.class);
+    public static final Map<Spec, List<String>> alwaysShow = new HashMap<>();
+    public static final Map<Spec, List<String>> showIfHasSpec = new HashMap<>();
+    public static final Map<Spec, SpecConfig.IconListMode> activeListMode = new HashMap<>();
+    public static final Map<Spec, SpecConfig.IconListMode> passiveListMode = new HashMap<>();
+    public static final Map<Spec, SpecConfig.IconListMode> giftListMode = new HashMap<>();
+    public static final Map<Spec, SpecConfig.IconListMode> curseListMode = new HashMap<>();
+    public static final Map<Spec, List<String>> activeList = new HashMap<>();
+    public static final Map<Spec, List<String>> passiveList = new HashMap<>();
+    public static final Map<Spec, List<String>> giftList = new HashMap<>();
+    public static final Map<Spec, List<String>> curseList = new HashMap<>();
 
     static {
-        // names
         names.put(Spec.STEEL, "Steel");
         names.put(Spec.SHADOW, "Shadow");
         names.put(Spec.FLAME, "Flame");
@@ -296,12 +298,36 @@ public final class ConfigDefaults {
             curseList.put(spec, curses);
         }
     }
+    // config for null spec
+    static {
+        names.put(null, "Charmless");
+        teammatePriority.put(null, Arrays.stream(Spec.values()).collect(Collectors.toMap(Function.identity(), spec -> 0)));
+        specPriority.put(null, Arrays.stream(AbilitySpec.values()).collect(Collectors.toMap(Function.identity(), spec -> 0)));
+        slotPriority.put(null, Arrays.stream(ActiveSlot.values()).collect(
+                () -> new EnumMap<>(ActiveSlot.class),
+                (map, slot) -> map.put(slot, slot.ordinal()),
+                EnumMap::putAll
+        ));
+        activeSortOrder.put(null, activeSortOrder.get(Spec.SHADOW));
+        passiveSortOrder.put(null, passiveSortOrder.get(Spec.SHADOW));
+        alwaysShow.put(null, new ArrayList<>());
+        showIfHasSpec.put(null, new ArrayList<>());
+        activeListMode.put(null, SpecConfig.IconListMode.BLOCKLIST);
+        passiveListMode.put(null, SpecConfig.IconListMode.BLOCKLIST);
+        giftListMode.put(null, SpecConfig.IconListMode.BLOCKLIST);
+        curseListMode.put(null, SpecConfig.IconListMode.BLOCKLIST);
+        activeList.put(null, new ArrayList<>());
+        passiveList.put(null, new ArrayList<>());
+        giftList.put(null, new ArrayList<>());
+        curseList.put(null, new ArrayList<>());
+    }
 
     public static Map<Spec, SpecConfig> createDefaultSpecConfigs() {
-        Map<Spec, SpecConfig> result = new EnumMap<>(Spec.class);
+        Map<Spec, SpecConfig> result = new HashMap<>();
         for (Spec spec : Spec.values()) {
             result.put(spec, createDefaultSpecConfig(spec));
         }
+        result.put(null, createDefaultSpecConfig(null));
         return result;
     }
 
@@ -323,7 +349,6 @@ public final class ConfigDefaults {
         config.passiveList = new ArrayList<>(passiveList.get(spec));
         config.giftList = new ArrayList<>(giftList.get(spec));
         config.curseList = new ArrayList<>(curseList.get(spec));
-        config.updateEnumSets();
         return config;
     }
 

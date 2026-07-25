@@ -4,6 +4,7 @@ import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.cztils.config.ConfigDefaults;
 import com.aquamancer.cztils.config.ModConfig;
 import com.aquamancer.cztils.config.custom.CustomAnnots;
+import com.aquamancer.cztils.config.custom.SpecConfig;
 import com.aquamancer.cztils.hud.*;
 import com.aquamancer.czlib.api.textures.ZenithTextures;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -37,13 +38,22 @@ public class Cztils implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	private static final Hud hud = new Hud(100, 100);
+
 	@Override
 	public void onInitialize() {
 		ConfigHolder<ModConfig> configHolder = AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
 		config = configHolder.getConfig();
 		CustomAnnots.init();
+		config.specConfigs.values().forEach(SpecConfig::updateEnumSets);
+		configHolder.registerSaveListener((a, b) -> {
+			hud.rebuild();
+			return ActionResult.PASS;
+		});
 
-		Player player = new Player(100, 100, new Vector2i(0, 10), new Vector2i(0, 28));
+		hud.party.put("riot games", new Player(0, 0, new Vector2i(0, 10), new Vector2i(0, 10+2+ Cztils.config.iconSize), Cztils.config.iconSize));
+		Player player = new Player(100, 100, new Vector2i(0, 10), new Vector2i(0, 28), 16);
+		Set<Spec> playerSpecs = Set.of(Spec.FLAME, Spec.WIND, Spec.EARTH, Spec.SHADOW);
 		player.setName("riot games");
 		player.setSpec(Spec.FLAME);
 		player.setHp(15);
@@ -56,13 +66,13 @@ public class Cztils implements ModInitializer {
 						new Active(Actives.IGNEOUS_RUNE, AbilitySpec.FLAME, Rarity.LEGENDARY),
 						new Active(Actives.RAPID_FIRE, AbilitySpec.STEEL, Rarity.COMMON),
 						new Active(Actives.EARTHQUAKE, AbilitySpec.EARTH, Rarity.UNCOMMON),
-						new Active(Actives.STEEL_STALLION, AbilitySpec.STEEL, Rarity.COMMON)
+						new Active(Actives.STEEL_STALLION, AbilitySpec.STEEL, Rarity.COMMON),
+						new Active(Actives.BLADE_FLURRY, AbilitySpec.SHADOW, Rarity.COMMON)
 				),
-				16
+				playerSpecs
 		);
 		player.setCurses(
-				Set.of(Curse.DEATH, Curse.ARACHNOPHOBIA),
-				16
+				Set.of(Curse.DEATH, Curse.ARACHNOPHOBIA)
 		);
 		player.setPassives(
 				List.of(
@@ -73,14 +83,13 @@ public class Cztils implements ModInitializer {
 						new Passive(Passives.PYROMANIA, AbilitySpec.FLAME, Rarity.RARE),
 						new Passive(Passives.REBIRTH, AbilitySpec.PRISMATIC, Rarity.COMMON)
 				),
-				16
+				playerSpecs
 		);
 		player.setGifts(
 				Set.of(
 						new Gift(Spec.STEEL),
 						new Gift(Gifts.CRACKED_IDOL)
-				),
-				16
+				)
 		);
 //		AbilityIcon icon = new ItemAbilityIcon(
 //				Identifier.of("minecraft", "textures/item/bell.png"),

@@ -20,6 +20,9 @@ public class ModConfig implements ConfigData {
     public ModConfig() {}
 
     @ConfigEntry.Category("icons")
+    public int iconSize = ConfigDefaults.grayedOutColor;
+
+    @ConfigEntry.Category("icons")
     @ConfigEntry.ColorPicker(allowAlpha = true)
     public int grayedOut = ConfigDefaults.grayedOutColor;
 
@@ -58,53 +61,6 @@ public class ModConfig implements ConfigData {
             }
             return AbilityIcon.Type.VANILLA;
         }
-    }
-
-    public <E extends Enum<E>> Set<E> getAlwaysShow(Class<E> abilityType, Spec spec) {
-        SpecConfig config = this.specConfigs.get(spec);
-        if (config == null) return Set.of();
-
-        Set<E> result = new HashSet<>();
-        for (Enum<?> e : config.alwaysShowSet) {
-            if (abilityType.isInstance(e)) {
-                result.add(abilityType.cast(e));
-            }
-        }
-        return result;
-    }
-
-    @Nullable
-    public Comparator<Active> getActiveSorter(Spec spec) {
-        SpecConfig config = this.specConfigs.get(spec);
-        Comparator<Active> sorter = null;
-
-        for (SpecConfig.ActiveSorters activeSorter : config.activeSortOrder) {
-            Comparator<Active> nextSorter = config.getSorter(activeSorter);
-            if (nextSorter == null) continue;
-            if (sorter == null) {
-                sorter = nextSorter;
-            } else {
-                sorter = sorter.thenComparing(nextSorter);
-            }
-        }
-        return sorter;
-    }
-
-    @Nullable
-    public Comparator<Passive> getPassiveSorter(Spec spec) {
-        SpecConfig config = this.specConfigs.get(spec);
-        Comparator<Passive> sorter = null;
-
-        for (SpecConfig.PassiveSorters passiveSorter : config.passiveSortOrder) {
-            Comparator<Passive> nextSorter = config.getSorter(passiveSorter);
-            if (nextSorter == null) continue;
-            if (sorter == null) {
-                sorter = nextSorter;
-            } else {
-                sorter = sorter.thenComparing(nextSorter);
-            }
-        }
-        return sorter;
     }
 
     @Retention(RetentionPolicy.RUNTIME)
