@@ -91,6 +91,7 @@ public class Cztils implements ModInitializer {
 						new Gift(Gifts.CRACKED_IDOL)
 				)
 		);
+		hud.party.put("copy of riot games", player);
 		hud.sort();
 //		AbilityIcon icon = new ItemAbilityIcon(
 //				Identifier.of("minecraft", "textures/item/bell.png"),

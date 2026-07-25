@@ -23,6 +23,7 @@ public class Hud extends HudElement {
             names.forEach(name -> party.putIfAbsent(
                     name, new Player(0, 0, new Vector2i(0, 10), new Vector2i(0, 10+2+Cztils.config.iconSize), Cztils.config.iconSize)
             ));
+            sort();
         });
     }
 
@@ -50,13 +51,17 @@ public class Hud extends HudElement {
         party.values().forEach(Player::rebuild);
     }
 
+//    private static Player createPlayer() {
+//        return new Player()
+//    }
+
     @Override
     public void render(DrawContext context) {
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(this.x, this.y, 0f);
         for (int i = 0; i < sorted.size(); i++) {
-            int y = i*(10+2+Cztils.config.iconSize*2+10);
+            int y = 10+32+12;
             if (y != 0) {
                 matrices.translate(0f, y, 0f);
             }

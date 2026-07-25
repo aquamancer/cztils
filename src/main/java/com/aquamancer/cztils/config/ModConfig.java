@@ -19,10 +19,11 @@ import java.util.*;
 public class ModConfig implements ConfigData {
     public ModConfig() {}
 
-    @ConfigEntry.Category("icons")
-    public int iconSize = ConfigDefaults.grayedOutColor;
 
-    @ConfigEntry.Category("icons")
+    @ConfigEntry.Category("hud")
+    public int iconSize = ConfigDefaults.iconSize;
+
+    @ConfigEntry.Category("hud")
     @ConfigEntry.ColorPicker(allowAlpha = true)
     public int grayedOut = ConfigDefaults.grayedOutColor;
 
