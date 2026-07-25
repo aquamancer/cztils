@@ -29,6 +29,8 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Category("icons")
     public int borderWidth = ConfigDefaults.borderWidth;
 
+    public boolean showSelf = ConfigDefaults.showSelf;
+
     @ConfigEntry.Category("specs")
     @SpecConfigs
     public Map<Spec, SpecConfig> specConfigs = ConfigDefaults.createDefaultSpecConfigs();

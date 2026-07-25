@@ -12,6 +12,7 @@ public final class ConfigDefaults {
     public static final int iconSize = 16;
     public static final int grayedOutColor = 0x80888888;
     public static final int borderWidth = 1;
+    public static final boolean showSelf = true;
     public static final Map<Spec, String> names = new HashMap<>();
     public static final Map<Spec, Map<Spec, Integer>> teammatePriority = new HashMap<>();
     public static final Map<Spec, Map<AbilitySpec, Integer>> specPriority = new HashMap<>();

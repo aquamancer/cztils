@@ -51,8 +51,8 @@ public class Cztils implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		hud.party.put("riot games", new Player(0, 0, new Vector2i(0, 10), new Vector2i(0, 10+2+ Cztils.config.iconSize), Cztils.config.iconSize));
 		Player player = new Player(100, 100, new Vector2i(0, 10), new Vector2i(0, 28), 16);
+		hud.party.put("riot games", player);
 		Set<Spec> playerSpecs = Set.of(Spec.FLAME, Spec.WIND, Spec.EARTH, Spec.SHADOW);
 		player.setName("riot games");
 		player.setSpec(Spec.FLAME);
@@ -91,6 +91,7 @@ public class Cztils implements ModInitializer {
 						new Gift(Gifts.CRACKED_IDOL)
 				)
 		);
+		hud.sort();
 //		AbilityIcon icon = new ItemAbilityIcon(
 //				Identifier.of("minecraft", "textures/item/bell.png"),
 //				Identifier.of("unofficial-monumenta-mod", "textures/abilities/dawnbringer/radiant_blessing.png"),
@@ -106,7 +107,7 @@ public class Cztils implements ModInitializer {
 //		).setBorderColor(0xffb3b4bc).setGrayedOut(0x80000000).setBackgroundFill(0xFF000000);
 
 		HudRenderCallback.EVENT.register(((context, tickDelta) -> {
-			player.render(context);
+			hud.render(context);
 		}));
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.

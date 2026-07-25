@@ -6,13 +6,14 @@ import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.cztils.Cztils;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector2i;
 
 import java.util.*;
 
 public class Hud extends HudElement {
     public final Map<String, Player> party = new HashMap<>();
-    private List<Player> sorted;
+    private List<Player> sorted = List.of();
 
     public Hud(int x, int y) {
         super(x, y);
@@ -25,27 +26,42 @@ public class Hud extends HudElement {
         });
     }
 
-    private void sort() {
+    public void sort() {
         Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
         if (self.isEmpty() || self.get().getCharmedSpec().isEmpty()) {
             this.sorted = new ArrayList<>(this.party.values());
             return;
         }
         Spec selfSpec = self.get().getCharmedSpec().get();
-        this.sorted = this.party.values().stream().sorted(
-                Comparator.nullsLast(Comparator.comparing(
-                        Player::getSpec,
-                        new Spec.SpecComparator(Cztils.config.specConfigs.get(selfSpec).teammatePriority)
-                ))
+        String selfName = ZenithApi.getInstance().getSelfName();
+        this.sorted = this.party.entrySet().stream()
+                .filter(p -> Cztils.config.showSelf || !p.getKey().equals(selfName))
+                .map(Map.Entry::getValue).sorted(
+                        Comparator.nullsLast(Comparator.comparing(
+                                Player::getSpec,
+                                new Spec.SpecComparator(Cztils.config.specConfigs.get(selfSpec).teammatePriority
+                        ))
+                )
         ).toList();
     }
 
     public void rebuild() {
+        this.sort();
         party.values().forEach(Player::rebuild);
     }
 
     @Override
     public void render(DrawContext context) {
-        party.values().forEach(player -> player.render(context));
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(this.x, this.y, 0f);
+        for (int i = 0; i < sorted.size(); i++) {
+            int y = i*(10+2+Cztils.config.iconSize*2+10);
+            if (y != 0) {
+                matrices.translate(0f, y, 0f);
+            }
+            sorted.get(i).render(context);
+        }
+        matrices.pop();
     }
 }
