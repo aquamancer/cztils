@@ -3,28 +3,55 @@ package com.aquamancer.cztils.hud;
 import com.aquamancer.czlib.api.PartyMember;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.cztils.Cztils;
+import net.fabricmc.fabric.api.event.Event;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector2i;
 
 import java.util.*;
+import java.util.function.Consumer;
 
-public class Hud extends HudElement {
+public class Hud {
     public final Map<String, Player> party = new HashMap<>();
     private List<Player> sorted = List.of();
 
-    public Hud(int x, int y) {
-        super(x, y);
+    public Hud() {
+        ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> {
+            party.clear();
+            sorted = List.of();
+        });
 
         ZenithApiUpdateEvents.PARTY_MEMBER.register(names -> {
             party.keySet().retainAll(names);
             names.forEach(name -> party.putIfAbsent(
-                    name, new Player(0, 0, new Vector2i(0, 10), new Vector2i(0, 10+2+Cztils.config.iconSize), Cztils.config.iconSize)
+                    name, new Player().setName(name)
             ));
             sort();
         });
+
+        Map<Event<ZenithApiUpdateEvents.PartyMemberUpdate>, Consumer<PartyMember>> listeners = Map.of(
+                ZenithApiUpdateEvents.ACTIVE, p -> party.get(p.getName()).setActives(p.getActives().values(), p.getSpecs()),
+                ZenithApiUpdateEvents.PASSIVE, player -> party.get(player.getName()).setPassives(player.getPassives().values(), player.getSpecs()),
+                ZenithApiUpdateEvents.CURSE, player -> party.get(player.getName()).setCurses(player.getCurses()),
+                ZenithApiUpdateEvents.GIFT, player -> party.get(player.getName()).setGifts(player.getGifts().values()),
+                ZenithApiUpdateEvents.GRAVE_TIMER, player -> party.get(player.getName()).setGraveTimer(player.getGraveTimer()),
+                ZenithApiUpdateEvents.VZC, player -> {
+                    party.get(player.getName()).setSpec(player.getCharmedSpec().orElse(null));
+                    rebuild();
+                }
+        );
+        for (Map.Entry<Event<ZenithApiUpdateEvents.PartyMemberUpdate>, Consumer<PartyMember>> entry : listeners.entrySet()) {
+            entry.getKey().register(player -> {
+                if (this.party.putIfAbsent(player.getName(), new Player()) == null) {
+                    sort();
+                }
+                entry.getValue().accept(player);
+            });
+        }
     }
 
     public void sort() {
@@ -51,20 +78,13 @@ public class Hud extends HudElement {
         party.values().forEach(Player::rebuild);
     }
 
-//    private static Player createPlayer() {
-//        return new Player()
-//    }
-
-    @Override
     public void render(DrawContext context) {
         MatrixStack matrices = context.getMatrices();
         matrices.push();
-        matrices.translate(this.x, this.y, 0f);
+        matrices.translate(context.getScaledWindowWidth() * Cztils.config.horizontalPos, context.getScaledWindowHeight() * Cztils.config.verticalPos, 0f);
         for (int i = 0; i < sorted.size(); i++) {
-            int y = 10+32+12;
-            if (y != 0) {
-                matrices.translate(0f, y, 0f);
-            }
+            double y = 10*Cztils.config.textScale + 2*Cztils.config.iconSize + Cztils.config.playerSpacing;
+            matrices.translate(0f, y, 0f);
             sorted.get(i).render(context);
         }
         matrices.pop();

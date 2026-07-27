@@ -19,18 +19,42 @@ import java.util.*;
 public class ModConfig implements ConfigData {
     public ModConfig() {}
 
+    @ConfigEntry.Category("hud")
+    public float verticalPos = 0.35f;
 
     @ConfigEntry.Category("hud")
-    public int iconSize = ConfigDefaults.iconSize;
+    public float horizontalPos = 0.01f;
+
+    @ConfigEntry.Category("hud")
+    public float textScale = 1.0f;
+
+    @ConfigEntry.Category("hud")
+    public int iconSize = 16;
+
+    @ConfigEntry.Category("hud")
+    public float activesOffsetX = 0;
+
+    @ConfigEntry.Category("hud")
+    public float activesOffsetY = 0;
+
+    @ConfigEntry.Category("hud")
+    public float passivesOffsetX = 0;
+
+    @ConfigEntry.Category("hud")
+    public float passivesOffsetY = 0;
+
+    @ConfigEntry.Category("hud")
+    public int playerSpacing = 8;
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.ColorPicker(allowAlpha = true)
-    public int grayedOut = ConfigDefaults.grayedOutColor;
+    public int grayedOut = 0x80888888;
 
-    @ConfigEntry.Category("icons")
-    public int borderWidth = ConfigDefaults.borderWidth;
+    @ConfigEntry.Category("hud")
+    public int borderWidth = 1;
 
-    public boolean showSelf = ConfigDefaults.showSelf;
+    @ConfigEntry.Category("hud")
+    public boolean showSelf = true;
 
     @ConfigEntry.Category("specs")
     @SpecConfigs

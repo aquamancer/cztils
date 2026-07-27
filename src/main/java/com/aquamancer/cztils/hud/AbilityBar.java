@@ -8,6 +8,11 @@ import java.util.List;
 public class AbilityBar extends HudElement {
     private final List<AbilityIcon> abilities;
 
+    public AbilityBar(List<AbilityIcon> abilities) {
+        super(0, 0);
+        this.abilities = abilities;
+    }
+
     public AbilityBar(int x, int y, List<AbilityIcon> abilities) {
         super(x, y);
         this.abilities = abilities;
@@ -27,7 +32,6 @@ public class AbilityBar extends HudElement {
         matrices.push();
         matrices.translate(this.x, this.y, 0f);
         for (AbilityIcon icon : abilities) {
-
             icon.render(context);
         }
         matrices.pop();

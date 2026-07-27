@@ -38,7 +38,7 @@ public class Cztils implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	private static final Hud hud = new Hud(100, 100);
+	private static final Hud hud = new Hud();
 
 	@Override
 	public void onInitialize() {
@@ -51,61 +51,61 @@ public class Cztils implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		Player player = new Player(100, 100, new Vector2i(0, 10), new Vector2i(0, 28), 16);
-		hud.party.put("riot games", player);
-		Set<Spec> playerSpecs = Set.of(Spec.FLAME, Spec.WIND, Spec.EARTH, Spec.SHADOW);
-		player.setName("riot games");
-		player.setSpec(Spec.FLAME);
-		player.setHp(15);
-		player.setHpMax(20).setGraveTimer(3.05);
-		player.setActives(
-				List.of(
-						new Active(Actives.WINDSWEPT, AbilitySpec.WIND, Rarity.TWISTED),
-						new Active(Actives.SOLAR_RAY, AbilitySpec.PRISMATIC, Rarity.COMMON),
-						new Active(Actives.FLAMESTRIKE, AbilitySpec.FLAME, Rarity.RARE),
-						new Active(Actives.IGNEOUS_RUNE, AbilitySpec.FLAME, Rarity.LEGENDARY),
-						new Active(Actives.RAPID_FIRE, AbilitySpec.STEEL, Rarity.COMMON),
-						new Active(Actives.EARTHQUAKE, AbilitySpec.EARTH, Rarity.UNCOMMON),
-						new Active(Actives.STEEL_STALLION, AbilitySpec.STEEL, Rarity.COMMON),
-						new Active(Actives.BLADE_FLURRY, AbilitySpec.SHADOW, Rarity.COMMON)
-				),
-				playerSpecs
-		);
-		player.setCurses(
-				Set.of(Curse.DEATH, Curse.ARACHNOPHOBIA)
-		);
-		player.setPassives(
-				List.of(
-						new Passive(Passives.BULWARK, AbilitySpec.EARTH, Rarity.COMMON),
-						new Passive(Passives.SHARPSHOOTER, AbilitySpec.STEEL, Rarity.LEGENDARY),
-						new Passive(Passives.FROZEN_DOMAIN, AbilitySpec.FROST, Rarity.RARE),
-						new Passive(Passives.AEROMANCY, AbilitySpec.WIND, Rarity.RARE),
-						new Passive(Passives.PYROMANIA, AbilitySpec.FLAME, Rarity.RARE),
-						new Passive(Passives.REBIRTH, AbilitySpec.PRISMATIC, Rarity.COMMON)
-				),
-				playerSpecs
-		);
-		player.setGifts(
-				Set.of(
-						new Gift(Spec.STEEL),
-						new Gift(Gifts.CRACKED_IDOL)
-				)
-		);
-		hud.party.put("copy of riot games", player);
-		hud.sort();
-//		AbilityIcon icon = new ItemAbilityIcon(
-//				Identifier.of("minecraft", "textures/item/bell.png"),
-//				Identifier.of("unofficial-monumenta-mod", "textures/abilities/dawnbringer/radiant_blessing.png"),
-//				10, 10,
-//				16, 16,
-//				1,
-//				ZenithTextures.getItem(Actives.Combo.SOOTHING).get()
-//				new TextureInfo(
-////						"unofficial-monumenta-mod:textures/abilities/dawnbringer/radiant_blessing.png",
-//						"minecraft:optifine/cit/monumenta/gui/depths/celestial_gifts/callicarpas_pointed_hat/callicarpas_pointed_hat.png",
-//						0, 0, 16, 16, 16, 16
+//		Player player = new Player(0, 0);
+//		hud.party.put("riot games", player);
+//		Set<Spec> playerSpecs = Set.of(Spec.FLAME, Spec.WIND, Spec.EARTH, Spec.SHADOW);
+//		player.setName("riot games");
+//		player.setSpec(Spec.FLAME);
+//		player.setHp(15);
+//		player.setHpMax(20).setGraveTimer(3.05);
+//		player.setActives(
+//				List.of(
+//						new Active(Actives.WINDSWEPT, AbilitySpec.WIND, Rarity.TWISTED),
+//						new Active(Actives.SOLAR_RAY, AbilitySpec.PRISMATIC, Rarity.COMMON),
+//						new Active(Actives.FLAMESTRIKE, AbilitySpec.FLAME, Rarity.RARE),
+//						new Active(Actives.IGNEOUS_RUNE, AbilitySpec.FLAME, Rarity.LEGENDARY),
+//						new Active(Actives.RAPID_FIRE, AbilitySpec.STEEL, Rarity.COMMON),
+//						new Active(Actives.EARTHQUAKE, AbilitySpec.EARTH, Rarity.UNCOMMON),
+//						new Active(Actives.STEEL_STALLION, AbilitySpec.STEEL, Rarity.COMMON),
+//						new Active(Actives.BLADE_FLURRY, AbilitySpec.SHADOW, Rarity.COMMON)
+//				),
+//				playerSpecs
+//		);
+//		player.setCurses(
+//				Set.of(Curse.DEATH, Curse.ARACHNOPHOBIA)
+//		);
+//		player.setPassives(
+//				List.of(
+//						new Passive(Passives.BULWARK, AbilitySpec.EARTH, Rarity.COMMON),
+//						new Passive(Passives.SHARPSHOOTER, AbilitySpec.STEEL, Rarity.LEGENDARY),
+//						new Passive(Passives.FROZEN_DOMAIN, AbilitySpec.FROST, Rarity.RARE),
+//						new Passive(Passives.AEROMANCY, AbilitySpec.WIND, Rarity.RARE),
+//						new Passive(Passives.PYROMANIA, AbilitySpec.FLAME, Rarity.RARE),
+//						new Passive(Passives.REBIRTH, AbilitySpec.PRISMATIC, Rarity.COMMON)
+//				),
+//				playerSpecs
+//		);
+//		player.setGifts(
+//				Set.of(
+//						new Gift(Spec.STEEL),
+//						new Gift(Gifts.CRACKED_IDOL)
 //				)
-//		).setBorderColor(0xffb3b4bc).setGrayedOut(0x80000000).setBackgroundFill(0xFF000000);
+//		);
+//		hud.party.put("copy of riot games", player);
+//		hud.sort();
+////		AbilityIcon icon = new ItemAbilityIcon(
+////				Identifier.of("minecraft", "textures/item/bell.png"),
+////				Identifier.of("unofficial-monumenta-mod", "textures/abilities/dawnbringer/radiant_blessing.png"),
+////				10, 10,
+////				16, 16,
+////				1,
+////				ZenithTextures.getItem(Actives.Combo.SOOTHING).get()
+////				new TextureInfo(
+//////						"unofficial-monumenta-mod:textures/abilities/dawnbringer/radiant_blessing.png",
+////						"minecraft:optifine/cit/monumenta/gui/depths/celestial_gifts/callicarpas_pointed_hat/callicarpas_pointed_hat.png",
+////						0, 0, 16, 16, 16, 16
+////				)
+////		).setBorderColor(0xffb3b4bc).setGrayedOut(0x80000000).setBackgroundFill(0xFF000000);
 
 		HudRenderCallback.EVENT.register(((context, tickDelta) -> {
 			hud.render(context);

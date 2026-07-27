@@ -25,11 +25,10 @@ public class Player extends HudElement {
     private SpecConfig config = Cztils.config.specConfigs.get(null);
 
     private final Nametag nametag = new Nametag(0, 0);
-    private AbilityBar actives = new AbilityBar(0, 0, List.of());
-    private AbilityBar curses = new AbilityBar(0, 0, List.of());
-    private AbilityBar passives = new AbilityBar(0, 0, List.of());
-    private AbilityBar gifts = new AbilityBar(0, 0, List.of());
-    private Vector2i activesOffset, passivesOffset;
+    private AbilityBar actives = new AbilityBar(List.of());
+    private AbilityBar curses = new AbilityBar(List.of());
+    private AbilityBar passives = new AbilityBar(List.of());
+    private AbilityBar gifts = new AbilityBar(List.of());
 
     private int iconSize;
 
@@ -40,11 +39,13 @@ public class Player extends HudElement {
     private Collection<Curse> lastCurses = List.of();
     private Set<Spec> lastSpecs = Set.of();
 
-    public Player(int x, int y, Vector2i activesOffset, Vector2i passivesOffset, int iconSize) {
+    public Player() {
+        super(0, 0);
+        this.iconSize = Cztils.config.iconSize;
+    }
+    public Player(int x, int y) {
         super(x, y);
-        this.activesOffset = activesOffset;
-        this.passivesOffset = passivesOffset;
-        this.iconSize = iconSize;
+        this.iconSize = Cztils.config.iconSize;
     }
 
     public Player setName(String name) {
@@ -52,7 +53,7 @@ public class Player extends HudElement {
         return this;
     }
 
-    public Player setSpec(Spec spec) {
+    public Player setSpec(@Nullable Spec spec) {
         this.spec = spec;
         this.config = Cztils.config.specConfigs.get(spec);
         this.nametag.setSpec(config.name);
@@ -113,7 +114,7 @@ public class Player extends HudElement {
             icons.add(createIcon(iconX, iconY, this.iconSize, active, borderColor, grayed));
         }
 
-        this.actives = new AbilityBar(activesOffset.x, activesOffset.y, icons);
+        this.actives = new AbilityBar(icons);
         return this;
     }
 
@@ -156,7 +157,7 @@ public class Player extends HudElement {
             icons.add(createIcon(iconX, iconY, this.iconSize, passive, borderColor, grayed));
         }
 
-        this.passives = new AbilityBar(passivesOffset.x, passivesOffset.y, icons);
+        this.passives = new AbilityBar(icons);
         return this;
     }
 
@@ -171,7 +172,7 @@ public class Player extends HudElement {
             icons.add(createIcon(i*this.iconSize, 0, this.iconSize, curse, AbilityIcon.CURSE_COLOR, false));
             i++;
         }
-        this.curses = new AbilityBar(passivesOffset.x, passivesOffset.y, icons);
+        this.curses = new AbilityBar(icons);
         return this;
     }
 
@@ -190,7 +191,7 @@ public class Player extends HudElement {
             i++;
         }
 
-        this.gifts = new AbilityBar(passivesOffset.x, passivesOffset.y, icons);
+        this.gifts = new AbilityBar(icons);
         return this;
     }
 
@@ -235,17 +236,33 @@ public class Player extends HudElement {
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(this.x, this.y, 0f);
+
+        matrices.push();
+        matrices.scale(Cztils.config.textScale, Cztils.config.textScale, 0f);
         this.nametag.render(context);
+        matrices.pop();
+
+        float textHeight = 10*Cztils.config.textScale;
+        matrices.translate(0f, textHeight, 0f);
+        matrices.translate(Cztils.config.activesOffsetX, Cztils.config.activesOffsetY, 0f);
         this.actives.render(context);
+
+        matrices.translate(0f, Cztils.config.iconSize, 0f);
+        matrices.translate(Cztils.config.passivesOffsetX, Cztils.config.passivesOffsetY, 0f);
         this.curses.render(context);
-        matrices.translate(this.curses.size()*this.iconSize + PASSIVE_GAP_PX, 0f, 0f);
+        if (this.curses.size() > 0) {
+            matrices.translate(this.curses.size() * this.iconSize + PASSIVE_GAP_PX, 0f, 0f);
+        }
         this.gifts.render(context);
-        matrices.translate(this.gifts.size()*this.iconSize + PASSIVE_GAP_PX, 0f, 0f);
+        if (this.gifts.size() > 0) {
+            matrices.translate(this.gifts.size() * this.iconSize + PASSIVE_GAP_PX, 0f, 0f);
+        }
         this.passives.render(context);
         matrices.pop();
     }
 
     public void rebuild() {
+        this.iconSize = Cztils.config.iconSize;
         this.nametag.rebuild();
         this.setActives(this.lastActives, this.lastSpecs);
         this.setCurses(this.lastCurses);
