@@ -6,6 +6,7 @@ import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.cztils.Cztils;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -20,6 +21,16 @@ public class Hud {
     private List<Player> sorted = List.of();
 
     public Hud() {
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            for (Map.Entry<String, Player> entry : this.party.entrySet()) {
+                Optional<PartyMember> data = ZenithApi.getInstance().getPlayer(entry.getKey());
+                if (data.isEmpty()) continue;
+                if (data.get().getEntity() == null) continue;
+                entry.getValue().setHp(data.get().getEntity().getHealth());
+                entry.getValue().setHpMax(data.get().getEntity().getMaxHealth());
+            }
+        });
+
         ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> {
             party.clear();
             sorted = List.of();

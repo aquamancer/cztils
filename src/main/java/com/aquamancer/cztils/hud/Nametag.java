@@ -11,6 +11,8 @@ public class Nametag extends HudElement {
     private String name = "";
     private String spec = "";
     private double hp, hpMax, graveTimer;
+    private String hpString = "";
+    private String hpMaxString = "";
     private MutableText text = Text.literal("");
 
     public Nametag(int x, int y) {
@@ -18,7 +20,9 @@ public class Nametag extends HudElement {
     }
 
     void rebuild() {
-        this.text = Text.literal(name).append(" (").append(spec).append(", ").append(String.valueOf(graveTimer)).append("s): ").append(String.valueOf(hp)).append("/").append(String.valueOf(hpMax));
+        this.hpString = String.valueOf(Math.round(this.hp * 10) / 10.0);
+        this.hpMaxString = String.valueOf(Math.round(this.hpMax * 10) / 10.0);
+        this.text = Text.literal(name).append(" (").append(spec).append(", ").append(String.valueOf(graveTimer)).append("s): ").append(this.hpString).append("/").append(this.hpMaxString);
     }
 
     public Nametag setName(String name) {
