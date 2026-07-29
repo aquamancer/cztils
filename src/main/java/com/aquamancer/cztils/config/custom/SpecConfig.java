@@ -8,14 +8,19 @@ import java.util.function.Function;
 
 public class SpecConfig {
     public enum ActiveSorters {
-        SPEC, SPEC_REVERSED,
-        SLOT, SLOT_REVERSED,
-        RARITY, RARITY_ASCENDING,
+        SPEC,
+        SLOT,
+        RARITY,
+        SPEC_REVERSED,
+        SLOT_REVERSED,
+        RARITY_ASCENDING,
         DISABLED
     }
     public enum PassiveSorters {
-        SPEC, SPEC_REVERSED,
-        RARITY, RARITY_ASCENDING,
+        SPEC,
+        RARITY,
+        SPEC_REVERSED,
+        RARITY_ASCENDING,
         DISABLED
     }
 
@@ -24,6 +29,8 @@ public class SpecConfig {
     }
 
     public String name;
+    public int nameColor;
+    public int specColor;
     public Map<Spec, Integer> teammatePriority;
     public Map<AbilitySpec, Integer> specPriority;
     public Map<ActiveSlot, Integer> slotPriority;

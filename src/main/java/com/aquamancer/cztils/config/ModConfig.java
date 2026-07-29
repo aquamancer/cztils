@@ -28,6 +28,31 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Category("hud")
     public float textScale = 1.0f;
 
+
+    public String nametagFormat = "{name}{spec} - {grave}: {hp}";
+    public boolean showHpAsPercentage = false;
+    public double midHp = 0.7;
+    public double lowHp = 0.5;
+    public double critHp = 0.25;
+    @ConfigEntry.ColorPicker
+    public int goodHpColor = 0x33ef2f;
+    @ConfigEntry.ColorPicker
+    public int midHpColor = 0xd9ef2f;
+    @ConfigEntry.ColorPicker
+    public int lowHpColor = 0xefa22f;
+    @ConfigEntry.ColorPicker
+    public int critHpColor = 0xef472d;
+    public boolean goodHpBolded = true;
+    public boolean midHpBolded = true;
+    public boolean lowHpBolded = true;
+    public boolean critHpBolded = true;
+    @ConfigEntry.ColorPicker
+    public int graveColor = 0xffffff;
+    public double critGrave = 5.15;
+    @ConfigEntry.ColorPicker
+    public int critGraveColor = 0xef472d;;
+    public boolean critGraveBolded = true;
+
     @ConfigEntry.Category("hud")
     public int iconSize = 16;
 

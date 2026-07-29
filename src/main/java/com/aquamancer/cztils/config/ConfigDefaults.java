@@ -9,11 +9,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class ConfigDefaults {
-    public static final int iconSize = 16;
-    public static final int grayedOutColor = 0x80888888;
-    public static final int borderWidth = 1;
-    public static final boolean showSelf = true;
     public static final Map<Spec, String> names = new HashMap<>();
+    public static final Map<Spec, Integer> nameColors = new HashMap<>();
+    public static final Map<Spec, Integer> specColors = new HashMap<>();
     public static final Map<Spec, Map<Spec, Integer>> teammatePriority = new HashMap<>();
     public static final Map<Spec, Map<AbilitySpec, Integer>> specPriority = new HashMap<>();
     public static final Map<Spec, Map<ActiveSlot, Integer>> slotPriority = new HashMap<>();
@@ -32,13 +30,36 @@ public final class ConfigDefaults {
     public static final Map<Spec, List<String>> curseList = new HashMap<>();
 
     static {
-        names.put(Spec.STEEL, "Steel");
-        names.put(Spec.SHADOW, "Shadow");
-        names.put(Spec.FLAME, "Flame");
-        names.put(Spec.FROST, "Frost");
-        names.put(Spec.WIND, "Wind");
-        names.put(Spec.EARTH, "Earth");
-        names.put(Spec.DAWN, "Dawn");
+        String bow = new String(Character.toChars(0x1F3F9));
+        String sword = new String(Character.toChars(0x1F5E1));
+        String fire = new String(Character.toChars(0x1F525));
+        String pickaxe = new String(Character.toChars(0x26CF));
+        names.put(Spec.STEEL, bow);
+        names.put(Spec.SHADOW, sword);
+        names.put(Spec.FLAME, fire);
+        names.put(Spec.FROST, "❄");
+        names.put(Spec.WIND, "⚡");
+        names.put(Spec.EARTH, pickaxe);
+        names.put(Spec.DAWN, "☀");
+
+        nameColors.put(Spec.STEEL, 0x929292);
+        nameColors.put(Spec.SHADOW, 0x7948af);
+        nameColors.put(Spec.FLAME, 0xf04e21);
+        nameColors.put(Spec.FROST, 0xa3cbe1);
+        nameColors.put(Spec.WIND, 0xc0dea9);
+        nameColors.put(Spec.EARTH, 0x6b3d2d);
+        nameColors.put(Spec.DAWN, 0xf0b326);
+
+        specColors.put(Spec.STEEL, 0x929292);
+        specColors.put(Spec.SHADOW, 0x7948af);
+        specColors.put(Spec.FLAME, 0xf04e21);
+        specColors.put(Spec.FROST, 0xa3cbe1);
+        specColors.put(Spec.WIND, 0xc0dea9);
+        specColors.put(Spec.EARTH, 0x6b3d2d);
+        specColors.put(Spec.DAWN, 0xf0b326);
+
+
+
         // teammatePriority
         for (Spec spec : Spec.values()) {
             Map<Spec, Integer> teammates = new EnumMap<>(Spec.class);
@@ -302,6 +323,9 @@ public final class ConfigDefaults {
     // config for null spec
     static {
         names.put(null, "Charmless");
+        nameColors.put(null, 0xffffff);
+        specColors.put(null, 0xffffff);
+
         teammatePriority.put(null, Arrays.stream(Spec.values()).collect(Collectors.toMap(Function.identity(), spec -> 0)));
         specPriority.put(null, Arrays.stream(AbilitySpec.values()).collect(Collectors.toMap(Function.identity(), spec -> 0)));
         slotPriority.put(null, Arrays.stream(ActiveSlot.values()).collect(
@@ -335,6 +359,8 @@ public final class ConfigDefaults {
     private static SpecConfig createDefaultSpecConfig(Spec spec) {
         SpecConfig config = new SpecConfig();
         config.name = names.get(spec);
+        config.nameColor = nameColors.get(spec);
+        config.specColor = specColors.get(spec);
         config.teammatePriority = new EnumMap<>(teammatePriority.get(spec));
         config.specPriority = new EnumMap<>(specPriority.get(spec));
         config.slotPriority = new EnumMap<>(slotPriority.get(spec));

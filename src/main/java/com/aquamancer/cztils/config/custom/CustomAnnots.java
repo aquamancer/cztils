@@ -62,7 +62,21 @@ public class CustomAnnots {
                                 SpecConfig specConfig = pair.getValue();
 
                                 List<AbstractConfigListEntry> children = new ArrayList<>();
-                                children.add(builder.startStrField(Text.literal("Display name"), specConfig.name).setSaveConsumer(s -> specConfig.name = s).build());
+                                children.add(builder.startColorField(Text.literal("Player name color"), specConfig.nameColor)
+                                        .setSaveConsumer(c -> specConfig.nameColor = c)
+                                        .setDefaultValue(ConfigDefaults.nameColors.get(spec))
+                                        .build()
+                                );
+                                children.add(builder.startStrField(Text.literal("Display name"), specConfig.name)
+                                        .setSaveConsumer(s -> specConfig.name = s)
+                                        .setDefaultValue(ConfigDefaults.names.get(spec))
+                                        .build()
+                                );
+                                children.add(builder.startColorField(Text.literal("Display name color"), specConfig.specColor)
+                                        .setSaveConsumer(c -> specConfig.specColor = c)
+                                        .setDefaultValue(ConfigDefaults.specColors.get(spec))
+                                        .build()
+                                );
                                 children.add(CustomEntries.teammatePriorityEntry("Teammate spec order", specConfig));
 
                                 children.add(CustomEntries.abilitySpecPriorityEntry("Ability spec order", specConfig));

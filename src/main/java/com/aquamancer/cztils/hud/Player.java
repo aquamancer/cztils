@@ -24,7 +24,7 @@ public class Player extends HudElement {
     private Spec spec = null;
     private SpecConfig config = Cztils.config.specConfigs.get(null);
 
-    private final Nametag nametag = new Nametag(0, 0);
+    private final Nametag nametag = new Nametag(0, 0, this.config);
     private AbilityBar actives = new AbilityBar(List.of());
     private AbilityBar curses = new AbilityBar(List.of());
     private AbilityBar passives = new AbilityBar(List.of());
@@ -56,7 +56,7 @@ public class Player extends HudElement {
     public Player setSpec(@Nullable Spec spec) {
         this.spec = spec;
         this.config = Cztils.config.specConfigs.get(spec);
-        this.nametag.setSpec(config.name);
+        this.nametag.setConfig(Cztils.config.specConfigs.get(spec));
         return this;
     }
 
@@ -263,6 +263,7 @@ public class Player extends HudElement {
 
     public void rebuild() {
         this.iconSize = Cztils.config.iconSize;
+        this.nametag.setFormat(Cztils.config.nametagFormat);
         this.nametag.rebuild();
         this.setActives(this.lastActives, this.lastSpecs);
         this.setCurses(this.lastCurses);

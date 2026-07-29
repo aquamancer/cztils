@@ -26,7 +26,7 @@ public class Hud {
                 Optional<PartyMember> data = ZenithApi.getInstance().getPlayer(entry.getKey());
                 if (data.isEmpty()) continue;
                 if (data.get().getEntity() == null) continue;
-                entry.getValue().setHp(data.get().getEntity().getHealth());
+                entry.getValue().setHp(data.get().getEntity().getHealth() + data.get().getEntity().getAbsorptionAmount());
                 entry.getValue().setHpMax(data.get().getEntity().getMaxHealth());
             }
         });

@@ -51,48 +51,48 @@ public class Cztils implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		Player player = new Player();
-		hud.party.put("riot games", player);
-		Set<Spec> playerSpecs = Set.of(Spec.FLAME, Spec.WIND, Spec.EARTH, Spec.SHADOW);
-		player.setName("riot games");
-		player.setSpec(Spec.FLAME);
-		player.setHp(15);
-		player.setHpMax(20).setGraveTimer(3.05);
-		player.setActives(
-				List.of(
-						new Active(Actives.WINDSWEPT, AbilitySpec.WIND, Rarity.TWISTED),
-						new Active(Actives.SOLAR_RAY, AbilitySpec.PRISMATIC, Rarity.COMMON),
-						new Active(Actives.FLAMESTRIKE, AbilitySpec.FLAME, Rarity.RARE),
-						new Active(Actives.IGNEOUS_RUNE, AbilitySpec.FLAME, Rarity.LEGENDARY),
-						new Active(Actives.RAPID_FIRE, AbilitySpec.STEEL, Rarity.COMMON),
-						new Active(Actives.EARTHQUAKE, AbilitySpec.EARTH, Rarity.UNCOMMON),
-						new Active(Actives.STEEL_STALLION, AbilitySpec.STEEL, Rarity.COMMON),
-						new Active(Actives.BLADE_FLURRY, AbilitySpec.SHADOW, Rarity.COMMON)
-				),
-				playerSpecs
-		);
-		player.setCurses(
-				Set.of(Curse.DEATH, Curse.ARACHNOPHOBIA)
-		);
-		player.setPassives(
-				List.of(
-						new Passive(Passives.BULWARK, AbilitySpec.EARTH, Rarity.COMMON),
-						new Passive(Passives.SHARPSHOOTER, AbilitySpec.STEEL, Rarity.LEGENDARY),
-						new Passive(Passives.FROZEN_DOMAIN, AbilitySpec.FROST, Rarity.RARE),
-						new Passive(Passives.AEROMANCY, AbilitySpec.WIND, Rarity.RARE),
-						new Passive(Passives.PYROMANIA, AbilitySpec.FLAME, Rarity.RARE),
-						new Passive(Passives.REBIRTH, AbilitySpec.PRISMATIC, Rarity.COMMON)
-				),
-				playerSpecs
-		);
-		player.setGifts(
-				Set.of(
-						new Gift(Spec.STEEL),
-						new Gift(Gifts.CRACKED_IDOL)
-				)
-		);
-		hud.party.put("copy of riot games", player);
-		hud.sort();
+//		Player player = new Player();
+//		hud.party.put("riot games", player);
+//		Set<Spec> playerSpecs = Set.of(Spec.FLAME, Spec.WIND, Spec.EARTH, Spec.SHADOW);
+//		player.setName("riot games");
+//		player.setSpec(Spec.DAWN);
+//		player.setHp(15);
+//		player.setHpMax(20).setGraveTimer(3.05);
+//		player.setActives(
+//				List.of(
+//						new Active(Actives.WINDSWEPT, AbilitySpec.WIND, Rarity.TWISTED),
+//						new Active(Actives.SOLAR_RAY, AbilitySpec.PRISMATIC, Rarity.COMMON),
+//						new Active(Actives.FLAMESTRIKE, AbilitySpec.FLAME, Rarity.RARE),
+//						new Active(Actives.IGNEOUS_RUNE, AbilitySpec.FLAME, Rarity.LEGENDARY),
+//						new Active(Actives.RAPID_FIRE, AbilitySpec.STEEL, Rarity.COMMON),
+//						new Active(Actives.EARTHQUAKE, AbilitySpec.EARTH, Rarity.UNCOMMON),
+//						new Active(Actives.STEEL_STALLION, AbilitySpec.STEEL, Rarity.COMMON),
+//						new Active(Actives.BLADE_FLURRY, AbilitySpec.SHADOW, Rarity.COMMON)
+//				),
+//				playerSpecs
+//		);
+//		player.setCurses(
+//				Set.of(Curse.DEATH, Curse.ARACHNOPHOBIA)
+//		);
+//		player.setPassives(
+//				List.of(
+//						new Passive(Passives.BULWARK, AbilitySpec.EARTH, Rarity.COMMON),
+//						new Passive(Passives.SHARPSHOOTER, AbilitySpec.STEEL, Rarity.LEGENDARY),
+//						new Passive(Passives.FROZEN_DOMAIN, AbilitySpec.FROST, Rarity.RARE),
+//						new Passive(Passives.AEROMANCY, AbilitySpec.WIND, Rarity.RARE),
+//						new Passive(Passives.PYROMANIA, AbilitySpec.FLAME, Rarity.RARE),
+//						new Passive(Passives.REBIRTH, AbilitySpec.PRISMATIC, Rarity.COMMON)
+//				),
+//				playerSpecs
+//		);
+//		player.setGifts(
+//				Set.of(
+//						new Gift(Spec.STEEL),
+//						new Gift(Gifts.CRACKED_IDOL)
+//				)
+//		);
+//		hud.party.put("copy of riot games", player);
+//		hud.sort();
 ////		AbilityIcon icon = new ItemAbilityIcon(
 ////				Identifier.of("minecraft", "textures/item/bell.png"),
 ////				Identifier.of("unofficial-monumenta-mod", "textures/abilities/dawnbringer/radiant_blessing.png"),
