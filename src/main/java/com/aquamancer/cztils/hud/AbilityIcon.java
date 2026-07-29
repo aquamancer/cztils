@@ -22,7 +22,6 @@ public abstract class AbilityIcon extends HudElement {
     public static final int PRISMATIC_COLOR = 0xff25f6f5;
     public static final int BACKGROUND_FILL = 0x88000000;
 
-    public enum Type { VANILLA, UMM }
     protected Rectangle border;
     protected Rectangle texture;
     protected int borderColor;

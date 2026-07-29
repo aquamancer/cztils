@@ -1,0 +1,88 @@
+{
+  "text.autoconfig.cztils.option.verticalPos": "Vertical Position",
+  "text.autoconfig.cztils.option.verticalPos.@Tooltip": "Vertical screen position as a fraction of screen height",
+
+  "text.autoconfig.cztils.option.horizontalPos": "Horizontal Position",
+  "text.autoconfig.cztils.option.horizontalPos.@Tooltip": "Horizontal screen position as a fraction of screen width",
+
+  "text.autoconfig.cztils.option.textScale": "Text scale (px)",
+
+  "text.autoconfig.cztils.option.nametag": "Nametag settings",
+  "text.autoconfig.cztils.option.nametag.nametagFormat": "Nametag format string",
+  "text.autoconfig.cztils.option.nametag.nametagFormat.@Tooltip": "Supports the following replacements:\n    {name}\n    {spec}\n    {hp}\n    {grave}",
+  "text.autoconfig.cztils.option.nametag.showHpAsPercentage": "Show HP as percentage",
+  "text.autoconfig.cztils.option.nametag.midHp": "Medium HP threshold",
+  "text.autoconfig.cztils.option.nametag.lowHp": "Low HP threshold",
+  "text.autoconfig.cztils.option.nametag.critHp": "Critical HP threshold",
+  "text.autoconfig.cztils.option.nametag.goodHpColor": "Good HP color",
+  "text.autoconfig.cztils.option.nametag.midHpColor": "Medium HP color",
+  "text.autoconfig.cztils.option.nametag.lowHpColor": "Low HP color",
+  "text.autoconfig.cztils.option.nametag.critHpColor": "Critical HP color",
+  "text.autoconfig.cztils.option.nametag.goodHpBolded": "Good HP bolded",
+  "text.autoconfig.cztils.option.nametag.midHpBolded": "Medium HP bolded",
+  "text.autoconfig.cztils.option.nametag.lowHpBolded": "Low HP bolded",
+  "text.autoconfig.cztils.option.nametag.critHpBolded": "Critical HP bolded",
+  "text.autoconfig.cztils.option.nametag.graveColor": "Grave color",
+  "text.autoconfig.cztils.option.nametag.critGrave": "Critical grave threshold (s)",
+  "text.autoconfig.cztils.option.nametag.critGraveColor": "Critical grave color",
+  "text.autoconfig.cztils.option.nametag.critGraveBolded": "Critical grave bolded",
+
+  "text.autoconfig.cztils.option.iconSize": "Icon size (px)",
+  "text.autoconfig.cztils.option.borderWidth": "Icon border thickness (px)",
+  "text.autoconfig.cztils.option.grayedOut": "Grayed-out color",
+
+  "text.autoconfig.cztils.option.activesOffsetX": "Actives offset X (px)",
+  "text.autoconfig.cztils.option.activesOffsetX.@Tooltip": "Horizontal offset applied to active ability icons",
+
+  "text.autoconfig.cztils.option.activesOffsetY": "Actives offset Y (px)",
+  "text.autoconfig.cztils.option.activesOffsetY.@Tooltip": "Vertical offset applied to active ability icons",
+
+  "text.autoconfig.cztils.option.passivesOffsetX": "Passives offset X (px)",
+  "text.autoconfig.cztils.option.passivesOffsetX.@Tooltip": "Horizontal offset applied to passive ability icons",
+
+  "text.autoconfig.cztils.option.passivesOffsetY": "Passives offset Y (px)",
+  "text.autoconfig.cztils.option.passivesOffsetY.@Tooltip": "Vertical offset applied to passive ability icons",
+
+  "text.autoconfig.cztils.option.playerSpacing": "Player spacing (px)",
+  "text.autoconfig.cztils.option.playerSpacing.@Tooltip": "Spacing between player entries",
+
+  "text.autoconfig.cztils.option.showSelf": "Show self",
+  "text.autoconfig.cztils.option.showSelf.@Tooltip": "Show self in the HUD",
+
+  "text.autoconfig.cztils.option.specConfig.nameColor": "Player name color",
+  "text.autoconfig.cztils.option.specConfig.name": "Spec display name",
+  "text.autoconfig.cztils.option.specConfig.specColor": "Spec display name color",
+
+  "text.autoconfig.cztils.option.specConfig.teammatePriority": "Teammate sort order",
+  "text.autoconfig.cztils.option.specConfig.teammatePriority.@Tooltip": "While playing this spec, sort teammates according to this order\nLower values have higher priority",
+
+  "text.autoconfig.cztils.option.specConfig.abilitySpecPriority": "Ability spec order",
+  "text.autoconfig.cztils.option.specConfig.abilitySpecPriority.@Tooltip": "Define the priority of specs for the ability sorter\nLower values have higher priority",
+
+  "text.autoconfig.cztils.option.specConfig.slotPriority": "Active slot order",
+  "text.autoconfig.cztils.option.specConfig.slotPriority.@Tooltip": "Define the priority of active ability slots for the ability sorter\nLower values have higher priority",
+
+  "text.autoconfig.cztils.option.specConfig.activeSort": "Active sort order",
+  "text.autoconfig.cztils.option.specConfig.activeSort.@Tooltip": "Define how to sort active abilities",
+
+  "text.autoconfig.cztils.option.specConfig.passiveSort": "Passive sort order",
+  "text.autoconfig.cztils.option.specConfig.passiveSort.@Tooltip": "Define how to sort passive abilities\nGifts and curses are not sorted",
+
+  "text.autoconfig.cztils.option.specConfig.alwaysShow": "Always shown icons",
+  "text.autoconfig.cztils.option.specConfig.alwaysShow.@Tooltip": "Always show these icons (grayed out if not obtained)",
+
+  "text.autoconfig.cztils.option.specConfig.showIfSpec": "Always shown if has spec",
+  "text.autoconfig.cztils.option.specConfig.showIfSpec.@Tooltip": "Always show these icons (grayed out if not obtained), but only if the player has the ability's spec",
+
+  "text.autoconfig.cztils.option.specConfig.iconsShown": "Icons to show if obtained",
+  "text.autoconfig.cztils.option.specConfig.iconsShown.@Tooltip": "The following lists define icons to be shown if obtained:\nList modes:\n    ALLOWLIST - Only show abilities from the category if listed\n    BLOCKLIST - Show all other icons from the category\nAbility names are case-sensitive",
+
+  "text.autoconfig.cztils.option.specConfig.iconList.activeMode": "List mode for active abilities",
+  "text.autoconfig.cztils.option.specConfig.iconList.actives": "Actives",
+  "text.autoconfig.cztils.option.specConfig.iconList.passiveMode": "List mode for passive abilities",
+  "text.autoconfig.cztils.option.specConfig.iconList.passives": "Passives",
+  "text.autoconfig.cztils.option.specConfig.iconList.giftMode": "List mode for gifts",
+  "text.autoconfig.cztils.option.specConfig.iconList.gifts": "Gifts",
+  "text.autoconfig.cztils.option.specConfig.iconList.curseMode": "List mode for curses",
+  "text.autoconfig.cztils.option.specConfig.iconList.curses": "Curses"
+}

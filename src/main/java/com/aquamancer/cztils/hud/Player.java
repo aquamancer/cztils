@@ -196,35 +196,20 @@ public class Player extends HudElement {
     }
 
     private static AbilityIcon createIcon(int x, int y, int iconSize, Enum<?> ability, int borderColor, boolean grayedOut) {
-        AbilityIcon.Type iconType = Cztils.config.textures.getIconType(ability);
-        switch (iconType) {
-            default:
-            case UMM:
-                // todo do later
-//                    icons.add(new TextureAbilityIcon(
-//                            iconX, iconY,
-//                            iconSize, iconSize,
-//                            1,
-//                            new TextureInfo(
-//
-//                            )
-//                    ))
-            case VANILLA:
-                AbilityIcon icon = new ItemAbilityIcon(
-                        x, y,
-                        iconSize, iconSize,
-                        Cztils.config.borderWidth,
-                        ZenithTextures.getItem(ability).orElse(new ItemStack(Items.AIR))
-                );
-                if (grayedOut) {
-                    icon.setBorderColor(Cztils.config.grayedOut);
-                    icon.setGrayedOut(Cztils.config.grayedOut);
-                } else {
-                    icon.setBackgroundFill(AbilityIcon.BACKGROUND_FILL);
-                    icon.setBorderColor(borderColor);
-                }
-                return icon;
+        AbilityIcon icon = new ItemAbilityIcon(
+                x, y,
+                iconSize, iconSize,
+                Cztils.config.borderWidth,
+                ZenithTextures.getItem(ability).orElse(new ItemStack(Items.AIR))
+        );
+        if (grayedOut) {
+            icon.setBorderColor(Cztils.config.grayedOut);
+            icon.setGrayedOut(Cztils.config.grayedOut);
+        } else {
+            icon.setBackgroundFill(AbilityIcon.BACKGROUND_FILL);
+            icon.setBorderColor(borderColor);
         }
+        return icon;
     }
 
     public Spec getSpec() {
@@ -263,7 +248,7 @@ public class Player extends HudElement {
 
     public void rebuild() {
         this.iconSize = Cztils.config.iconSize;
-        this.nametag.setFormat(Cztils.config.nametagFormat);
+        this.nametag.setFormat(Cztils.config.nametag.nametagFormat);
         this.nametag.rebuild();
         this.setActives(this.lastActives, this.lastSpecs);
         this.setCurses(this.lastCurses);

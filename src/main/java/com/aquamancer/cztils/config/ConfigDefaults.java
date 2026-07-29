@@ -304,6 +304,7 @@ public final class ConfigDefaults {
                     actives.add("Bottled Sunlight");
                     actives.add("Lightning Bottle");
                     actives.add("Divine Beam");
+                    curses.add("Curse of Lust");
                     break;
             }
 
@@ -377,25 +378,6 @@ public final class ConfigDefaults {
         config.giftList = new ArrayList<>(giftList.get(spec));
         config.curseList = new ArrayList<>(curseList.get(spec));
         return config;
-    }
-
-    public static ModConfig.Textures createDefaultTextures() {
-        ModConfig.Textures textures = new ModConfig.Textures();
-        textures.actives = new EnumMap<>(Actives.class);
-        textures.passives = new EnumMap<>(Passives.class);
-        textures.curses = new EnumMap<>(Curse.class);
-        textures.gifts = new EnumMap<>(Gifts.class);
-        loadEnumMap(Actives.values(), textures.actives);
-        loadEnumMap(Passives.values(), textures.passives);
-        loadEnumMap(Curse.values(), textures.curses);
-        loadEnumMap(Gifts.values(), textures.gifts);
-        return textures;
-    }
-
-    private static <T extends Enum<?>> void loadEnumMap(T[] values, Map<T, AbilityIcon.Type> map) {
-        for (T key : values) {
-            map.put(key, AbilityIcon.Type.VANILLA);
-        }
     }
 
     private ConfigDefaults() {}

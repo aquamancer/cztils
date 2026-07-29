@@ -20,104 +20,83 @@ public class ModConfig implements ConfigData {
     public ModConfig() {}
 
     @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
     public float verticalPos = 0.35f;
 
     @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
     public float horizontalPos = 0.01f;
 
     @ConfigEntry.Category("hud")
     public float textScale = 1.0f;
 
+    @ConfigEntry.Gui.CollapsibleObject
+    @ConfigEntry.Category("hud")
+    public NametagEntry nametag = new NametagEntry();
 
-    public String nametagFormat = "{name}{spec} - {grave}: {hp}";
-    public boolean showHpAsPercentage = false;
-    public double midHp = 0.7;
-    public double lowHp = 0.5;
-    public double critHp = 0.25;
-    @ConfigEntry.ColorPicker
-    public int goodHpColor = 0x33ef2f;
-    @ConfigEntry.ColorPicker
-    public int midHpColor = 0xd9ef2f;
-    @ConfigEntry.ColorPicker
-    public int lowHpColor = 0xefa22f;
-    @ConfigEntry.ColorPicker
-    public int critHpColor = 0xef472d;
-    public boolean goodHpBolded = true;
-    public boolean midHpBolded = true;
-    public boolean lowHpBolded = true;
-    public boolean critHpBolded = true;
-    @ConfigEntry.ColorPicker
-    public int graveColor = 0xffffff;
-    public double critGrave = 5.15;
-    @ConfigEntry.ColorPicker
-    public int critGraveColor = 0xef472d;;
-    public boolean critGraveBolded = true;
+    public static class NametagEntry {
+        @ConfigEntry.Gui.Tooltip
+        public String nametagFormat = "{name} {spec} - {grave}: {hp}";
+        public boolean showHpAsPercentage = false;
+        public double midHp = 0.7;
+        public double lowHp = 0.5;
+        public double critHp = 0.25;
+        @ConfigEntry.ColorPicker
+        public int goodHpColor = 0x33ef2f;
+        @ConfigEntry.ColorPicker
+        public int midHpColor = 0xd9ef2f;
+        @ConfigEntry.ColorPicker
+        public int lowHpColor = 0xefa22f;
+        @ConfigEntry.ColorPicker
+        public int critHpColor = 0xef472d;
+        public boolean goodHpBolded = true;
+        public boolean midHpBolded = true;
+        public boolean lowHpBolded = true;
+        public boolean critHpBolded = true;
+        @ConfigEntry.ColorPicker
+        public int graveColor = 0xffffff;
+        public double critGrave = 5.15;
+        @ConfigEntry.ColorPicker
+        public int critGraveColor = 0xef472d;
+        public boolean critGraveBolded = true;
+    }
 
     @ConfigEntry.Category("hud")
     public int iconSize = 16;
 
     @ConfigEntry.Category("hud")
-    public float activesOffsetX = 0;
-
-    @ConfigEntry.Category("hud")
-    public float activesOffsetY = 0;
-
-    @ConfigEntry.Category("hud")
-    public float passivesOffsetX = 0;
-
-    @ConfigEntry.Category("hud")
-    public float passivesOffsetY = 0;
-
-    @ConfigEntry.Category("hud")
-    public int playerSpacing = 8;
+    public int borderWidth = 1;
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.ColorPicker(allowAlpha = true)
     public int grayedOut = 0x80888888;
 
     @ConfigEntry.Category("hud")
-    public int borderWidth = 1;
+    @ConfigEntry.Gui.Tooltip
+    public float activesOffsetX = 0;
 
     @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
+    public float activesOffsetY = 0;
+
+    @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
+    public float passivesOffsetX = 0;
+
+    @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
+    public float passivesOffsetY = 0;
+
+    @ConfigEntry.Category("hud")
+    public int playerSpacing = 8;
+
+    @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
     public boolean showSelf = true;
 
     @ConfigEntry.Category("specs")
     @SpecConfigs
     public Map<Spec, SpecConfig> specConfigs = ConfigDefaults.createDefaultSpecConfigs();
-
-    @ConfigEntry.Category("textures")
-    @ConfigEntry.Gui.TransitiveObject
-    public Textures textures = ConfigDefaults.createDefaultTextures();
-
-    public static class Textures {
-        public Textures() {}
-
-        @AbilityIconMap
-        public Map<Actives, AbilityIcon.Type> actives;
-        @AbilityIconMap
-        public Map<Passives, AbilityIcon.Type> passives;
-        @AbilityIconMap
-        public Map<Curse, AbilityIcon.Type> curses;
-        @AbilityIconMap
-        public Map<Gifts, AbilityIcon.Type> gifts;
-
-        public AbilityIcon.Type getIconType(Enum<?> ability) {
-            if (ability instanceof Actives) {
-                return actives.get(ability);
-            } else if (ability instanceof Passives) {
-                return passives.get(ability);
-            } else if (ability instanceof Curse) {
-                return curses.get(ability);
-            } else if (ability instanceof Gifts) {
-                return gifts.get(ability);
-            }
-            return AbilityIcon.Type.VANILLA;
-        }
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.FIELD)
-    public @interface AbilityIconMap {}
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)

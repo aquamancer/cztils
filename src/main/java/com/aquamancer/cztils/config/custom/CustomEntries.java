@@ -2,65 +2,27 @@ package com.aquamancer.cztils.config.custom;
 
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.cztils.config.ConfigDefaults;
-import com.aquamancer.cztils.hud.AbilityIcon;
-import com.aquamancer.cztils.hud.TextureInfo;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class CustomEntries {
-    public static AbstractConfigListEntry textureEntry(String name, TextureInfo info) {
-        ConfigEntryBuilder builder = ConfigEntryBuilder.create();
-        List<AbstractConfigListEntry> entries = List.of(
-                builder.startStrField(Text.literal("Identifier"), info.getIdentifier())
-                        .setSaveConsumer(id -> info.setIdentifier(id)).build(),
-                builder.startIntField(Text.literal("u"), info.getU())
-                        .setSaveConsumer(v -> info.setU(v)).build(),
-                builder.startIntField(Text.literal("v"), info.getV())
-                        .setSaveConsumer(v -> info.setV(v)).build(),
-                builder.startIntField(Text.literal("uw"), info.getUw())
-                        .setSaveConsumer(v -> info.setUw(v)).build(),
-                builder.startIntField(Text.literal("uh"), info.getUh())
-                        .setSaveConsumer(v -> info.setUh(v)).build(),
-                builder.startIntField(Text.literal("sourceWidth"), info.getSourceWidth())
-                        .setSaveConsumer(v -> info.setSourceWidth(v)).build(),
-                builder.startIntField(Text.literal("sourceHeight"), info.getSourceHeight())
-                        .setSaveConsumer(v -> info.setSourceHeight(v)).build()
-        );
-        return builder.startSubCategory(Text.literal(name), entries).build();
-    }
-
-    public static AbstractConfigListEntry textureEntry(Enum<?> key, Map<Enum<?>, AbilityIcon.Type> config) {
-        ConfigEntryBuilder builder = ConfigEntryBuilder.create();
-
-        AbstractConfigListEntry entry = builder.startEnumSelector(
-                        Text.literal(key.name()),
-                        AbilityIcon.Type.class,
-                        config.get(key)
-                )
-                .setSaveConsumer(v -> config.put(key, v))
-                .build();
-
-        return entry;
-    }
-
-    public static AbstractConfigListEntry teammatePriorityEntry(String dropdownName, SpecConfig config) {
+    public static AbstractConfigListEntry teammatePriorityEntry(Text name, Text tooltip, SpecConfig config) {
         List<AbstractConfigListEntry> inputs = new ArrayList<>();
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
         for (Spec spec : Spec.values()) {
             AbstractConfigListEntry input = builder
-                    .startIntField(Text.literal(spec.name()), config.teammatePriority.get(spec))
+                    .startIntField(Text.literal(spec.getDisplayName()), config.teammatePriority.get(spec))
                     .setSaveConsumer(v -> config.teammatePriority.put(spec, v))
                     .build();
             inputs.add(input);
         }
-        return builder.startSubCategory(Text.literal(dropdownName), inputs).build();
+        return builder.startSubCategory(name, inputs).setTooltip(tooltip).build();
     }
 
-    public static AbstractConfigListEntry abilitySpecPriorityEntry(String dropdownName, SpecConfig config) {
+    public static AbstractConfigListEntry abilitySpecPriorityEntry(Text name, Text tooltip, SpecConfig config) {
         List<AbstractConfigListEntry> inputs = new ArrayList<>();
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
         for (AbilitySpec spec : AbilitySpec.values()) {
@@ -70,10 +32,10 @@ public class CustomEntries {
                     .build();
             inputs.add(input);
         }
-        return builder.startSubCategory(Text.literal(dropdownName), inputs).build();
+        return builder.startSubCategory(name, inputs).setTooltip(tooltip).build();
     }
 
-    public static AbstractConfigListEntry activeSlotPriorityEntry(String dropdownName, SpecConfig config) {
+    public static AbstractConfigListEntry slotPriority(Text name, Text tooltip, SpecConfig config) {
         List<AbstractConfigListEntry> inputs = new ArrayList<>();
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
         for (ActiveSlot slot : ActiveSlot.values()) {
@@ -83,10 +45,10 @@ public class CustomEntries {
                     .build();
             inputs.add(input);
         }
-        return builder.startSubCategory(Text.literal(dropdownName), inputs).build();
+        return builder.startSubCategory(name, inputs).setTooltip(tooltip).build();
     }
 
-    public static AbstractConfigListEntry activeSortEntry(String dropdownName, SpecConfig config) {
+    public static AbstractConfigListEntry activeSortEntry(Text name, Text tooltip, SpecConfig config) {
         List<AbstractConfigListEntry> sortOrder = new ArrayList<>();
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
         for (int i = 0; i < SpecConfig.ActiveSorters.values().length - 1; i++) {
@@ -97,10 +59,10 @@ public class CustomEntries {
                     .build();
             sortOrder.add(entry);
         }
-        return builder.startSubCategory(Text.literal(dropdownName), sortOrder).build();
+        return builder.startSubCategory(name, sortOrder).setTooltip(tooltip).build();
     }
 
-    public static AbstractConfigListEntry passiveSortEntry(String dropdownName, SpecConfig config) {
+    public static AbstractConfigListEntry passiveSortEntry(Text name, Text tooltip, SpecConfig config) {
         List<AbstractConfigListEntry> sortOrder = new ArrayList<>();
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
         for (int i = 0; i < SpecConfig.PassiveSorters.values().length - 1; i++) {
@@ -111,57 +73,64 @@ public class CustomEntries {
                     .build();
             sortOrder.add(entry);
         }
-        return builder.startSubCategory(Text.literal(dropdownName), sortOrder).build();
+        return builder.startSubCategory(name, sortOrder).setTooltip(tooltip).build();
     }
 
-    public static AbstractConfigListEntry enumListEntry(String listName, List<String> configRef, Runnable setUpdateCallback, List<String> defaultValue) {
+    public static AbstractConfigListEntry enumListEntry(Text name, Text tooltip, List<String> configRef, Runnable setUpdateCallback, List<String> defaultValue) {
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
 
-        return builder.startStrList(Text.literal(listName), configRef).setSaveConsumer(updated -> {
-            configRef.clear();
-            updated.forEach(e -> {
-                Optional<Enum<?>> ability = AbilityUtils.fromString(e);
-                if (ability.isPresent()) {
-                    configRef.add(e);
-                }
-            });
-            setUpdateCallback.run();
-        }).setDefaultValue(defaultValue).build();
+        return builder.startStrList(name, configRef)
+                .setSaveConsumer(updated -> {
+                    configRef.clear();
+                    updated.forEach(e -> {
+                        Optional<Enum<?>> ability = AbilityUtils.fromString(e);
+                        if (ability.isPresent()) {
+                            configRef.add(e);
+                        }
+                    });
+                    setUpdateCallback.run();
+                })
+                .setDefaultValue(defaultValue)
+                .setTooltip(tooltip)
+                .build();
     }
 
-    public static AbstractConfigListEntry iconListDropdownEntry(String dropdownName, SpecConfig configRef, Spec spec) {
+    public static AbstractConfigListEntry iconListDropdownEntry(Text name, Text tooltip, SpecConfig configRef, Spec spec) {
         List<AbstractConfigListEntry> children = new ArrayList<>();
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
 
-        children.add(builder.startEnumSelector(Text.literal("List mode for actives"), SpecConfig.IconListMode.class, configRef.activeListMode)
+        children.add(builder.startEnumSelector(Text.translatable("text.autoconfig.cztils.option.specConfig.iconList.activeMode"), SpecConfig.IconListMode.class, configRef.activeListMode)
                 .setDefaultValue(ConfigDefaults.activeListMode.get(spec))
                 .setSaveConsumer(mode -> {
                     configRef.activeListMode = mode;
                     configRef.updateEnumSets();
                 }).build());
-        children.add(enumListEntry("Actives", configRef.activeList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.activeList.get(spec))));
-        children.add(builder.startEnumSelector(Text.literal("List mode for passives"), SpecConfig.IconListMode.class, configRef.passiveListMode)
+        children.add(enumListEntry(Text.translatable("text.autoconfig.cztils.option.specConfig.iconList.actives"), Text.empty(), configRef.activeList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.activeList.get(spec))));
+
+        children.add(builder.startEnumSelector(Text.translatable("text.autoconfig.cztils.option.specConfig.iconList.passiveMode"), SpecConfig.IconListMode.class, configRef.passiveListMode)
                 .setDefaultValue(ConfigDefaults.passiveListMode.get(spec))
                 .setSaveConsumer(mode -> {
                     configRef.passiveListMode = mode;
                     configRef.updateEnumSets();
                 }).build());
-        children.add(enumListEntry("Passives", configRef.passiveList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.passiveList.get(spec))));
-        children.add(builder.startEnumSelector(Text.literal("List mode for gifts"), SpecConfig.IconListMode.class, configRef.giftListMode)
+        children.add(enumListEntry(Text.translatable("text.autoconfig.cztils.option.specConfig.iconList.passives"), Text.empty(), configRef.passiveList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.passiveList.get(spec))));
+
+        children.add(builder.startEnumSelector(Text.translatable("text.autoconfig.cztils.option.specConfig.iconList.giftMode"), SpecConfig.IconListMode.class, configRef.giftListMode)
                 .setDefaultValue(ConfigDefaults.giftListMode.get(spec))
                 .setSaveConsumer(mode -> {
                     configRef.giftListMode = mode;
                     configRef.updateEnumSets();
                 }).build());
-        children.add(enumListEntry("Gifts", configRef.giftList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.giftList.get(spec))));
-        children.add(builder.startEnumSelector(Text.literal("List mode for curses"), SpecConfig.IconListMode.class, configRef.curseListMode)
+        children.add(enumListEntry(Text.translatable("text.autoconfig.cztils.option.specConfig.iconList.gifts"), Text.empty(), configRef.giftList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.giftList.get(spec))));
+
+        children.add(builder.startEnumSelector(Text.translatable("text.autoconfig.cztils.option.specConfig.iconList.curseMode"), SpecConfig.IconListMode.class, configRef.curseListMode)
                 .setDefaultValue(ConfigDefaults.curseListMode.get(spec))
                 .setSaveConsumer(mode -> {
                     configRef.curseListMode = mode;
                     configRef.updateEnumSets();
                 }).build());
-        children.add(enumListEntry("Curses", configRef.curseList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.curseList.get(spec))));
+        children.add(enumListEntry(Text.translatable("text.autoconfig.cztils.option.specConfig.iconList.curses"), Text.empty(), configRef.curseList, configRef::updateEnumSets, new ArrayList<>(ConfigDefaults.curseList.get(spec))));
 
-        return builder.startSubCategory(Text.literal(dropdownName), children).build();
+        return builder.startSubCategory(name, children).setTooltip(tooltip).build();
     }
 }

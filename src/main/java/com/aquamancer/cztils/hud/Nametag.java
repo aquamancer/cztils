@@ -26,7 +26,7 @@ public class Nametag extends HudElement {
         HP(
                 "{hp}",
                 nametag -> {
-                    if (Cztils.config.showHpAsPercentage) {
+                    if (Cztils.config.nametag.showHpAsPercentage) {
                         return String.valueOf(Math.round(nametag.hp / nametag.hpMax * 100)) + '%';
                     } else {
                         return String.valueOf(Math.round(nametag.hp * 10) / 10.0) + '/' + Math.round(nametag.hpMax * 10) / 10.0;
@@ -34,14 +34,14 @@ public class Nametag extends HudElement {
                 },
                 (n, c) -> (s) -> {
                     double percent = n.hp / n.hpMax;
-                    if (percent < Cztils.config.critHp) {
-                        return s.withColor(Cztils.config.critHpColor).withBold(Cztils.config.critHpBolded);
-                    } else if (percent < Cztils.config.lowHp) {
-                        return s.withColor(Cztils.config.lowHpColor).withBold(Cztils.config.lowHpBolded);
-                    } else if (percent < Cztils.config.midHp) {
-                        return s.withColor(Cztils.config.midHpColor).withBold(Cztils.config.midHpBolded);
+                    if (percent < Cztils.config.nametag.critHp) {
+                        return s.withColor(Cztils.config.nametag.critHpColor).withBold(Cztils.config.nametag.critHpBolded);
+                    } else if (percent < Cztils.config.nametag.lowHp) {
+                        return s.withColor(Cztils.config.nametag.lowHpColor).withBold(Cztils.config.nametag.lowHpBolded);
+                    } else if (percent < Cztils.config.nametag.midHp) {
+                        return s.withColor(Cztils.config.nametag.midHpColor).withBold(Cztils.config.nametag.midHpBolded);
                     } else {
-                        return s.withColor(Cztils.config.goodHpColor).withBold(Cztils.config.goodHpBolded);
+                        return s.withColor(Cztils.config.nametag.goodHpColor).withBold(Cztils.config.nametag.goodHpBolded);
                     }
                 }
         ),
@@ -49,10 +49,10 @@ public class Nametag extends HudElement {
                 "{grave}",
                 (n) -> String.valueOf(n.graveTimer) + 's',
                 (n, c) -> (s) -> {
-                    if (n.graveTimer <= Cztils.config.critGrave) {
-                        return s.withColor(Cztils.config.critGraveColor).withBold(Cztils.config.critGraveBolded);
+                    if (n.graveTimer <= Cztils.config.nametag.critGrave) {
+                        return s.withColor(Cztils.config.nametag.critGraveColor).withBold(Cztils.config.nametag.critGraveBolded);
                     } else {
-                        return s.withColor(Cztils.config.graveColor);
+                        return s.withColor(Cztils.config.nametag.graveColor);
                     }
                 }
         );
@@ -104,7 +104,7 @@ public class Nametag extends HudElement {
     public Nametag(int x, int y, SpecConfig config) {
         super(x, y);
         this.config = config;
-        this.setFormat(Cztils.config.nametagFormat);
+        this.setFormat(Cztils.config.nametag.nametagFormat);
     }
 
     void rebuild() {
