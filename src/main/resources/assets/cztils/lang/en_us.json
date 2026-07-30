@@ -1,4 +1,9 @@
 {
+  "text.autoconfig.cztils.title": "Configuring cztils",
+
+  "text.autoconfig.cztils.category.hud": "Hud",
+  "text.autoconfig.cztils.category.specs": "Specs",
+
   "text.autoconfig.cztils.option.verticalPos": "Vertical Position",
   "text.autoconfig.cztils.option.verticalPos.@Tooltip": "Vertical screen position as a fraction of screen height",
 
@@ -74,8 +79,8 @@
   "text.autoconfig.cztils.option.specConfig.showIfSpec": "Always shown if has spec",
   "text.autoconfig.cztils.option.specConfig.showIfSpec.@Tooltip": "Always show these icons (grayed out if not obtained), but only if the player has the ability's spec",
 
-  "text.autoconfig.cztils.option.specConfig.iconsShown": "Icons to show if obtained",
-  "text.autoconfig.cztils.option.specConfig.iconsShown.@Tooltip": "The following lists define icons to be shown if obtained:\nList modes:\n    ALLOWLIST - Only show abilities from the category if listed\n    BLOCKLIST - Show all other icons from the category\nAbility names are case-sensitive",
+  "text.autoconfig.cztils.option.specConfig.iconsShown": "Other icons to show if obtained",
+  "text.autoconfig.cztils.option.specConfig.iconsShown.@Tooltip": "The following lists define icons to be shown if obtained:\nList modes:\n    ALLOWLIST - Only show abilities from the category if listed\n    BLOCKLIST - Show all icons from the category except those in the list\nAbility names are case-sensitive",
 
   "text.autoconfig.cztils.option.specConfig.iconList.activeMode": "List mode for active abilities",
   "text.autoconfig.cztils.option.specConfig.iconList.actives": "Actives",

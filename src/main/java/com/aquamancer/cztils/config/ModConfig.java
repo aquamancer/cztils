@@ -88,6 +88,7 @@ public class ModConfig implements ConfigData {
     public float passivesOffsetY = 0;
 
     @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
     public int playerSpacing = 8;
 
     @ConfigEntry.Category("hud")

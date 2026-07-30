@@ -1,0 +1,93 @@
+{
+  "text.autoconfig.cztils.title": "配置 cztils",
+
+  "text.autoconfig.cztils.category.hud": "HUD",
+  "text.autoconfig.cztils.category.specs": "专精",
+
+  "text.autoconfig.cztils.option.verticalPos": "垂直位置",
+  "text.autoconfig.cztils.option.verticalPos.@Tooltip": "屏幕垂直位置（占屏幕高度的比例）",
+
+  "text.autoconfig.cztils.option.horizontalPos": "水平位置",
+  "text.autoconfig.cztils.option.horizontalPos.@Tooltip": "屏幕水平位置（占屏幕宽度的比例）",
+
+  "text.autoconfig.cztils.option.textScale": "文本缩放（像素）",
+
+  "text.autoconfig.cztils.option.nametag": "名称标签设置",
+  "text.autoconfig.cztils.option.nametag.nametagFormat": "名称标签格式",
+  "text.autoconfig.cztils.option.nametag.nametagFormat.@Tooltip": "支持以下占位符：\n    {name}\n    {spec}\n    {hp}\n    {grave}",
+  "text.autoconfig.cztils.option.nametag.showHpAsPercentage": "以百分比显示生命值",
+  "text.autoconfig.cztils.option.nametag.midHp": "中等生命值阈值",
+  "text.autoconfig.cztils.option.nametag.lowHp": "低生命值阈值",
+  "text.autoconfig.cztils.option.nametag.critHp": "危险生命值阈值",
+  "text.autoconfig.cztils.option.nametag.goodHpColor": "高生命值颜色",
+  "text.autoconfig.cztils.option.nametag.midHpColor": "中等生命值颜色",
+  "text.autoconfig.cztils.option.nametag.lowHpColor": "低生命值颜色",
+  "text.autoconfig.cztils.option.nametag.critHpColor": "危险生命值颜色",
+  "text.autoconfig.cztils.option.nametag.goodHpBolded": "高生命值加粗",
+  "text.autoconfig.cztils.option.nametag.midHpBolded": "中等生命值加粗",
+  "text.autoconfig.cztils.option.nametag.lowHpBolded": "低生命值加粗",
+  "text.autoconfig.cztils.option.nametag.critHpBolded": "危险生命值加粗",
+  "text.autoconfig.cztils.option.nametag.graveColor": "墓碑计时颜色",
+  "text.autoconfig.cztils.option.nametag.critGrave": "危险墓碑阈值（秒）",
+  "text.autoconfig.cztils.option.nametag.critGraveColor": "危险墓碑颜色",
+  "text.autoconfig.cztils.option.nametag.critGraveBolded": "危险墓碑加粗",
+
+  "text.autoconfig.cztils.option.iconSize": "图标大小（像素）",
+  "text.autoconfig.cztils.option.borderWidth": "图标边框宽度（像素）",
+  "text.autoconfig.cztils.option.grayedOut": "灰显颜色",
+
+  "text.autoconfig.cztils.option.activesOffsetX": "主动技能偏移 X（像素）",
+  "text.autoconfig.cztils.option.activesOffsetX.@Tooltip": "应用于主动技能图标的水平偏移",
+
+  "text.autoconfig.cztils.option.activesOffsetY": "主动技能偏移 Y（像素）",
+  "text.autoconfig.cztils.option.activesOffsetY.@Tooltip": "应用于主动技能图标的垂直偏移",
+
+  "text.autoconfig.cztils.option.passivesOffsetX": "被动技能偏移 X（像素）",
+  "text.autoconfig.cztils.option.passivesOffsetX.@Tooltip": "应用于被动技能图标的水平偏移",
+
+  "text.autoconfig.cztils.option.passivesOffsetY": "被动技能偏移 Y（像素）",
+  "text.autoconfig.cztils.option.passivesOffsetY.@Tooltip": "应用于被动技能图标的垂直偏移",
+
+  "text.autoconfig.cztils.option.playerSpacing": "玩家间距（像素）",
+  "text.autoconfig.cztils.option.playerSpacing.@Tooltip": "玩家条目之间的间距",
+
+  "text.autoconfig.cztils.option.showSelf": "显示自己",
+  "text.autoconfig.cztils.option.showSelf.@Tooltip": "在 HUD 中显示自己",
+
+  "text.autoconfig.cztils.option.specConfig.nameColor": "玩家名称颜色",
+  "text.autoconfig.cztils.option.specConfig.name": "专精显示名称",
+  "text.autoconfig.cztils.option.specConfig.specColor": "专精名称颜色",
+
+  "text.autoconfig.cztils.option.specConfig.teammatePriority": "队友排序优先级",
+  "text.autoconfig.cztils.option.specConfig.teammatePriority.@Tooltip": "使用此专精时，按此顺序排序队友\n数值越小优先级越高",
+
+  "text.autoconfig.cztils.option.specConfig.abilitySpecPriority": "技能专精优先级",
+  "text.autoconfig.cztils.option.specConfig.abilitySpecPriority.@Tooltip": "定义技能排序器中的专精优先级\n数值越小优先级越高",
+
+  "text.autoconfig.cztils.option.specConfig.slotPriority": "主动技能槽位优先级",
+  "text.autoconfig.cztils.option.specConfig.slotPriority.@Tooltip": "定义技能排序器中的主动技能槽位优先级\n数值越小优先级越高",
+
+  "text.autoconfig.cztils.option.specConfig.activeSort": "主动技能排序方式",
+  "text.autoconfig.cztils.option.specConfig.activeSort.@Tooltip": "定义主动技能的排序方式",
+
+  "text.autoconfig.cztils.option.specConfig.passiveSort": "被动技能排序方式",
+  "text.autoconfig.cztils.option.specConfig.passiveSort.@Tooltip": "定义被动技能的排序方式\n天赋（Gift）和诅咒（Curse）不会被排序",
+
+  "text.autoconfig.cztils.option.specConfig.alwaysShow": "始终显示的图标",
+  "text.autoconfig.cztils.option.specConfig.alwaysShow.@Tooltip": "始终显示这些图标（未获得时灰显）",
+
+  "text.autoconfig.cztils.option.specConfig.showIfSpec": "拥有对应专精时始终显示",
+  "text.autoconfig.cztils.option.specConfig.showIfSpec.@Tooltip": "始终显示这些图标（未获得时灰显），但仅当玩家拥有该技能所属专精时",
+
+  "text.autoconfig.cztils.option.specConfig.iconsShown": "获得后显示的其他图标",
+  "text.autoconfig.cztils.option.specConfig.iconsShown.@Tooltip": "以下列表定义获得后显示的图标：\n列表模式：\n    ALLOWLIST - 仅显示列表中的技能\n    BLOCKLIST - 显示该类别中除列表外的所有技能\n技能名称区分大小写",
+
+  "text.autoconfig.cztils.option.specConfig.iconList.activeMode": "主动技能列表模式",
+  "text.autoconfig.cztils.option.specConfig.iconList.actives": "主动技能",
+  "text.autoconfig.cztils.option.specConfig.iconList.passiveMode": "被动技能列表模式",
+  "text.autoconfig.cztils.option.specConfig.iconList.passives": "被动技能",
+  "text.autoconfig.cztils.option.specConfig.iconList.giftMode": "天赋列表模式",
+  "text.autoconfig.cztils.option.specConfig.iconList.gifts": "天赋",
+  "text.autoconfig.cztils.option.specConfig.iconList.curseMode": "诅咒列表模式",
+  "text.autoconfig.cztils.option.specConfig.iconList.curses": "诅咒"
+}
