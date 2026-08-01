@@ -1,12 +1,17 @@
 package com.aquamancer.cztils.config.custom;
 
-import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.AbilitySpec;
+import com.aquamancer.czlib.api.abils.AbilityUtils;
+import com.aquamancer.czlib.api.abils.ActiveSlot;
+import com.aquamancer.czlib.api.abils.Spec;
 import com.aquamancer.cztils.config.ConfigDefaults;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.text.Text;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class CustomEntries {
     public static AbstractConfigListEntry teammatePriorityEntry(Text name, Text tooltip, SpecConfig config) {

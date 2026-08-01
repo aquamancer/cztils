@@ -1,24 +1,21 @@
 package com.aquamancer.cztils.config;
 
-import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.Spec;
 import com.aquamancer.cztils.Cztils;
 import com.aquamancer.cztils.config.custom.SpecConfig;
-import com.aquamancer.cztils.hud.AbilityIcon;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.*;
+import java.util.Map;
 
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
-    public enum RenderMode { ALWAYS, TABLIST }
-
+    public enum InGameRenderMode { ALWAYS, TABLIST, OFF }
 
     @ConfigEntry.Category("hud")
     public boolean hudEnabled = true;
@@ -26,7 +23,7 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public RenderMode renderMode = RenderMode.ALWAYS;
+    public InGameRenderMode inGameRenderMode = InGameRenderMode.ALWAYS;
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip

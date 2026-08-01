@@ -9,14 +9,9 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2i;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 public class Player extends HudElement {
     private static final String ANCHOR = new String(Character.toChars(0x2693));
@@ -177,6 +172,7 @@ public class Player extends HudElement {
             if (curse == Curse.GREED) {
                 icon.setSubscript('-' + String.valueOf(player.getGreedAmount()*5) + '%');
             }
+            icons.add(icon);
             i++;
         }
         this.curses = new AbilityBar(icons);

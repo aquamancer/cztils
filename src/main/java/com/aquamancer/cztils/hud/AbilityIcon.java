@@ -1,9 +1,7 @@
 package com.aquamancer.cztils.hud;
 
 import com.aquamancer.czlib.api.abils.Rarity;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2i;
 
 import java.util.Map;
 

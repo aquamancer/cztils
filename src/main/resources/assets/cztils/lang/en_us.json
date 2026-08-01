@@ -4,8 +4,10 @@
   "text.autoconfig.cztils.category.hud": "Hud",
   "text.autoconfig.cztils.category.specs": "Specs",
 
-  "text.autoconfig.cztils.option.renderMode": "Render mode",
-  "text.autoconfig.cztils.option.renderMode.@Tooltip": "ALWAYS - Always shown\nTABLIST - Only shown while tablist is open",
+  "text.autoconfig.cztils.option.hudEnabled": "Enabled",
+
+  "text.autoconfig.cztils.option.inGameRenderMode": "In-game render mode",
+  "text.autoconfig.cztils.option.inGameRenderMode.@Tooltip": "ALWAYS - Always shown\nTABLIST - Only shown while tablist is open\nOFF - Disabled in-game",
 
   "text.autoconfig.cztils.option.renderInInventory": "Render in inventory",
   "text.autoconfig.cztils.option.renderInInventory.@Tooltip": "Render as a front object in inventory screens",

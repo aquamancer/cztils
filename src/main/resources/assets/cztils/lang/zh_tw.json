@@ -4,8 +4,10 @@
   "text.autoconfig.cztils.category.hud": "HUD",
   "text.autoconfig.cztils.category.specs": "專精",
 
-  "text.autoconfig.cztils.option.renderMode": "顯示模式",
-  "text.autoconfig.cztils.option.renderMode.@Tooltip": "ALWAYS - 永遠顯示\nTABLIST - 僅在玩家列表（Tab）開啟時顯示",
+  "text.autoconfig.cztils.option.hudEnabled": "啟用",
+
+  "text.autoconfig.cztils.option.inGameRenderMode": "遊戲內顯示模式",
+  "text.autoconfig.cztils.option.inGameRenderMode.@Tooltip": "ALWAYS - 永遠顯示\nTABLIST - 僅在玩家列表（Tab）開啟時顯示\nOFF - 在遊戲內停用",
 
   "text.autoconfig.cztils.option.renderInInventory": "在背包介面顯示",
   "text.autoconfig.cztils.option.renderInInventory.@Tooltip": "在背包介面中作為前景元素進行渲染",

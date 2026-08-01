@@ -1,8 +1,9 @@
 package com.aquamancer.cztils.config;
 
-import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.AbilitySpec;
+import com.aquamancer.czlib.api.abils.ActiveSlot;
+import com.aquamancer.czlib.api.abils.Spec;
 import com.aquamancer.cztils.config.custom.SpecConfig;
-import com.aquamancer.cztils.hud.AbilityIcon;
 
 import java.util.*;
 import java.util.function.Function;
