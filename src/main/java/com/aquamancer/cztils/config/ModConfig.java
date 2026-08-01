@@ -17,7 +17,20 @@ import java.util.*;
 
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
-    public ModConfig() {}
+    public enum RenderMode { ALWAYS, TABLIST }
+
+
+    @ConfigEntry.Category("hud")
+    public boolean hudEnabled = true;
+
+    @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    public RenderMode renderMode = RenderMode.ALWAYS;
+
+    @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
+    public boolean renderInInventory = true;
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
@@ -25,7 +38,7 @@ public class ModConfig implements ConfigData {
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
-    public float horizontalPos = 0.01f;
+    public float horizontalPos = 0.005f;
 
     @ConfigEntry.Category("hud")
     public float textScale = 1.0f;
@@ -69,6 +82,10 @@ public class ModConfig implements ConfigData {
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.ColorPicker(allowAlpha = true)
+    public int backgroundFill = 0x88000000;
+
+    @ConfigEntry.Category("hud")
+    @ConfigEntry.ColorPicker(allowAlpha = true)
     public int grayedOut = 0x80888888;
 
     @ConfigEntry.Category("hud")
@@ -102,4 +119,6 @@ public class ModConfig implements ConfigData {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     public @interface SpecConfigs {}
+
+    public ModConfig() {}
 }

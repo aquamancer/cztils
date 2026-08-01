@@ -16,14 +16,11 @@ public abstract class AbilityIcon extends HudElement {
             Rarity.LEGENDARY, 0xffe49b20,
             Rarity.TWISTED, 0xff703663
     );
-    public static final int DEFAULT_BORDER_COLOR = 0xff444444;
-//    public static final int DEFAULT_BORDER_COLOR = 0;
     public static final int CURSE_COLOR = 0xffc41300;
     public static final int PRISMATIC_COLOR = 0xff25f6f5;
-    public static final int BACKGROUND_FILL = 0x88000000;
 
-    protected Rectangle border;
-    protected Rectangle texture;
+    protected int w, h;
+    protected int borderWidth;
     protected int borderColor;
     protected int backgroundFill;
     protected int grayedOut;
@@ -31,8 +28,9 @@ public abstract class AbilityIcon extends HudElement {
 
     public AbilityIcon(int x, int y, int w, int h, int borderWidth) {
         super(x, y);
-        this.border = new Rectangle(x, y, w, h);
-        this.texture = new Rectangle(x + borderWidth, y + borderWidth, w - borderWidth*2, h - borderWidth*2);
+        this.w = w;
+        this.h = h;
+        this.borderWidth = borderWidth;
     }
 
     public AbilityIcon setBorderColor(int argb) {
@@ -46,6 +44,7 @@ public abstract class AbilityIcon extends HudElement {
     }
 
     public AbilityIcon setGrayedOut(int argb) {
+        this.backgroundFill = 0;
         this.grayedOut = argb;
         return this;
     }

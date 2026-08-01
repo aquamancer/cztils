@@ -4,13 +4,19 @@
   "text.autoconfig.cztils.category.hud": "Hud",
   "text.autoconfig.cztils.category.specs": "Specs",
 
+  "text.autoconfig.cztils.option.renderMode": "Render mode",
+  "text.autoconfig.cztils.option.renderMode.@Tooltip": "ALWAYS - Always shown\nTABLIST - Only shown while tablist is open",
+
+  "text.autoconfig.cztils.option.renderInInventory": "Render in inventory",
+  "text.autoconfig.cztils.option.renderInInventory.@Tooltip": "Render as a front object in inventory screens",
+
   "text.autoconfig.cztils.option.verticalPos": "Vertical Position",
   "text.autoconfig.cztils.option.verticalPos.@Tooltip": "Vertical screen position as a fraction of screen height",
 
   "text.autoconfig.cztils.option.horizontalPos": "Horizontal Position",
   "text.autoconfig.cztils.option.horizontalPos.@Tooltip": "Horizontal screen position as a fraction of screen width",
 
-  "text.autoconfig.cztils.option.textScale": "Text scale (px)",
+  "text.autoconfig.cztils.option.textScale": "Text scale",
 
   "text.autoconfig.cztils.option.nametag": "Nametag settings",
   "text.autoconfig.cztils.option.nametag.nametagFormat": "Nametag format string",

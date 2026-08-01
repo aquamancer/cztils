@@ -45,10 +45,10 @@ public class Hud {
         });
 
         Map<Event<ZenithApiUpdateEvents.PartyMemberUpdate>, Consumer<PartyMember>> listeners = Map.of(
-                ZenithApiUpdateEvents.ACTIVE, p -> party.get(p.getName()).setActives(p.getActives().values(), p.getSpecs()),
-                ZenithApiUpdateEvents.PASSIVE, player -> party.get(player.getName()).setPassives(player.getPassives().values(), player.getSpecs()),
-                ZenithApiUpdateEvents.CURSE, player -> party.get(player.getName()).setCurses(player.getCurses()),
-                ZenithApiUpdateEvents.GIFT, player -> party.get(player.getName()).setGifts(player.getGifts().values()),
+                ZenithApiUpdateEvents.ACTIVE, player -> party.get(player.getName()).setActives(player),
+                ZenithApiUpdateEvents.PASSIVE, player -> party.get(player.getName()).setPassives(player),
+                ZenithApiUpdateEvents.CURSE, player -> party.get(player.getName()).setCurses(player),
+                ZenithApiUpdateEvents.GIFT, player -> party.get(player.getName()).setGifts(player),
                 ZenithApiUpdateEvents.GRAVE_TIMER, player -> party.get(player.getName()).setGraveTimer(player.getGraveTimer()),
                 ZenithApiUpdateEvents.VZC, player -> {
                     party.get(player.getName()).setSpec(player.getCharmedSpec().orElse(null));

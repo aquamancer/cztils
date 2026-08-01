@@ -4,13 +4,19 @@
   "text.autoconfig.cztils.category.hud": "HUD",
   "text.autoconfig.cztils.category.specs": "专精",
 
+  "text.autoconfig.cztils.option.renderMode": "显示模式",
+  "text.autoconfig.cztils.option.renderMode.@Tooltip": "ALWAYS - 始终显示\nTABLIST - 仅在玩家列表（Tab）打开时显示",
+
+  "text.autoconfig.cztils.option.renderInInventory": "在背包界面显示",
+  "text.autoconfig.cztils.option.renderInInventory.@Tooltip": "在背包界面中作为前景元素进行渲染",
+
   "text.autoconfig.cztils.option.verticalPos": "垂直位置",
   "text.autoconfig.cztils.option.verticalPos.@Tooltip": "屏幕垂直位置（占屏幕高度的比例）",
 
   "text.autoconfig.cztils.option.horizontalPos": "水平位置",
   "text.autoconfig.cztils.option.horizontalPos.@Tooltip": "屏幕水平位置（占屏幕宽度的比例）",
 
-  "text.autoconfig.cztils.option.textScale": "文本缩放（像素）",
+  "text.autoconfig.cztils.option.textScale": "文本缩放",
 
   "text.autoconfig.cztils.option.nametag": "名称标签设置",
   "text.autoconfig.cztils.option.nametag.nametagFormat": "名称标签格式",

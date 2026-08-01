@@ -16,33 +16,42 @@ public class ItemAbilityIcon extends AbilityIcon {
     public ItemAbilityIcon(int x, int y, int w, int h, int borderWidth, ItemStack item) {
         super(x, y, w, h, borderWidth);
         this.item = item;
-        this.scaleX = this.texture.w / DEFAULT_SIZE;
-        this.scaleY = this.texture.h / DEFAULT_SIZE;
+        this.scaleX = (w - borderWidth*2) / DEFAULT_SIZE;
+        this.scaleY = (h - borderWidth*2) / DEFAULT_SIZE;
     }
 
     @Override
     public void render(DrawContext context) {
-        context.fill(RenderLayer.getGuiOverlay(), border.x, border.y, border.x2, border.y2, borderColor);
-        if (backgroundFill != 0) {
-            context.fill(RenderLayer.getGuiOverlay(), texture.x, texture.y, texture.x2, texture.y2, backgroundFill);
-        }
         MatrixStack matrices = context.getMatrices();
+
         matrices.push();
-        matrices.translate(texture.x, texture.y, 0);
+        matrices.translate(this.x, this.y, 0f);
+        context.fill(RenderLayer.getGuiOverlay(), 0, 0, this.w, this.h, borderColor);
+        matrices.translate(borderWidth, borderWidth, 0f);
+        if (backgroundFill != 0) {
+            context.fill(RenderLayer.getGuiOverlay(), 0, 0, this.w - borderWidth*2, this.h - borderWidth*2, backgroundFill);
+        }
+
+        matrices.push();
         matrices.scale(this.scaleX, this.scaleY, 1.0f);
         context.drawItem(this.item, 0, 0);
+        matrices.pop();
+
+        if (grayedOut != 0) {
+            context.fill(RenderLayer.getGuiOverlay(), 0, 0, this.w - borderWidth*2, this.h - borderWidth*2, grayedOut);
+        }
+        // draw subscript over gray-out so you can actually see it
         if (this.subscript != null) {
+            matrices.push();
+            matrices.scale(this.scaleX, this.scaleY, 1.0f);
             context.drawItemInSlot(
                     MinecraftClient.getInstance().textRenderer,
                     this.item,
                     0, 0,
                     this.subscript
             );
+            matrices.pop();
         }
         matrices.pop();
-        if (grayedOut != 0) {
-            context.fill(RenderLayer.getGuiOverlay(), texture.x, texture.y, texture.x2, texture.y2, grayedOut);
-        }
     }
-
 }

@@ -19,6 +19,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class Player extends HudElement {
+    private static final String ANCHOR = new String(Character.toChars(0x2693));
+
     private static final int PASSIVE_GAP_PX = 4;
 
     private Spec spec = null;
@@ -32,12 +34,8 @@ public class Player extends HudElement {
 
     private int iconSize;
 
-    // for rebuild()
-    private Collection<Active> lastActives = List.of();
-    private Collection<Passive> lastPassives = List.of();
-    private Collection<Gift> lastGifts = List.of();
-    private Collection<Curse> lastCurses = List.of();
-    private Set<Spec> lastSpecs = Set.of();
+    // only for rebuild()
+    private PartyMember cachedPlayer;
 
     public Player() {
         super(0, 0);
@@ -75,69 +73,74 @@ public class Player extends HudElement {
         return this;
     }
 
-    public Player setActives(Collection<Active> actives, Set<Spec> playerSpecs) {
-        this.lastActives = actives;
-        this.lastSpecs = playerSpecs;
+    public Player setActives(PartyMember player) {
+        this.cachedPlayer = player;
 
         Map<Active, Boolean> combined = new HashMap<>();
         for (Actives grayedOut : this.config.getAlwaysShow(Actives.class)) {
-            Optional<AbilitySpec> grayedOutSpec = AbilitySpec.fromAbilityName(grayedOut.getDisplayName());
-            if (grayedOutSpec.isEmpty()) continue;
-            combined.put(new Active(grayedOut, grayedOutSpec.get(), null), true);
+            combined.put(new Active(grayedOut, null), true);
         }
         for (Actives grayedOut : this.config.getShowIfHasSpec(Actives.class)) {
-            Optional<AbilitySpec> grayedOutSpec = AbilitySpec.fromAbilityName(grayedOut.getDisplayName());
-            if (grayedOutSpec.isEmpty()) continue;
-            if (grayedOutSpec.get().toSpec().isEmpty()) continue;
-            if (!playerSpecs.contains(grayedOutSpec.get().toSpec().get())) continue;
-            combined.put(new Active(grayedOut, grayedOutSpec.get(), null), true);
+            Optional<Spec> spec = grayedOut.getSpec().toSpec();
+            if (spec.isEmpty()) continue;
+            if (!player.getSpecs().contains(spec.get())) continue;
+            combined.put(new Active(grayedOut, null), true);
         }
-        actives.forEach(a -> {
-            if (combined.remove(a) != null || this.config.activeSet.contains(a.getAbility())) {
-                combined.put(a, false);
+        player.getActives().forEach((k, v) -> {
+            if (combined.remove(v) != null || this.config.activeSet.contains(v.getAbility())) {
+                combined.put(v, false);
             }
         });
 
         Comparator<Active> sorter = this.config.getActiveSorter();
         List<Map.Entry<Active, Boolean>> sorted = (sorter == null) ? new ArrayList<>(combined.entrySet()) : combined.entrySet().stream().sorted(Map.Entry.comparingByKey(sorter)).toList();
+        Map<AbilitySpec, Integer> counts = sorted.stream().collect(
+                () -> new EnumMap<>(AbilitySpec.class),
+                (map, entry) -> map.compute(entry.getKey().getSpec(), (k, v) -> (v == null) ? 1 : v + 1),
+                Map::putAll
+        );
 
         List<AbilityIcon> icons = new ArrayList<>();
         for (int i = 0; i < sorted.size(); i++) {
-            Actives active = sorted.get(i).getKey().getAbility();
-            Rarity rarity = sorted.get(i).getKey().getRarity();
-            Boolean grayed = sorted.get(i).getValue();
+            Active active = sorted.get(i).getKey();
+            Boolean isGrayedOut = sorted.get(i).getValue();
 
-            int iconX = i*(this.iconSize);
+            int iconX = i*this.iconSize;
             int iconY = 0;
-            // rarity == null if grayed
-            int borderColor = (rarity == null) ? AbilityIcon.DEFAULT_BORDER_COLOR : AbilityIcon.RARITY_COLORS.get(rarity);
-            icons.add(createIcon(iconX, iconY, this.iconSize, active, borderColor, grayed));
+            AbilityIcon icon = createIcon(iconX, iconY, this.iconSize, active, isGrayedOut);
+
+            if (isGrayedOut) {
+                PartyMember.BlockReason isBlocked = player.isBlocked(sorted.get(i).getKey(), true);
+                if (isBlocked == PartyMember.BlockReason.SLOT_TAKEN) {
+                    icon.setSubscript(ANCHOR);
+                } else if (isBlocked == PartyMember.BlockReason.MORE_THAN_4 || counts.get(active.getSpec()) > 4) {
+                    icon.setSubscript("4+");
+                }
+                // not handling slot blocked and 4+ at the same time
+            }
+            icons.add(icon);
         }
 
         this.actives = new AbilityBar(icons);
         return this;
     }
 
-    public Player setPassives(Collection<Passive> passives, Set<Spec> playerSpecs) {
-        this.lastPassives = passives;
-        this.lastSpecs = playerSpecs;
+    public Player setPassives(PartyMember player) {
+        this.cachedPlayer = player;
 
         Map<Passive, Boolean> combined = new HashMap<>();
         for (Passives grayedOut : this.config.getAlwaysShow(Passives.class)) {
-            Optional<AbilitySpec> grayedOutSpec = AbilitySpec.fromAbilityName(grayedOut.getDisplayName());
-            if (grayedOutSpec.isEmpty()) continue;
-            combined.put(new Passive(grayedOut, grayedOutSpec.get(), null), true);
+            combined.put(new Passive(grayedOut, null), true);
         }
         for (Passives grayedOut : this.config.getShowIfHasSpec(Passives.class)) {
-            Optional<AbilitySpec> grayedOutSpec = AbilitySpec.fromAbilityName(grayedOut.getDisplayName());
-            if (grayedOutSpec.isEmpty()) continue;
-            if (grayedOutSpec.get().toSpec().isEmpty()) continue;
-            if (!playerSpecs.contains(grayedOutSpec.get().toSpec().get())) continue;
-            combined.put(new Passive(grayedOut, grayedOutSpec.get(), null), true);
+            Optional<Spec> spec = grayedOut.getSpec().toSpec();
+            if (spec.isEmpty()) continue;
+            if (!player.getSpecs().contains(spec.get())) continue;
+            combined.put(new Passive(grayedOut, null), true);
         }
-        passives.forEach(a -> {
-            if (combined.remove(a) != null || this.config.passiveSet.contains(a.getAbility())) {
-                combined.put(a, false);
+        player.getPassives().forEach((k, v) -> {
+            if (combined.remove(v) != null || this.config.passiveSet.contains(v.getAbility())) {
+                combined.put(v, false);
             }
         });
 
@@ -146,45 +149,49 @@ public class Player extends HudElement {
 
         List<AbilityIcon> icons = new ArrayList<>();
         for (int i = 0; i < sorted.size(); i++) {
-            Passives passive = sorted.get(i).getKey().getAbility();
-            Rarity rarity = sorted.get(i).getKey().getRarity();
-            Boolean grayed = sorted.get(i).getValue();
-
-            // relative to ability bar
-            int iconX = i*(this.iconSize);
+            int iconX = i*this.iconSize;
             int iconY = 0;
-            int borderColor = (rarity == null) ? AbilityIcon.DEFAULT_BORDER_COLOR : AbilityIcon.RARITY_COLORS.get(rarity);
-            icons.add(createIcon(iconX, iconY, this.iconSize, passive, borderColor, grayed));
+            icons.add(createIcon(iconX, iconY, this.iconSize, sorted.get(i).getKey(), sorted.get(i).getValue()));
         }
 
         this.passives = new AbilityBar(icons);
         return this;
     }
 
-    public Player setCurses(Collection<Curse> curses) {
-        this.lastCurses = curses;
+    public Player setCurses(PartyMember player) {
+        this.cachedPlayer = player;
 
-        curses = curses.stream().filter(c -> this.config.curseSet.contains(c)).toList();
+        List<Curse> curses = player.getCurses().stream().filter(c -> this.config.curseSet.contains(c)).toList();
 
         List<AbilityIcon> icons = new ArrayList<>(curses.size());
         int i = 0;
         for (Curse curse : curses) {
-            icons.add(createIcon(i*this.iconSize, 0, this.iconSize, curse, AbilityIcon.CURSE_COLOR, false));
+            AbilityIcon icon = new ItemAbilityIcon(
+                    i*this.iconSize, 0,
+                    this.iconSize, this.iconSize,
+                    Cztils.config.borderWidth,
+                    ZenithTextures.getItem(curse).orElse(new ItemStack(Items.BARRIER))
+            );
+            icon.setBorderColor(AbilityIcon.CURSE_COLOR);
+            icon.setBackgroundFill(Cztils.config.backgroundFill);
+            if (curse == Curse.GREED) {
+                icon.setSubscript('-' + String.valueOf(player.getGreedAmount()*5) + '%');
+            }
             i++;
         }
         this.curses = new AbilityBar(icons);
         return this;
     }
 
-    public Player setGifts(Collection<Gift> gifts) {
-        this.lastGifts = gifts;
+    public Player setGifts(PartyMember player) {
+        this.cachedPlayer = player;
 
-        gifts = gifts.stream().filter(g -> this.config.giftSet.contains(g.getAbility())).toList();
+        List<Gift> gifts = player.getGifts().values().stream().filter(g -> this.config.giftSet.contains(g.getAbility())).toList();
 
         List<AbilityIcon> icons = new ArrayList<>(gifts.size());
         int i = 0;
         for (Gift gift : gifts) {
-            AbilityIcon icon = createIcon(i*this.iconSize, 0, this.iconSize, gift.getAbility(), AbilityIcon.PRISMATIC_COLOR, false);
+            AbilityIcon icon = createIcon(i*this.iconSize, 0, this.iconSize, gift, false);
             String counter = (gift.getCounter() == 0) ? null : String.valueOf(gift.getCounter());
             icon.setSubscript(counter);
             icons.add(icon);
@@ -195,19 +202,24 @@ public class Player extends HudElement {
         return this;
     }
 
-    private static AbilityIcon createIcon(int x, int y, int iconSize, Enum<?> ability, int borderColor, boolean grayedOut) {
+    private static <T extends HasAbility> AbilityIcon createIcon(int x, int y, int iconSize, T ability, boolean grayedOut) {
         AbilityIcon icon = new ItemAbilityIcon(
                 x, y,
                 iconSize, iconSize,
                 Cztils.config.borderWidth,
-                ZenithTextures.getItem(ability).orElse(new ItemStack(Items.AIR))
+                ZenithTextures.getItem(ability.getAbility()).orElse(new ItemStack(Items.BARRIER))
         );
+        int borderColor = Cztils.config.grayedOut;
+        if (ability instanceof Gift) {
+            borderColor = AbilityIcon.PRISMATIC_COLOR;
+        }
+        if (ability instanceof HasRarity a && a.getRarity() != null) {
+            borderColor = AbilityIcon.RARITY_COLORS.get(a.getRarity());
+        }
+        icon.setBorderColor(borderColor);
+        icon.setBackgroundFill(Cztils.config.backgroundFill);
         if (grayedOut) {
-            icon.setBorderColor(Cztils.config.grayedOut);
             icon.setGrayedOut(Cztils.config.grayedOut);
-        } else {
-            icon.setBackgroundFill(AbilityIcon.BACKGROUND_FILL);
-            icon.setBorderColor(borderColor);
         }
         return icon;
     }
@@ -250,9 +262,11 @@ public class Player extends HudElement {
         this.iconSize = Cztils.config.iconSize;
         this.nametag.setFormat(Cztils.config.nametag.nametagFormat);
         this.nametag.rebuild();
-        this.setActives(this.lastActives, this.lastSpecs);
-        this.setCurses(this.lastCurses);
-        this.setGifts(this.lastGifts);
-        this.setPassives(this.lastPassives, this.lastSpecs);
+        if (cachedPlayer != null) {
+            this.setActives(cachedPlayer);
+            this.setCurses(cachedPlayer);
+            this.setGifts(cachedPlayer);
+            this.setPassives(cachedPlayer);
+        }
     }
 }
