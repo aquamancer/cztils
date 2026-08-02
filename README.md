@@ -1,4 +1,6 @@
 ### Building
+Place `czlib-X.X.X.jar` in the directory `libs/`
+
 Windows:
 `gradlew build`
 
