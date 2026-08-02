@@ -12,8 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ScreenMixin {
     @Inject(at = @At("TAIL"), method = "render(Lnet/minecraft/client/gui/DrawContext;IIF)V")
     private void onRender(DrawContext context, int mouseX, int mouseY, float tickDelta, CallbackInfo ci) {
-        if (Cztils.config.renderInInventory && Cztils.config.hudEnabled) {
-            Cztils.hud.render(context);
-        }
+        Cztils.hud.render(context, Cztils.config.inventoryRenderMode);
     }
 }

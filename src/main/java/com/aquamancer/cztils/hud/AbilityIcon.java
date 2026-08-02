@@ -1,6 +1,7 @@
 package com.aquamancer.cztils.hud;
 
 import com.aquamancer.czlib.api.abils.Rarity;
+import com.aquamancer.cztils.Cztils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -43,6 +44,7 @@ public abstract class AbilityIcon extends HudElement {
 
     public AbilityIcon setGrayedOut(int argb) {
         this.backgroundFill = 0;
+        this.borderColor = argb;
         this.grayedOut = argb;
         return this;
     }

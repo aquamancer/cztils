@@ -26,7 +26,6 @@ public class AbilityBar extends HudElement {
         return this.abilities;
     }
 
-    @Override
     public void render(DrawContext context) {
         MatrixStack matrices = context.getMatrices();
         matrices.push();

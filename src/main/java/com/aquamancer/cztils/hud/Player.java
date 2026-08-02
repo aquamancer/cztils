@@ -15,8 +15,9 @@ import java.util.*;
 
 public class Player extends HudElement {
     private static final String ANCHOR = new String(Character.toChars(0x2693));
-
     private static final int PASSIVE_GAP_PX = 4;
+
+    public enum RenderMode { ALL, NAMETAG, OFF }
 
     private Spec spec = null;
     private SpecConfig config = Cztils.config.specConfigs.get(null);
@@ -96,24 +97,30 @@ public class Player extends HudElement {
         );
 
         List<AbilityIcon> icons = new ArrayList<>();
-        for (int i = 0; i < sorted.size(); i++) {
-            Active active = sorted.get(i).getKey();
-            Boolean isGrayedOut = sorted.get(i).getValue();
+        int iconX = 0;
+        for (Map.Entry<Active, Boolean> entry : sorted) {
+            Active active = entry.getKey();
+            Boolean isGrayedOut = entry.getValue();
 
-            int iconX = i*this.iconSize;
             int iconY = 0;
-            AbilityIcon icon = createIcon(iconX, iconY, this.iconSize, active, isGrayedOut);
+            AbilityIcon icon = createIcon(iconX, 0, this.iconSize, active, isGrayedOut);
 
             if (isGrayedOut) {
-                PartyMember.BlockReason isBlocked = player.isBlocked(sorted.get(i).getKey(), true);
+                PartyMember.BlockReason isBlocked = player.isBlocked(active, true);
                 if (isBlocked == PartyMember.BlockReason.SLOT_TAKEN) {
                     icon.setSubscript(ANCHOR);
                 } else if (isBlocked == PartyMember.BlockReason.MORE_THAN_4 || counts.get(active.getSpec()) > 4) {
                     icon.setSubscript("4+");
                 }
-                // not handling slot blocked and 4+ at the same time
             }
             icons.add(icon);
+            iconX += this.iconSize;
+        }
+
+        if (Cztils.config.showMissingLifelines && sorted.stream().noneMatch(entry -> entry.getKey().getSlot() == ActiveSlot.LIFELINE)) {
+            icons.add(new ItemAbilityIcon(iconX, 0, this.iconSize, this.iconSize, Cztils.config.borderWidth, new ItemStack(Items.TOTEM_OF_UNDYING))
+                    .setGrayedOut(Cztils.config.grayedOut)
+            );
         }
 
         this.actives = new AbilityBar(icons);
@@ -170,7 +177,9 @@ public class Player extends HudElement {
             icon.setBorderColor(AbilityIcon.CURSE_COLOR);
             icon.setBackgroundFill(Cztils.config.backgroundFill);
             if (curse == Curse.GREED) {
-                icon.setSubscript('-' + String.valueOf(player.getGreedAmount()*5) + '%');
+                icon.setSubscript(String.valueOf(player.getGreedAmount()*5) + '%');
+            } else if (curse == Curse.PRIDE) {
+                icon.setSubscript(String.valueOf(player.getPrideAmount()*10) + '%');
             }
             icons.add(icon);
             i++;
@@ -224,33 +233,34 @@ public class Player extends HudElement {
         return this.spec;
     }
 
-    @Override
-    public void render(DrawContext context) {
+    public void render(DrawContext context, RenderMode mode) {
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(this.x, this.y, 0f);
 
         matrices.push();
-        matrices.scale(Cztils.config.textScale, Cztils.config.textScale, 0f);
+        matrices.scale(Cztils.config.nametag.textScale, Cztils.config.nametag.textScale, 0f);
         this.nametag.render(context);
         matrices.pop();
 
-        float textHeight = 10*Cztils.config.textScale;
-        matrices.translate(0f, textHeight, 0f);
-        matrices.translate(Cztils.config.activesOffsetX, Cztils.config.activesOffsetY, 0f);
-        this.actives.render(context);
+        if (mode == RenderMode.ALL) {
+            float textHeight = 10 * Cztils.config.nametag.textScale;
+            matrices.translate(0f, textHeight, 0f);
+            matrices.translate(Cztils.config.activesOffsetX, Cztils.config.activesOffsetY, 0f);
+            this.actives.render(context);
 
-        matrices.translate(0f, Cztils.config.iconSize, 0f);
-        matrices.translate(Cztils.config.passivesOffsetX, Cztils.config.passivesOffsetY, 0f);
-        this.curses.render(context);
-        if (this.curses.size() > 0) {
-            matrices.translate(this.curses.size() * this.iconSize + PASSIVE_GAP_PX, 0f, 0f);
+            matrices.translate(0f, Cztils.config.iconSize, 0f);
+            matrices.translate(Cztils.config.passivesOffsetX, Cztils.config.passivesOffsetY, 0f);
+            this.curses.render(context);
+            if (this.curses.size() > 0) {
+                matrices.translate(this.curses.size() * this.iconSize + PASSIVE_GAP_PX, 0f, 0f);
+            }
+            this.gifts.render(context);
+            if (this.gifts.size() > 0) {
+                matrices.translate(this.gifts.size() * this.iconSize + PASSIVE_GAP_PX, 0f, 0f);
+            }
+            this.passives.render(context);
         }
-        this.gifts.render(context);
-        if (this.gifts.size() > 0) {
-            matrices.translate(this.gifts.size() * this.iconSize + PASSIVE_GAP_PX, 0f, 0f);
-        }
-        this.passives.render(context);
         matrices.pop();
     }
 

@@ -3,6 +3,8 @@ package com.aquamancer.cztils.config;
 import com.aquamancer.czlib.api.abils.Spec;
 import com.aquamancer.cztils.Cztils;
 import com.aquamancer.cztils.config.custom.SpecConfig;
+import com.aquamancer.cztils.hud.Hud;
+import com.aquamancer.cztils.hud.Player;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
@@ -15,30 +17,36 @@ import java.util.Map;
 
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
-    public enum InGameRenderMode { ALWAYS, TABLIST, OFF }
-
     @ConfigEntry.Category("hud")
     public boolean hudEnabled = true;
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public InGameRenderMode inGameRenderMode = InGameRenderMode.ALWAYS;
+    public Hud.PositionAnchor positionAnchor = Hud.PositionAnchor.CENTERED;
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
-    public boolean renderInInventory = true;
-
-    @ConfigEntry.Category("hud")
-    @ConfigEntry.Gui.Tooltip
-    public float verticalPos = 0.35f;
+    public float verticalPos = 0.45f;
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
     public float horizontalPos = 0.005f;
 
     @ConfigEntry.Category("hud")
-    public float textScale = 1.0f;
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    public Player.RenderMode inGameRenderMode = Player.RenderMode.ALL;
+
+    @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    public Player.RenderMode tabPressedRenderMode = Player.RenderMode.ALL;
+
+    @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    public Player.RenderMode inventoryRenderMode = Player.RenderMode.ALL;
 
     @ConfigEntry.Gui.CollapsibleObject
     @ConfigEntry.Category("hud")
@@ -47,6 +55,7 @@ public class ModConfig implements ConfigData {
     public static class NametagEntry {
         @ConfigEntry.Gui.Tooltip
         public String nametagFormat = "{name} {spec} - {grave}: {hp}";
+        public float textScale = 1.0f;
         public boolean showHpAsPercentage = false;
         public double midHp = 0.7;
         public double lowHp = 0.5;
@@ -108,6 +117,11 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
     public boolean showSelf = true;
+
+
+    @ConfigEntry.Category("specs")
+    @ConfigEntry.Gui.Tooltip
+    public boolean showMissingLifelines = true;
 
     @ConfigEntry.Category("specs")
     @SpecConfigs

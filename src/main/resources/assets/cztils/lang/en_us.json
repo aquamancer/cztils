@@ -6,11 +6,8 @@
 
   "text.autoconfig.cztils.option.hudEnabled": "Enabled",
 
-  "text.autoconfig.cztils.option.inGameRenderMode": "In-game render mode",
-  "text.autoconfig.cztils.option.inGameRenderMode.@Tooltip": "ALWAYS - Always shown\nTABLIST - Only shown while tablist is open\nOFF - Disabled in-game",
-
-  "text.autoconfig.cztils.option.renderInInventory": "Render in inventory",
-  "text.autoconfig.cztils.option.renderInInventory.@Tooltip": "Render as a front object in inventory screens",
+  "text.autoconfig.cztils.option.positionAnchor": "Anchor position",
+  "text.autoconfig.cztils.option.positionAnchor.@Tooltip": "CENTERED - The HUD position is always its center, growing equally upward and downward\nTOP - The HUD position is always the top, growing downward",
 
   "text.autoconfig.cztils.option.verticalPos": "Vertical Position",
   "text.autoconfig.cztils.option.verticalPos.@Tooltip": "Vertical screen position as a fraction of screen height",
@@ -18,11 +15,19 @@
   "text.autoconfig.cztils.option.horizontalPos": "Horizontal Position",
   "text.autoconfig.cztils.option.horizontalPos.@Tooltip": "Horizontal screen position as a fraction of screen width",
 
-  "text.autoconfig.cztils.option.textScale": "Text scale",
+  "text.autoconfig.cztils.option.inGameRenderMode": "In-game render mode",
+  "text.autoconfig.cztils.option.inGameRenderMode.@Tooltip": "Elements to be displayed in-game\n    ALL - Nametag and icons\n    NAMETAG - Nametag\n    OFF - None\nIf rendering icons is too laggy, you can set this to Nametag and use the other render modes",
+
+  "text.autoconfig.cztils.option.tabPressedRenderMode": "Tab pressed render mode",
+  "text.autoconfig.cztils.option.tabPressedRenderMode.@Tooltip": "Elements to be displayed while tab is pressed\nALL - Nametag and icons\nNAMETAG - Nametag\nOFF - None",
+
+  "text.autoconfig.cztils.option.inventoryRenderMode": "Inventory render mode",
+  "text.autoconfig.cztils.option.inventoryRenderMode.@Tooltip": "Elements to be displayed in an inventory screen\nALL - Nametag and icons\nNAMETAG - Nametag\nOFF - None",
 
   "text.autoconfig.cztils.option.nametag": "Nametag settings",
   "text.autoconfig.cztils.option.nametag.nametagFormat": "Nametag format string",
   "text.autoconfig.cztils.option.nametag.nametagFormat.@Tooltip": "Supports the following replacements:\n    {name}\n    {spec}\n    {hp}\n    {grave}",
+  "text.autoconfig.cztils.option.nametag.textScale": "Text scale",
   "text.autoconfig.cztils.option.nametag.showHpAsPercentage": "Show HP as percentage",
   "text.autoconfig.cztils.option.nametag.midHp": "Medium HP threshold",
   "text.autoconfig.cztils.option.nametag.lowHp": "Low HP threshold",
@@ -42,7 +47,8 @@
 
   "text.autoconfig.cztils.option.iconSize": "Icon size (px)",
   "text.autoconfig.cztils.option.borderWidth": "Icon border thickness (px)",
-  "text.autoconfig.cztils.option.grayedOut": "Grayed-out color",
+  "text.autoconfig.cztils.option.backgroundFill": "Background fill color (ARGB)",
+  "text.autoconfig.cztils.option.grayedOut": "Grayed-out color (ARGB)",
 
   "text.autoconfig.cztils.option.activesOffsetX": "Actives offset X (px)",
   "text.autoconfig.cztils.option.activesOffsetX.@Tooltip": "Horizontal offset applied to active ability icons",
@@ -61,6 +67,11 @@
 
   "text.autoconfig.cztils.option.showSelf": "Show self",
   "text.autoconfig.cztils.option.showSelf.@Tooltip": "Show self in the HUD",
+
+
+
+  "text.autoconfig.cztils.option.showMissingLifelines": "Always show missing lifelines",
+  "text.autoconfig.cztils.option.showMissingLifelines.@Tooltip": "Shown as a Totem of Undying",
 
   "text.autoconfig.cztils.option.specConfig.nameColor": "Player name color",
   "text.autoconfig.cztils.option.specConfig.name": "Spec display name",

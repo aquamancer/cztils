@@ -15,6 +15,8 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class Hud {
+    public enum PositionAnchor { CENTERED, TOP }
+
     public final Map<String, Player> party = new HashMap<>();
     private List<Player> sorted = List.of();
 
@@ -43,8 +45,14 @@ public class Hud {
         });
 
         Map<Event<ZenithApiUpdateEvents.PartyMemberUpdate>, Consumer<PartyMember>> listeners = Map.of(
-                ZenithApiUpdateEvents.ACTIVE, player -> party.get(player.getName()).setActives(player),
-                ZenithApiUpdateEvents.PASSIVE, player -> party.get(player.getName()).setPassives(player),
+                ZenithApiUpdateEvents.ACTIVE, player -> {
+                    party.get(player.getName()).setActives(player);
+                    party.get(player.getName()).setCurses(player);  // for greed/pride
+                },
+                ZenithApiUpdateEvents.PASSIVE, player -> {
+                    party.get(player.getName()).setPassives(player);
+                    party.get(player.getName()).setCurses(player);  // for greed/pride
+                },
                 ZenithApiUpdateEvents.CURSE, player -> party.get(player.getName()).setCurses(player),
                 ZenithApiUpdateEvents.GIFT, player -> party.get(player.getName()).setGifts(player),
                 ZenithApiUpdateEvents.GRAVE_TIMER, player -> party.get(player.getName()).setGraveTimer(player.getGraveTimer()),
@@ -87,14 +95,27 @@ public class Hud {
         party.values().forEach(Player::rebuild);
     }
 
-    public void render(DrawContext context) {
+    public void render(DrawContext context, Player.RenderMode renderMode) {
+        if (renderMode == Player.RenderMode.OFF) return;
+        if (this.sorted.isEmpty()) return;
+
+        float playerHeight = 10*Cztils.config.nametag.textScale;
+        if (renderMode == Player.RenderMode.ALL) {
+            playerHeight += 2*Cztils.config.iconSize + Cztils.config.playerSpacing;
+        }
+
+        float xi = context.getScaledWindowWidth()*Cztils.config.horizontalPos;
+        float yi = context.getScaledWindowHeight()*Cztils.config.verticalPos;
+        if (Cztils.config.positionAnchor == PositionAnchor.CENTERED) {
+            yi -= this.sorted.size()/2.0f*playerHeight;
+        }
+
         MatrixStack matrices = context.getMatrices();
         matrices.push();
-        matrices.translate(context.getScaledWindowWidth() * Cztils.config.horizontalPos, context.getScaledWindowHeight() * Cztils.config.verticalPos, 0f);
+        matrices.translate(xi, yi, 0f);
         for (int i = 0; i < sorted.size(); i++) {
-            double y = 10*Cztils.config.textScale + 2*Cztils.config.iconSize + Cztils.config.playerSpacing;
-            matrices.translate(0f, y, 0f);
-            sorted.get(i).render(context);
+            sorted.get(i).render(context, renderMode);
+            matrices.translate(0f, playerHeight, 0f);
         }
         matrices.pop();
     }

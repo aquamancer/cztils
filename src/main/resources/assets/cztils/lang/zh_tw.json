@@ -6,11 +6,8 @@
 
   "text.autoconfig.cztils.option.hudEnabled": "啟用",
 
-  "text.autoconfig.cztils.option.inGameRenderMode": "遊戲內顯示模式",
-  "text.autoconfig.cztils.option.inGameRenderMode.@Tooltip": "ALWAYS - 永遠顯示\nTABLIST - 僅在玩家列表（Tab）開啟時顯示\nOFF - 在遊戲內停用",
-
-  "text.autoconfig.cztils.option.renderInInventory": "在背包介面顯示",
-  "text.autoconfig.cztils.option.renderInInventory.@Tooltip": "在背包介面中作為前景元素進行渲染",
+  "text.autoconfig.cztils.option.positionAnchor": "錨點位置",
+  "text.autoconfig.cztils.option.positionAnchor.@Tooltip": "CENTERED - HUD 位置始終以中心點為基準，向上與向下等量擴展\nTOP - HUD 位置始終以頂部為基準，向下擴展",
 
   "text.autoconfig.cztils.option.verticalPos": "垂直位置",
   "text.autoconfig.cztils.option.verticalPos.@Tooltip": "螢幕垂直位置（相對於螢幕高度的比例）",
@@ -18,11 +15,19 @@
   "text.autoconfig.cztils.option.horizontalPos": "水平位置",
   "text.autoconfig.cztils.option.horizontalPos.@Tooltip": "螢幕水平位置（相對於螢幕寬度的比例）",
 
-  "text.autoconfig.cztils.option.textScale": "文字縮放",
+  "text.autoconfig.cztils.option.inGameRenderMode": "遊戲內顯示模式",
+  "text.autoconfig.cztils.option.inGameRenderMode.@Tooltip": "遊戲內顯示的元素\n    ALL - 名稱標籤與圖示\n    NAMETAG - 僅名稱標籤\n    OFF - 不顯示\n如果渲染圖示造成延遲，可以將此項設為 NAMETAG，並使用其他顯示模式",
+
+  "text.autoconfig.cztils.option.tabPressedRenderMode": "按下 Tab 時的顯示模式",
+  "text.autoconfig.cztils.option.tabPressedRenderMode.@Tooltip": "按下 Tab 時顯示的元素\nALL - 名稱標籤與圖示\nNAMETAG - 僅名稱標籤\nOFF - 不顯示",
+
+  "text.autoconfig.cztils.option.inventoryRenderMode": "背包介面顯示模式",
+  "text.autoconfig.cztils.option.inventoryRenderMode.@Tooltip": "在背包介面中顯示的元素\nALL - 名稱標籤與圖示\nNAMETAG - 僅名稱標籤\nOFF - 不顯示",
 
   "text.autoconfig.cztils.option.nametag": "名稱標籤設定",
   "text.autoconfig.cztils.option.nametag.nametagFormat": "名稱標籤格式",
   "text.autoconfig.cztils.option.nametag.nametagFormat.@Tooltip": "支援以下佔位符：\n    {name}\n    {spec}\n    {hp}\n    {grave}",
+  "text.autoconfig.cztils.option.nametag.textScale": "文字縮放",
   "text.autoconfig.cztils.option.nametag.showHpAsPercentage": "以百分比顯示生命值",
   "text.autoconfig.cztils.option.nametag.midHp": "中等生命值門檻",
   "text.autoconfig.cztils.option.nametag.lowHp": "低生命值門檻",
@@ -42,6 +47,7 @@
 
   "text.autoconfig.cztils.option.iconSize": "圖示大小（像素）",
   "text.autoconfig.cztils.option.borderWidth": "圖示邊框寬度（像素）",
+  "text.autoconfig.cztils.option.backgroundFill": "背景填滿顏色（ARGB）",
   "text.autoconfig.cztils.option.grayedOut": "灰顯顏色",
 
   "text.autoconfig.cztils.option.activesOffsetX": "主動技能偏移 X（像素）",
@@ -61,6 +67,11 @@
 
   "text.autoconfig.cztils.option.showSelf": "顯示自己",
   "text.autoconfig.cztils.option.showSelf.@Tooltip": "在 HUD 中顯示自己",
+
+
+
+  "text.autoconfig.cztils.option.showMissingLifelines": "永遠顯示未取得的保命道具",
+  "text.autoconfig.cztils.option.showMissingLifelines.@Tooltip": "以不死圖騰顯示",
 
   "text.autoconfig.cztils.option.specConfig.nameColor": "玩家名稱顏色",
   "text.autoconfig.cztils.option.specConfig.name": "專精顯示名稱",

@@ -35,11 +35,15 @@ public class Cztils implements ModInitializer {
 		});
 
 		HudRenderCallback.EVENT.register(((context, tickDelta) -> {
-			if (!Cztils.config.hudEnabled || Cztils.config.inGameRenderMode == ModConfig.InGameRenderMode.OFF) return;
+			if (!Cztils.config.hudEnabled) return;
 			MinecraftClient client = MinecraftClient.getInstance();
-			if (Cztils.config.renderInInventory && client.currentScreen instanceof HandledScreen<?>) return;
-			if (Cztils.config.inGameRenderMode == ModConfig.InGameRenderMode.TABLIST && !client.options.playerListKey.isPressed()) return;
-			hud.render(context);
+			if (client.currentScreen instanceof HandledScreen<?>) return;
+
+			if (client.options.playerListKey.isPressed()) {
+				hud.render(context, Cztils.config.tabPressedRenderMode);
+			} else {
+				hud.render(context, Cztils.config.inGameRenderMode);
+			}
 		}));
 	}
 
