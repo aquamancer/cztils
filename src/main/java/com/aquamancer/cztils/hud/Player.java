@@ -168,14 +168,12 @@ public class Player extends HudElement {
         List<AbilityIcon> icons = new ArrayList<>(curses.size());
         int i = 0;
         for (Curse curse : curses) {
-            AbilityIcon icon = new ItemAbilityIcon(
+            AbilityIcon icon = createIcon(
                     i*this.iconSize, 0,
-                    this.iconSize, this.iconSize,
-                    Cztils.config.borderWidth,
-                    ZenithTextures.getItem(curse).orElse(new ItemStack(Items.BARRIER))
+                    this.iconSize,
+                    curse,
+                    false
             );
-            icon.setBorderColor(AbilityIcon.CURSE_COLOR);
-            icon.setBackgroundFill(Cztils.config.backgroundFill);
             if (curse == Curse.GREED) {
                 icon.setSubscript(String.valueOf(player.getGreedAmount()*5) + '%');
             } else if (curse == Curse.PRIDE) {
@@ -217,9 +215,10 @@ public class Player extends HudElement {
         int borderColor = Cztils.config.grayedOut;
         if (ability instanceof Gift) {
             borderColor = AbilityIcon.PRISMATIC_COLOR;
-        }
-        if (ability instanceof HasRarity a && a.getRarity() != null) {
+        } else if (ability instanceof HasRarity a && a.getRarity() != null) {
             borderColor = AbilityIcon.RARITY_COLORS.get(a.getRarity());
+        } else if (ability instanceof Curse) {
+            borderColor = AbilityIcon.CURSE_COLOR;
         }
         icon.setBorderColor(borderColor);
         icon.setBackgroundFill(Cztils.config.backgroundFill);
