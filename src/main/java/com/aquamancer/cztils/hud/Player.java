@@ -205,7 +205,7 @@ public class Player extends HudElement {
         return this;
     }
 
-    private static <T extends HasAbility> AbilityIcon createIcon(int x, int y, int iconSize, T ability, boolean grayedOut) {
+    private static <T extends Ability> AbilityIcon createIcon(int x, int y, int iconSize, T ability, boolean grayedOut) {
         AbilityIcon icon = new ItemAbilityIcon(
                 x, y,
                 iconSize, iconSize,
