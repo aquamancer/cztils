@@ -214,7 +214,7 @@ public class Player extends HudElement {
         );
         int borderColor = Cztils.config.grayedOut;
         if (ability instanceof Gift) {
-            borderColor = AbilityIcon.PRISMATIC_COLOR;
+            borderColor = AbilityIcon.GIFT_COLOR;
         } else if (ability instanceof HasRarity a && a.getRarity() != null) {
             borderColor = AbilityIcon.RARITY_COLORS.get(a.getRarity());
         } else if (ability instanceof Curse) {

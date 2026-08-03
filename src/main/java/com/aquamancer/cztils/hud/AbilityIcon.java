@@ -1,7 +1,6 @@
 package com.aquamancer.cztils.hud;
 
 import com.aquamancer.czlib.api.abils.Rarity;
-import com.aquamancer.cztils.Cztils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -16,7 +15,7 @@ public abstract class AbilityIcon extends HudElement {
             Rarity.TWISTED, 0xff703663
     );
     public static final int CURSE_COLOR = 0xffc41300;
-    public static final int PRISMATIC_COLOR = 0xff25f6f5;
+    public static final int GIFT_COLOR = 0xff25f6f5;
 
     protected int w, h;
     protected int borderWidth;
