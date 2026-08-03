@@ -2,7 +2,7 @@
 Place `czlib-X.X.X.jar` in the directory `libs/`
 
 Windows:
-`gradlew build`
+`gradlew.bat build`
 
 Linux: `./gradlew build`
 
