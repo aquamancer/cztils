@@ -49,8 +49,8 @@ public class SpecConfig {
     public List<String> giftList;
     public List<String> curseList;
     // set view of the above, actually used in code
-    public transient Set<Enum<?>> alwaysShowSet;
-    public transient Set<Enum<?>> showIfHasSpecSet;
+    public transient Set<Ability> alwaysShowSet;
+    public transient Set<Ability> showIfHasSpecSet;
     public transient Set<Actives> activeSet;
     public transient Set<Passives> passiveSet;
     public transient Set<Gifts> giftSet;
@@ -67,10 +67,10 @@ public class SpecConfig {
         this.curseSet = fillAbilitySet(this.curseList, Curse.class, curseListMode == IconListMode.BLOCKLIST);
     }
 
-    private static Set<Enum<?>> fillAbilitySet(List<String> names, Function<Enum<?>, Boolean> excludeIf) {
-        Set<Enum<?>> set = new HashSet<>();
+    private static Set<Ability> fillAbilitySet(List<String> names, Function<Ability, Boolean> excludeIf) {
+        Set<Ability> set = new HashSet<>();
         for (String name : names) {
-            Optional<Enum<?>> ability = AbilityUtils.fromString(name);
+            Optional<Ability> ability = AbilityUtils.fromString(name);
             if (ability.isEmpty()) continue;
             if (!excludeIf.apply(ability.get())) {
                 set.add(ability.get());

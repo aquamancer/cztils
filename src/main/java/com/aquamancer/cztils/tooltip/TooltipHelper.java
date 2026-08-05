@@ -75,6 +75,25 @@ public class TooltipHelper {
         return result;
     }
 
+    private static MutableText createAbilityList(List<Ability> abilities, int color) {
+        MutableText result = Text.empty();
+        for (int i = 0; i < abilities.size(); i++) {
+            Ability ability = abilities.get(i);
+            MutableText word;
+            if (i % 4 == 0) {
+                if (i != 0) {
+                    result.append(",\n");
+                }
+                word = Text.literal(ability.getAbility().name());
+            } else {
+                word = Text.literal(", ").append(ability.getAbility().name());
+            }
+            word.styled(s -> s.withColor(color));
+            result.append(word);
+        }
+        return result;
+    }
+
     static {
         // gifts
         abilitySelectOperations.put(Gifts.BROODMOTHERS_WEBBING, (tooltip, api) -> {
@@ -99,12 +118,12 @@ public class TooltipHelper {
             Optional<PartyMember> self = api.getSelf();
             if (self.isEmpty()) return;
             MutableText current = Text.literal("Current trees: ");
-            current.append(createSpecList(self.get().getSpecs().stream().toList()));
+            current.append(createSpecList(List.copyOf(self.get().getSpecs())));
             tooltip.add(current);
             tooltip.add(Text.empty());
 
             MutableText after = Text.literal("New trees: ");
-            after.append(createSpecList(EnumSet.complementOf(self.get().getSpecs()).stream().toList()));
+            after.append(createSpecList(List.copyOf(EnumSet.complementOf(self.get().getSpecs()))));
             tooltip.add(after);
         });
 
@@ -146,13 +165,56 @@ public class TooltipHelper {
             if (self.isEmpty()) return;
 
             MutableText current = Text.literal("Current trees: ");
-            current.append(createSpecList(new ArrayList<>(self.get().getSpecs())));
+            current.append(createSpecList(List.copyOf(self.get().getSpecs())));
             tooltip.add(current);
             tooltip.add(Text.empty());
 
-            MutableText after = Text.literal("Eligible trees: ");
-            after.append(createSpecList(new ArrayList<>(EnumSet.complementOf(self.get().getSpecs()))));
-            tooltip.add(after);
+            tooltip.add(Text.literal("Eligible trees:"));
+            List<Spec> eligible = List.copyOf(EnumSet.complementOf(self.get().getSpecs()));
+            for (Spec spec : eligible) {
+                tooltip.add(
+                        Text.literal(spec.getDisplayName()).styled(s -> s.withColor(Cztils.config.specConfigs.get(spec).specColor))
+                                .append(": ")
+                                .append(createAbilityList(
+                                        spec.toSpec().getActives().stream()
+                                                .filter(a -> self.get().isBlocked(a, true) == PartyMember.BlockReason.NOT_BLOCKED)
+                                                .toList()
+                                ))
+                );
+            }
+        });
+
+        abilitySelectOperations.put(Gifts.PRISMATIC_CUBE, (tooltip, api) -> {
+            Optional<PartyMember> self = api.getSelf();
+            if (self.isEmpty()) return;
+            SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
+
+            self.get().getActives().keySet().stream().sorted(new Actives.ActiveSlotComparator(config.slotPriority))
+                    .forEach(a -> {
+                        tooltip.add(
+                                Text.literal(a.getDisplayName()).styled(s -> s.withColor(a.getColor()))
+                                        .append(Text.literal(" -> "))
+                                        .append(createAbilityList(List.copyOf(a.getSlot().getActives().get(AbilitySpec.PRISMATIC))))
+                        );
+                    });
+        });
+
+        abilitySelectOperations.put(Gifts.PURGING_STONE, (tooltip, api) -> {
+            Optional<PartyMember> self = api.getSelf();
+            if (self.isEmpty()) return;
+            tooltip.add(Text.literal("Current curses: ").append(createAbilityList(List.copyOf(self.get().getCurses()), Curse.COLOR)));
+        });
+
+        abilitySelectOperations.put(Gifts.STATUE_OF_REGRET, (tooltip, api) -> {
+            Optional<PartyMember> self = api.getSelf();
+            if (self.isEmpty()) return;
+            tooltip.add(Text.literal("Current curses: ").append(createAbilityList(List.copyOf(self.get().getCurses()), Curse.COLOR)));
+        });
+
+        abilitySelectOperations.put(Gifts.VENOM_OF_THE_BROODMOTHER, (tooltip, api) -> {
+//            Optional<PartyMember> self = api.getSelf();
+//            if (self.isEmpty()) return;
+//            tooltip.add(Text.literal(""))
         });
     }
 }
