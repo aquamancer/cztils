@@ -106,7 +106,7 @@ public class Player extends HudElement {
             AbilityIcon icon = createIcon(iconX, 0, this.iconSize, active, isGrayedOut);
 
             if (isGrayedOut) {
-                PartyMember.BlockReason isBlocked = player.isBlocked(active.getAbility(), true);
+                PartyMember.BlockReason isBlocked = player.isBlocked(active.getAbility(), Cztils.config.a14);
                 if (isBlocked == PartyMember.BlockReason.SLOT_TAKEN) {
                     icon.setSubscript(ANCHOR);
                 } else if (isBlocked == PartyMember.BlockReason.MORE_THAN_4 || counts.get(active.getSpec()) > 4) {

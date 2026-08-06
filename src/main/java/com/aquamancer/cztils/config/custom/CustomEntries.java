@@ -1,9 +1,6 @@
 package com.aquamancer.cztils.config.custom;
 
-import com.aquamancer.czlib.api.abils.AbilitySpec;
-import com.aquamancer.czlib.api.abils.AbilityUtils;
-import com.aquamancer.czlib.api.abils.ActiveSlot;
-import com.aquamancer.czlib.api.abils.Spec;
+import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.cztils.config.ConfigDefaults;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -88,7 +85,7 @@ public class CustomEntries {
                 .setSaveConsumer(updated -> {
                     configRef.clear();
                     updated.forEach(e -> {
-                        Optional<Enum<?>> ability = AbilityUtils.fromString(e);
+                        Optional<Ability<?>> ability = AbilityUtils.fromString(e);
                         if (ability.isPresent()) {
                             configRef.add(e);
                         }

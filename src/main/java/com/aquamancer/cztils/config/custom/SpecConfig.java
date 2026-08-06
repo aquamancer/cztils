@@ -49,8 +49,8 @@ public class SpecConfig {
     public List<String> giftList;
     public List<String> curseList;
     // set view of the above, actually used in code
-    public transient Set<Ability> alwaysShowSet;
-    public transient Set<Ability> showIfHasSpecSet;
+    public transient Set<Ability<?>> alwaysShowSet;
+    public transient Set<Ability<?>> showIfHasSpecSet;
     public transient Set<Actives> activeSet;
     public transient Set<Passives> passiveSet;
     public transient Set<Gifts> giftSet;
@@ -67,10 +67,10 @@ public class SpecConfig {
         this.curseSet = fillAbilitySet(this.curseList, Curse.class, curseListMode == IconListMode.BLOCKLIST);
     }
 
-    private static Set<Ability> fillAbilitySet(List<String> names, Function<Ability, Boolean> excludeIf) {
-        Set<Ability> set = new HashSet<>();
+    private static Set<Ability<?>> fillAbilitySet(List<String> names, Function<Ability<?>, Boolean> excludeIf) {
+        Set<Ability<?>> set = new HashSet<>();
         for (String name : names) {
-            Optional<Ability> ability = AbilityUtils.fromString(name);
+            Optional<Ability<?>> ability = AbilityUtils.fromString(name);
             if (ability.isEmpty()) continue;
             if (!excludeIf.apply(ability.get())) {
                 set.add(ability.get());
@@ -82,7 +82,7 @@ public class SpecConfig {
     private static <E extends Enum<E>> Set<E> fillAbilitySet(List<String> names, Class<E> type, boolean invert) {
         EnumSet<E> result = EnumSet.noneOf(type);
         for (String name : names) {
-            Optional<Enum<?>> ability = AbilityUtils.fromString(name);
+            Optional<Ability<?>> ability = AbilityUtils.fromString(name);
             if (ability.isEmpty()) continue;
             if (type.isInstance(ability.get())) {
                 result.add(type.cast(ability.get()));
@@ -93,7 +93,7 @@ public class SpecConfig {
 
     public <E extends Enum<E>> Set<E> getAlwaysShow(Class<E> abilityType) {
         Set<E> result = new HashSet<>();
-        for (Enum<?> e : this.alwaysShowSet) {
+        for (Ability<?> e : this.alwaysShowSet) {
             if (abilityType.isInstance(e)) {
                 result.add(abilityType.cast(e));
             }
@@ -103,7 +103,7 @@ public class SpecConfig {
 
     public <E extends Enum<E>> Set<E> getShowIfHasSpec(Class<E> abilityType) {
         Set<E> result = new HashSet<>();
-        for (Enum<?> e : this.showIfHasSpecSet) {
+        for (Ability<?> e : this.showIfHasSpecSet) {
             if (abilityType.isInstance(e)) {
                 result.add(abilityType.cast(e));
             }
@@ -148,8 +148,8 @@ public class SpecConfig {
     @Nullable
     public Comparator<Active> getSorter(ActiveSorters type) {
         Comparator<? super Active> comparator = switch (type) {
-            case SPEC -> new AbilitySpec.SpecComparator(this.specPriority);
-            case SPEC_REVERSED -> new AbilitySpec.SpecComparator(this.specPriority).reversed();
+            case SPEC -> new AbilitySpec.AbilitySpecComparator(this.specPriority);
+            case SPEC_REVERSED -> new AbilitySpec.AbilitySpecComparator(this.specPriority).reversed();
             case SLOT -> new Actives.ActiveSlotComparator2(this.slotPriority);
             case SLOT_REVERSED -> new Actives.ActiveSlotComparator2(this.slotPriority).reversed();
             case RARITY -> new Rarity.RarityComparator().reversed();
@@ -162,8 +162,8 @@ public class SpecConfig {
     @Nullable
     public Comparator<Passive> getSorter(PassiveSorters type) {
         Comparator<? super Passive> comparator = switch (type) {
-            case SPEC -> new AbilitySpec.SpecComparator(this.specPriority);
-            case SPEC_REVERSED -> new AbilitySpec.SpecComparator(this.specPriority).reversed();
+            case SPEC -> new AbilitySpec.AbilitySpecComparator(this.specPriority);
+            case SPEC_REVERSED -> new AbilitySpec.AbilitySpecComparator(this.specPriority).reversed();
             case RARITY -> new Rarity.RarityComparator().reversed();
             case RARITY_ASCENDING -> new Rarity.RarityComparator();
             case DISABLED -> null;

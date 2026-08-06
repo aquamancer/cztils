@@ -18,6 +18,10 @@ import java.util.Map;
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
     @ConfigEntry.Category("hud")
+    @ConfigEntry.Gui.Tooltip
+    public boolean a14 = true;
+
+    @ConfigEntry.Category("hud")
     public boolean hudEnabled = true;
 
     @ConfigEntry.Category("hud")
@@ -130,6 +134,11 @@ public class ModConfig implements ConfigData {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     public @interface SpecConfigs {}
+
+
+    @ConfigEntry.Category("tooltip")
+    @ConfigEntry.Gui.Tooltip
+    public boolean useConfigForTooltips = true;
 
     public ModConfig() {}
 }
