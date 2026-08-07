@@ -4,11 +4,14 @@ import com.aquamancer.cztils.config.ModConfig;
 import com.aquamancer.cztils.config.custom.CustomAnnots;
 import com.aquamancer.cztils.config.custom.SpecConfig;
 import com.aquamancer.cztils.hud.Hud;
+import com.aquamancer.cztils.tooltip.TooltipHelper;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.util.ActionResult;
@@ -45,6 +48,10 @@ public class Cztils implements ModInitializer {
 				hud.render(context, Cztils.config.inGameRenderMode);
 			}
 		}));
+
+		ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
+			TooltipHelper.onTooltip(stack, context, lines);
+		});
 	}
 
 	public static Identifier id(String path) {

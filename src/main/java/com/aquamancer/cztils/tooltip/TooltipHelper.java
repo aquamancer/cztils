@@ -44,20 +44,23 @@ public class TooltipHelper {
     }
 
     private static MutableText getSpecName(Spec spec) {
-        SpecConfig config = Cztils.config.specConfigs.get(spec);
-        MutableText result = Cztils.config.useConfigForTooltips ? Text.literal(config.name) : Text.literal(spec.getDisplayName());
-        return result.styled(getSpecColorer(spec.toSpec()));
+        return getSpecName(spec.toAbilitySpec());
+    }
+
+    private static MutableText getSpecName(AbilitySpec spec) {
+        SpecConfig config = Cztils.config.specConfigs.get(spec.toSpec().orElse(null));
+        MutableText result = (Cztils.config.useConfigForTooltips && spec != AbilitySpec.PRISMATIC) ? Text.literal(config.name) : Text.literal(spec.getDisplayName());
+        return result.styled(getSpecColorer(spec));
     }
 
     private static int getSpecColor(AbilitySpec spec) {
-        Optional<Spec> converted = spec.toSpec();
-        return (Cztils.config.useConfigForTooltips && spec != AbilitySpec.PRISMATIC) ? Cztils.config.specConfigs.get(converted.orElse(null)).specColor : spec.getColor();
+        SpecConfig config = Cztils.config.specConfigs.get(spec.toSpec().orElse(null));
+        return (Cztils.config.useConfigForTooltips && spec != AbilitySpec.PRISMATIC) ? config.specColor : spec.getColor();
     }
 
     private static UnaryOperator<Style> getSpecColorer(AbilitySpec spec) {
         return (s) -> s.withColor(getSpecColor(spec));
     }
-
 
     private static MutableText createSpecList(Collection<Spec> specs) {
         return createSpecList(specs, (s, t) -> {});
@@ -93,22 +96,13 @@ public class TooltipHelper {
     }
 
     private static <T extends Ability<?>> MutableText createAbilityList(Collection<T> abilities, BiConsumer<T, MutableText> postOperator) {
-        return createAbilityList(
-                abilities,
-                (ability) -> {
-                    if (ability instanceof HasAbilitySpec hasAbilitySpec) {
-                        return getSpecColor(hasAbilitySpec.getSpec());
-                    }
-                    return 0xFFFFFF;
-                },
-                (s, t) -> {
-                    postOperator.accept(s, t);
-                    return t;
-                }
-        );
+        return createAbilityList(abilities, (a, t) -> {
+            postOperator.accept(a, t);
+            return t;
+        });
     }
 
-    private static <T extends Ability<?>> MutableText createAbilityList(Collection<T> abilities, Function<T, Integer> colorer, BiFunction<T, MutableText, MutableText> postOperator) {
+    private static <T extends Ability<?>> MutableText createAbilityList(Collection<T> abilities, BiFunction<T, MutableText, MutableText> postOperator) {
         MutableText result = Text.empty();
         int i = 0;
         for (T ability : abilities) {
@@ -120,11 +114,41 @@ public class TooltipHelper {
                 result.append(", ");
             }
             MutableText name = Text.literal(ability.getAbility().name());
-            name.styled(s -> s.withColor(colorer.apply(ability)));
+            if (ability instanceof HasAbilitySpec hasAbilitySpec) {
+                name.styled(getSpecColorer(hasAbilitySpec.getSpec()));
+            }
             result.append(postOperator.apply(ability, name));
             i++;
         }
         return result;
+    }
+
+    private static MutableText createRemainingAbilityList(AbilitySpec spec, PartyMember player) {
+        return createRemainingAbilityList(spec, player, (a, t) -> t);
+    }
+
+    private static MutableText createRemainingAbilityList(AbilitySpec spec, PartyMember player, BiFunction<Ability<?>, MutableText, MutableText> postOperator) {
+        MutableText line = getSpecName(spec);
+        SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
+
+        Set<Ability<?>> remainingAbilities = AbilitySpec.getAllAbilities(
+                spec,
+                new Actives.ActiveSlotComparator(config.slotPriority),
+                null,
+                true
+        );
+        remainingAbilities.removeIf(a -> (a instanceof Actives active) && (player.isBlocked(active, Cztils.config.a14) == PartyMember.BlockReason.SLOT_TAKEN));
+//        remainingAbilities.removeAll(player.getActiveSet(spec));  // slot taken should handle this
+        remainingAbilities.removeAll(player.getPassiveSet(spec));
+
+        if (Cztils.config.a14) {
+            long activeCount = player.getActiveCount(spec);
+            line.append(" (" + activeCount + "/4 actives)");
+        }
+        line.append(": ");
+        line.append(createAbilityList(remainingAbilities, postOperator));
+
+        return line;
     }
 
     static {
@@ -146,41 +170,12 @@ public class TooltipHelper {
             if (self.isEmpty()) return;
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
-            tooltip.add(Text.literal("Remaining abilities:"));
-            tooltip.addAll(
-                    self.get().getSpecs().stream()
-                            .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
-                            .map(s -> {
-                                AbilitySpec spec = s.toSpec();
-                                MutableText line = getSpecName(s);
-
-                                if (Cztils.config.a14) {
-                                    long activeCount = self.get().getActiveCount(spec);
-                                    line.append(" (" + activeCount + " ");
-                                    line.append((activeCount == 1) ? "active)" : "actives)");
-                                }
-                                line.append(": ");
-
-                                EnumSet<Actives> actives = AbilitySpec.getActives(spec);
-                                actives.removeAll(self.get().getActiveSet(spec));
-                                EnumSet<Passives> passives = AbilitySpec.getPassives(spec);
-                                passives.removeAll(self.get().getPassiveSet(spec));
-                                List<Ability<?>> combined = new ArrayList<>(actives.stream().sorted(new Actives.ActiveSlotComparator(config.slotPriority)).toList());
-                                combined.addAll(passives);
-
-                                line.append(createAbilityList(
-                                        combined,
-                                        (ability, name) -> {
-                                            if (ability instanceof Actives active) {
-                                                if (self.get().isBlocked(active, Cztils.config.a14) == PartyMember.BlockReason.SLOT_TAKEN) {
-                                                    name.append(ANCHOR);
-                                                }
-                                            }
-                                        }
-                                ));
-                                return line;
-                            }).toList()
-            );
+            tooltip.add(Text.literal("Available abilities:"));
+            self.get().getSpecs().stream()
+                    .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
+                    .forEach(s -> {
+                        tooltip.add(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
+                    });
             // todo add curse of pride
         });
         abilitySelectOperations.put(Gifts.FORSAKEN_GRIMOIRE, (tooltip, api) -> {
@@ -189,23 +184,21 @@ public class TooltipHelper {
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
             tooltip.add(Text.literal("Eligible actives"));
-            tooltip.addAll(
-                    self.get().getSpecs().stream()
-                            .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
-                            .map(s -> {
-                                AbilitySpec spec = s.toSpec();
-                                MutableText line = getSpecName(s).append(": ");
+            self.get().getSpecs().stream()
+                    .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
+                    .forEach(s -> {
+                        AbilitySpec spec = s.toAbilitySpec();
+                        MutableText line = getSpecName(s).append(": ");
 
-                                EnumSet<Actives> actives = AbilitySpec.getActives(spec);
-                                Collection<Actives> eligible = actives.stream()
-                                        .filter(a -> self.get().isBlocked(a, Cztils.config.a14) != PartyMember.BlockReason.SLOT_TAKEN)
-                                        .sorted(new Actives.ActiveSlotComparator(config.slotPriority))
-                                        .toList();
+                        EnumSet<Actives> actives = AbilitySpec.getActives(spec);
+                        Collection<Actives> eligible = actives.stream()
+                                .filter(a -> self.get().isBlocked(a, Cztils.config.a14) != PartyMember.BlockReason.SLOT_TAKEN)
+                                .sorted(new Actives.ActiveSlotComparator(config.slotPriority))
+                                .toList();
 
-                                line.append(createAbilityList(eligible));
-                                return line;
-                            }).toList()
-            );
+                        line.append(createAbilityList(eligible));
+                        tooltip.add(line);
+                    });
         });
         abilitySelectOperations.put(Gifts.KALEIDOSCOPIC_LENS, (tooltip, api) -> {
             Optional<PartyMember> self = api.getSelf();
@@ -254,27 +247,22 @@ public class TooltipHelper {
         });
 
         abilitySelectOperations.put(Gifts.POETS_QUILL, (tooltip, api) -> {
-            // todo remaining abils for current
             Optional<PartyMember> self = api.getSelf();
             if (self.isEmpty()) return;
+            Spec.SpecComparator specSorter = Spec.SpecComparator.fromAbilitySpec(Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null)).specPriority);
 
-            MutableText current = Text.literal("Current trees: ");
-            current.append(createSpecList(self.get().getSpecs()));
-            tooltip.add(current);
+            tooltip.add(Text.literal("Current trees"));
+            self.get().getSpecs().stream().sorted(specSorter)
+                    .forEach(s -> {
+                        tooltip.add(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
+                    });
             tooltip.add(Text.empty());
+            tooltip.add(Text.literal("Available trees"));
 
-            tooltip.add(Text.literal("Eligible trees:"));
-            for (Spec spec : EnumSet.complementOf(self.get().getSpecs())) {
-                tooltip.add(
-                        getSpecName(spec)
-                                .append(": ")
-                                .append(createAbilityList(
-                                        AbilitySpec.getActives(spec.toSpec()).stream()
-                                                .filter(a -> self.get().isBlocked(a, Cztils.config.a14) == PartyMember.BlockReason.NOT_BLOCKED)
-                                                .toList()
-                                ))
-                );
-            }
+            EnumSet.complementOf(self.get().getSpecs()).stream().sorted(specSorter)
+                    .forEach(s -> {
+                        tooltip.add(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
+                    });
         });
 
         abilitySelectOperations.put(Gifts.PRISMATIC_CUBE, (tooltip, api) -> {
@@ -282,12 +270,15 @@ public class TooltipHelper {
             if (self.isEmpty()) return;
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
+            tooltip.add(Text.literal("Available replacements:"));
             self.get().getActives().keySet().stream().sorted(new Actives.ActiveSlotComparator(config.slotPriority))
                     .forEach(a -> {
+                        Set<Actives> replacements = Actives.getActives(a.getSlot()).get(AbilitySpec.PRISMATIC);
+                        if (replacements.isEmpty()) return;
                         tooltip.add(
                                 Text.literal(a.getDisplayName()).styled(getSpecColorer(a.getSpec()))
                                         .append(Text.literal(" -> "))
-                                        .append(createAbilityList(a.getSlot().getActives().get(AbilitySpec.PRISMATIC)))
+                                        .append(createAbilityList(replacements))
                         );
                     });
         });
@@ -295,13 +286,17 @@ public class TooltipHelper {
         abilitySelectOperations.put(Gifts.PURGING_STONE, (tooltip, api) -> {
             Optional<PartyMember> self = api.getSelf();
             if (self.isEmpty()) return;
-            tooltip.add(Text.literal("Current curses: ").append(createAbilityList(self.get().getCurses(), (c, t) -> t.styled(s -> s.withColor(Curse.COLOR)))));
+            tooltip.add(Text.literal("Current curses: ").append(createAbilityList(self.get().getCurses(), (c, t) -> {
+                t.styled(s -> s.withColor(Curse.COLOR));
+            })));
         });
 
         abilitySelectOperations.put(Gifts.STATUE_OF_REGRET, (tooltip, api) -> {
             Optional<PartyMember> self = api.getSelf();
             if (self.isEmpty()) return;
-            tooltip.add(Text.literal("Current curses: ").append(createAbilityList(self.get().getCurses(), (c, t) -> t.styled(s -> s.withColor(Curse.COLOR)))));
+            tooltip.add(Text.literal("Current curses: ").append(createAbilityList(self.get().getCurses(), (c, t) -> {
+                t.styled(s -> s.withColor(Curse.COLOR));
+            })));
         });
 
         abilitySelectOperations.put(Gifts.VENOM_OF_THE_BROODMOTHER, (tooltip, api) -> {
