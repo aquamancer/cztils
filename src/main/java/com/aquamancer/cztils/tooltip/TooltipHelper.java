@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -43,22 +44,36 @@ public class TooltipHelper {
         }
     }
 
-    private static MutableText getSpecName(Spec spec) {
+    private static MutableText getSpecName(@Nullable Spec spec) {
+        if (spec == null) return Text.literal(Cztils.config.specConfigs.get(null).name);
         return getSpecName(spec.toAbilitySpec());
     }
 
-    private static MutableText getSpecName(AbilitySpec spec) {
+    private static MutableText getSpecName(@Nullable AbilitySpec spec) {
+        if (spec == null) return Text.literal(Cztils.config.specConfigs.get(null).name);
+
         SpecConfig config = Cztils.config.specConfigs.get(spec.toSpec().orElse(null));
         MutableText result = (Cztils.config.useConfigForTooltips && spec != AbilitySpec.PRISMATIC) ? Text.literal(config.name) : Text.literal(spec.getDisplayName());
         return result.styled(getSpecColorer(spec));
     }
 
-    private static int getSpecColor(AbilitySpec spec) {
-        SpecConfig config = Cztils.config.specConfigs.get(spec.toSpec().orElse(null));
-        return (Cztils.config.useConfigForTooltips && spec != AbilitySpec.PRISMATIC) ? config.specColor : spec.getColor();
+    private static int getSpecColor(@Nullable Spec spec) {
+        if (spec == null) return Cztils.config.specConfigs.get(null).specColor;
+        SpecConfig config = Cztils.config.specConfigs.get(spec);
+        return Cztils.config.useConfigForTooltips ? config.specColor : spec.getColor();
     }
 
-    private static UnaryOperator<Style> getSpecColorer(AbilitySpec spec) {
+    private static int getSpecColor(@Nullable AbilitySpec spec) {
+        if (spec == null) return Cztils.config.specConfigs.get(null).specColor;
+        if (spec == AbilitySpec.PRISMATIC) return AbilitySpec.PRISMATIC.getColor();
+        return getSpecColor(spec.toSpec().orElse(null));
+    }
+
+    private static UnaryOperator<Style> getSpecColorer(@Nullable Spec spec) {
+        return (s) -> s.withColor(getSpecColor(spec));
+    }
+
+    private static UnaryOperator<Style> getSpecColorer(@Nullable AbilitySpec spec) {
         return (s) -> s.withColor(getSpecColor(spec));
     }
 
@@ -154,16 +169,18 @@ public class TooltipHelper {
     static {
         // gifts
         abilitySelectOperations.put(Gifts.BROODMOTHERS_WEBBING, (tooltip, api) -> {
-            tooltip.addAll(api.getParty().values().stream().sorted(Comparator.comparingDouble(PartyMember::getGraveTimer)).map(
-                    player -> {
-                        SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
-                        return Text.literal(player.getName()).styled(s -> s.withColor(config.nameColor))
+            api.getParty().values().stream()
+                    .sorted(Comparator.comparingDouble(PartyMember::getGraveTimer))
+                    .forEach(player -> {
+                        Spec spec = player.getCharmedSpec().orElse(null);
+                        SpecConfig config = Cztils.config.specConfigs.get(spec);
+                        tooltip.add(Text.literal(player.getName()).styled(s -> s.withColor(config.nameColor))
                                 .append(" - ")
-                                .append(config.name).styled(s -> s.withColor(config.specColor))
+                                .append(getSpecName(spec)).styled(getSpecColorer(spec))
                                 .append(": ")
-                                .append(String.valueOf(player.getGraveTimer()));
+                                .append(String.valueOf(player.getGraveTimer())));
                     }
-            ).toList());
+            );
         });
         abilitySelectOperations.put(Gifts.CALLICARPAS_POINTED_HAT, (tooltip, api) -> {
             Optional<PartyMember> self = api.getSelf();
