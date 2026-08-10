@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -46,15 +47,16 @@ public class TooltipHelper {
 
     private static MutableText getSpecName(@Nullable Spec spec) {
         if (spec == null) return Text.literal(Cztils.config.specConfigs.get(null).name);
-        return getSpecName(spec.toAbilitySpec());
+        SpecConfig config = Cztils.config.specConfigs.get(spec);
+        MutableText result = Cztils.config.useConfigForTooltips ? Text.literal(config.name) : Text.literal(spec.getDisplayName());
+
+        return result.withColor(getSpecColor(spec));
     }
 
     private static MutableText getSpecName(@Nullable AbilitySpec spec) {
         if (spec == null) return Text.literal(Cztils.config.specConfigs.get(null).name);
-
-        SpecConfig config = Cztils.config.specConfigs.get(spec.toSpec().orElse(null));
-        MutableText result = (Cztils.config.useConfigForTooltips && spec != AbilitySpec.PRISMATIC) ? Text.literal(config.name) : Text.literal(spec.getDisplayName());
-        return result.styled(getSpecColorer(spec));
+        if (spec == AbilitySpec.PRISMATIC) return Text.literal(AbilitySpec.PRISMATIC.getDisplayName()).withColor(getSpecColor(AbilitySpec.PRISMATIC));
+        return getSpecName(spec.toSpec().orElse(null));
     }
 
     private static int getSpecColor(@Nullable Spec spec) {
@@ -67,14 +69,6 @@ public class TooltipHelper {
         if (spec == null) return Cztils.config.specConfigs.get(null).specColor;
         if (spec == AbilitySpec.PRISMATIC) return AbilitySpec.PRISMATIC.getColor();
         return getSpecColor(spec.toSpec().orElse(null));
-    }
-
-    private static UnaryOperator<Style> getSpecColorer(@Nullable Spec spec) {
-        return (s) -> s.withColor(getSpecColor(spec));
-    }
-
-    private static UnaryOperator<Style> getSpecColorer(@Nullable AbilitySpec spec) {
-        return (s) -> s.withColor(getSpecColor(spec));
     }
 
     private static MutableText createSpecList(Collection<Spec> specs) {
@@ -94,7 +88,7 @@ public class TooltipHelper {
         for (Spec spec : specs) {
             if (i % 4 == 0) {
                 if (i != 0) {
-                    result.append(",\n");
+                    result.append(Text.literal(",\n"));
                 }
             } else {
                 result.append(Text.literal(", "));
@@ -106,44 +100,54 @@ public class TooltipHelper {
         return result;
     }
 
-    private static <T extends Ability<?>> MutableText createAbilityList(Collection<T> abilities) {
-        return createAbilityList(abilities, (a, t) -> {});
+    public static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, Collection<T> abilities, int width, int firstLineWidth) {
+        return createAbilityList(prefix, abilities, width, firstLineWidth, (a, t) -> {});
     }
 
-    private static <T extends Ability<?>> MutableText createAbilityList(Collection<T> abilities, BiConsumer<T, MutableText> postOperator) {
-        return createAbilityList(abilities, (a, t) -> {
+    private static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, Collection<T> abilities, int width, int firstLineWidth, BiConsumer<T, MutableText> postOperator) {
+        return createAbilityList(prefix, abilities, width, firstLineWidth, (a, t) -> {
             postOperator.accept(a, t);
             return t;
         });
     }
 
-    private static <T extends Ability<?>> MutableText createAbilityList(Collection<T> abilities, BiFunction<T, MutableText, MutableText> postOperator) {
-        MutableText result = Text.empty();
+    private static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, Collection<T> abilities, int width, int firstLineWidth, BiFunction<T, MutableText, MutableText> postOperator) {
+        List<MutableText> result = new ArrayList<>();
+        MutableText line = Text.empty();
+        line.append(prefix);
+        if (abilities.isEmpty()) {
+            line.append("None");
+            result.add(line);
+            return result;
+        }
+
         int i = 0;
         for (T ability : abilities) {
-            if (i % 4 == 0) {
-                if (i != 0) {
-                    result.append(",\n");
+            if (i != 0) {
+                line.append(Text.literal(", "));
+                if ((i - firstLineWidth) % width == 0) {
+                    result.add(line);
+                    line = Text.empty();
                 }
-            } else {
-                result.append(", ");
             }
-            MutableText name = Text.literal(ability.getAbility().name());
+            MutableText name = Text.literal(ability.getDisplayName());
             if (ability instanceof HasAbilitySpec hasAbilitySpec) {
-                name.styled(getSpecColorer(hasAbilitySpec.getSpec()));
+                name.withColor(getSpecColor(hasAbilitySpec.getSpec()));
             }
-            result.append(postOperator.apply(ability, name));
+            line.append(postOperator.apply(ability, name));
             i++;
+        }
+        if (!line.equals(Text.empty()) && !abilities.isEmpty()) {  // total abilities not divided evenly
+            result.add(line);
         }
         return result;
     }
 
-    private static MutableText createRemainingAbilityList(AbilitySpec spec, PartyMember player) {
+    private static List<MutableText> createRemainingAbilityList(AbilitySpec spec, PartyMember player) {
         return createRemainingAbilityList(spec, player, (a, t) -> t);
     }
 
-    private static MutableText createRemainingAbilityList(AbilitySpec spec, PartyMember player, BiFunction<Ability<?>, MutableText, MutableText> postOperator) {
-        MutableText line = getSpecName(spec);
+    private static List<MutableText> createRemainingAbilityList(AbilitySpec spec, PartyMember player, BiFunction<Ability<?>, MutableText, MutableText> postOperator) {
         SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
 
         Set<Ability<?>> remainingAbilities = AbilitySpec.getAllAbilities(
@@ -156,14 +160,14 @@ public class TooltipHelper {
 //        remainingAbilities.removeAll(player.getActiveSet(spec));  // slot taken should handle this
         remainingAbilities.removeAll(player.getPassiveSet(spec));
 
+        MutableText prefix = Text.empty();
+        prefix.append(getSpecName(spec));
         if (Cztils.config.a14) {
             long activeCount = player.getActiveCount(spec);
-            line.append(" (" + activeCount + "/4 actives)");
+            prefix.append(" (" + activeCount + "/4 actives)");
         }
-        line.append(": ");
-        line.append(createAbilityList(remainingAbilities, postOperator));
-
-        return line;
+        prefix.append(": ");
+        return createAbilityList(prefix, remainingAbilities, 4, 3, postOperator);
     }
 
     static {
@@ -176,7 +180,7 @@ public class TooltipHelper {
                         SpecConfig config = Cztils.config.specConfigs.get(spec);
                         tooltip.add(Text.literal(player.getName()).styled(s -> s.withColor(config.nameColor))
                                 .append(" - ")
-                                .append(getSpecName(spec)).styled(getSpecColorer(spec))
+                                .append(getSpecName(spec)).withColor(getSpecColor(spec))
                                 .append(": ")
                                 .append(String.valueOf(player.getGraveTimer())));
                     }
@@ -191,7 +195,7 @@ public class TooltipHelper {
             self.get().getSpecs().stream()
                     .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
                     .forEach(s -> {
-                        tooltip.add(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
+                        tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
                     });
             // todo add curse of pride
         });
@@ -205,7 +209,6 @@ public class TooltipHelper {
                     .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
                     .forEach(s -> {
                         AbilitySpec spec = s.toAbilitySpec();
-                        MutableText line = getSpecName(s).append(": ");
 
                         EnumSet<Actives> actives = AbilitySpec.getActives(spec);
                         Collection<Actives> eligible = actives.stream()
@@ -213,21 +216,27 @@ public class TooltipHelper {
                                 .sorted(new Actives.ActiveSlotComparator(config.slotPriority))
                                 .toList();
 
-                        line.append(createAbilityList(eligible));
-                        tooltip.add(line);
+                        MutableText prefix = getSpecName(s).append(Text.literal(": "));
+                        tooltip.addAll(createAbilityList(prefix, eligible, 4, 3));
                     });
         });
         abilitySelectOperations.put(Gifts.KALEIDOSCOPIC_LENS, (tooltip, api) -> {
             Optional<PartyMember> self = api.getSelf();
             if (self.isEmpty()) return;
-            MutableText current = Text.literal("Current trees: ");
-            current.append(createSpecList(self.get().getSpecs()));
-            tooltip.add(current);
-            tooltip.add(Text.empty());
+            Spec.SpecComparator specSorter = Spec.SpecComparator.fromAbilitySpec(Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null)).specPriority);
 
-            MutableText after = Text.literal("New trees: ");
-            after.append(createSpecList(EnumSet.complementOf(self.get().getSpecs())));
-            tooltip.add(after);
+            tooltip.add(Text.literal("Current trees"));
+            self.get().getSpecs().stream().sorted(specSorter)
+                    .forEach(s -> {
+                        tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
+                    });
+            tooltip.add(Text.empty());
+            tooltip.add(Text.literal("Available trees"));
+
+            EnumSet.complementOf(self.get().getSpecs()).stream().sorted(specSorter)
+                    .forEach(s -> {
+                        tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
+                    });
         });
 
         abilitySelectOperations.put(Gifts.MEGA_HAMMER, (tooltip, api) -> {
@@ -246,9 +255,9 @@ public class TooltipHelper {
                 passives = passives.sorted(passiveSorter);
             }
 
-            tooltip.add(Text.literal("Actives: ").append(createAbilityList(actives.toList())));
+            tooltip.addAll(createAbilityList(Text.literal("Actives: "), actives.toList(), 4, 3));
             tooltip.add(Text.empty());
-            tooltip.add(Text.literal("Passives: ").append(createAbilityList(passives.toList())));
+            tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives.toList(), 4, 3));
         });
 
         abilitySelectOperations.put(Gifts.ORB_OF_DARKNESS, (tooltip, api) -> {
@@ -258,9 +267,9 @@ public class TooltipHelper {
             List<Active> actives = self.get().getActives().values().stream().filter(a -> a.getSpec() == AbilitySpec.PRISMATIC).toList();
             List<Passive> passives = self.get().getPassives().values().stream().filter(p -> p.getSpec() == AbilitySpec.PRISMATIC).toList();
 
-            tooltip.add(Text.literal("Actives: ").append(createAbilityList(actives)));
+            tooltip.addAll(createAbilityList(Text.literal("Actives: "), actives, 4, 3));
             tooltip.add(Text.empty());
-            tooltip.add(Text.literal("Passives: ").append(createAbilityList(passives)));
+            tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives, 4, 3));
         });
 
         abilitySelectOperations.put(Gifts.POETS_QUILL, (tooltip, api) -> {
@@ -271,14 +280,14 @@ public class TooltipHelper {
             tooltip.add(Text.literal("Current trees"));
             self.get().getSpecs().stream().sorted(specSorter)
                     .forEach(s -> {
-                        tooltip.add(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
+                        tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
                     });
             tooltip.add(Text.empty());
             tooltip.add(Text.literal("Available trees"));
 
             EnumSet.complementOf(self.get().getSpecs()).stream().sorted(specSorter)
                     .forEach(s -> {
-                        tooltip.add(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
+                        tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
                     });
         });
 
@@ -292,10 +301,12 @@ public class TooltipHelper {
                     .forEach(a -> {
                         Set<Actives> replacements = Actives.getActives(a.getSlot()).get(AbilitySpec.PRISMATIC);
                         if (replacements.isEmpty()) return;
-                        tooltip.add(
-                                Text.literal(a.getDisplayName()).styled(getSpecColorer(a.getSpec()))
-                                        .append(Text.literal(" -> "))
-                                        .append(createAbilityList(replacements))
+                        tooltip.addAll(
+                                createAbilityList(
+                                        Text.literal(a.getDisplayName()).withColor(getSpecColor(a.getSpec())).append(" -> "),
+                                        replacements,
+                                        4, 3
+                                )
                         );
                     });
         });
@@ -303,17 +314,27 @@ public class TooltipHelper {
         abilitySelectOperations.put(Gifts.PURGING_STONE, (tooltip, api) -> {
             Optional<PartyMember> self = api.getSelf();
             if (self.isEmpty()) return;
-            tooltip.add(Text.literal("Current curses: ").append(createAbilityList(self.get().getCurses(), (c, t) -> {
-                t.styled(s -> s.withColor(Curse.COLOR));
-            })));
+            tooltip.addAll(createAbilityList(
+                    Text.literal("Current curses: "),
+                    self.get().getCurses(),
+                    4, 3,
+                    (c, t) -> {
+                        t.withColor(Curse.COLOR);
+                    }
+            ));
         });
 
         abilitySelectOperations.put(Gifts.STATUE_OF_REGRET, (tooltip, api) -> {
             Optional<PartyMember> self = api.getSelf();
             if (self.isEmpty()) return;
-            tooltip.add(Text.literal("Current curses: ").append(createAbilityList(self.get().getCurses(), (c, t) -> {
-                t.styled(s -> s.withColor(Curse.COLOR));
-            })));
+            tooltip.addAll(createAbilityList(
+                    Text.literal("Current curses: "),
+                    self.get().getCurses(),
+                    4, 3,
+                    (c, t) -> {
+                        t.withColor(Curse.COLOR);
+                    }
+            ));
         });
 
         abilitySelectOperations.put(Gifts.VENOM_OF_THE_BROODMOTHER, (tooltip, api) -> {

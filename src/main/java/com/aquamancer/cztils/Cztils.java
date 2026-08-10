@@ -1,5 +1,7 @@
 package com.aquamancer.cztils;
 
+import com.aquamancer.czlib.api.abils.ActiveSlot;
+import com.aquamancer.czlib.api.abils.Actives;
 import com.aquamancer.cztils.config.ModConfig;
 import com.aquamancer.cztils.config.custom.CustomAnnots;
 import com.aquamancer.cztils.config.custom.SpecConfig;
@@ -14,10 +16,14 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.text.MutableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cztils implements ModInitializer {
 	public static final String MOD_ID = "cztils";
@@ -37,6 +43,7 @@ public class Cztils implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
+		Actives.getActives(ActiveSlot.COMBO);
 		HudRenderCallback.EVENT.register(((context, tickDelta) -> {
 			if (!Cztils.config.hudEnabled) return;
 			MinecraftClient client = MinecraftClient.getInstance();
