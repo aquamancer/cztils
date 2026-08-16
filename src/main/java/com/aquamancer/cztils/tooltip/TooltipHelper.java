@@ -297,7 +297,7 @@ public class TooltipHelper {
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
             tooltip.add(Text.literal("Available replacements:"));
-            self.get().getActives().keySet().stream().sorted(new Actives.ActiveSlotComparator(config.slotPriority))
+            self.get().getActives().keySet().stream().filter(a -> a.getSpec() != AbilitySpec.PRISMATIC).sorted(new Actives.ActiveSlotComparator(config.slotPriority))
                     .forEach(a -> {
                         Set<Actives> replacements = Actives.getActives(a.getSlot()).get(AbilitySpec.PRISMATIC);
                         if (replacements.isEmpty()) return;
