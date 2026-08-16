@@ -207,7 +207,7 @@ public final class ConfigDefaults {
 
             actives.add("Wind Walk");
             actives.add("Rapid Fire");
-
+            actives.add("Skyhook");
             actives.add("Steel Stallion");
             actives.add("Escape Artist");
             actives.add("Apocalypse");
