@@ -43,7 +43,6 @@ public class Cztils implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		Actives.getActives(ActiveSlot.COMBO);
 		HudRenderCallback.EVENT.register(((context, tickDelta) -> {
 			if (!Cztils.config.hudEnabled) return;
 			MinecraftClient client = MinecraftClient.getInstance();
