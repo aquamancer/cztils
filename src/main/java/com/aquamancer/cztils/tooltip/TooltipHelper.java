@@ -71,35 +71,6 @@ public class TooltipHelper {
         return getSpecColor(spec.toSpec().orElse(null));
     }
 
-    private static MutableText createSpecList(Collection<Spec> specs) {
-        return createSpecList(specs, (s, t) -> {});
-    }
-
-    private static MutableText createSpecList(Collection<Spec> specs, BiConsumer<Spec, MutableText> postOperator) {
-        return createSpecList(specs, (s, t) -> {
-            postOperator.accept(s, t);
-            return t;
-        });
-    }
-
-    private static MutableText createSpecList(Collection<Spec> specs, BiFunction<Spec, MutableText, MutableText> postOperator) {
-        MutableText result = Text.empty();
-        int i = 0;
-        for (Spec spec : specs) {
-            if (i % 4 == 0) {
-                if (i != 0) {
-                    result.append(Text.literal(",\n"));
-                }
-            } else {
-                result.append(Text.literal(", "));
-            }
-            MutableText name = getSpecName(spec);
-            result.append(postOperator.apply(spec, name));
-            i++;
-        }
-        return result;
-    }
-
     public static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, Collection<T> abilities, int width, int firstLineWidth) {
         return createAbilityList(prefix, abilities, width, firstLineWidth, (a, t) -> {});
     }
