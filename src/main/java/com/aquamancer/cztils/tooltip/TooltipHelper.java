@@ -162,7 +162,6 @@ public class TooltipHelper {
             if (self.isEmpty()) return;
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
-            tooltip.add(Text.literal("Available abilities:"));
             self.get().getSpecs().stream()
                     .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
                     .forEach(s -> {
@@ -175,7 +174,6 @@ public class TooltipHelper {
             if (self.isEmpty()) return;
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
-            tooltip.add(Text.literal("Eligible actives"));
             self.get().getSpecs().stream()
                     .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
                     .forEach(s -> {
@@ -196,14 +194,13 @@ public class TooltipHelper {
             if (self.isEmpty()) return;
             Spec.SpecComparator specSorter = Spec.SpecComparator.fromAbilitySpec(Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null)).specPriority);
 
-            tooltip.add(Text.literal("Current trees"));
+            tooltip.add(Text.literal("Current trees:").styled(s -> s.withUnderline(true)));
             self.get().getSpecs().stream().sorted(specSorter)
                     .forEach(s -> {
                         tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
                     });
-            tooltip.add(Text.empty());
-            tooltip.add(Text.literal("Available trees"));
 
+            tooltip.add(Text.literal("New trees:").styled(s -> s.withUnderline(true)));
             EnumSet.complementOf(self.get().getSpecs()).stream().sorted(specSorter)
                     .forEach(s -> {
                         tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
@@ -227,7 +224,6 @@ public class TooltipHelper {
             }
 
             tooltip.addAll(createAbilityList(Text.literal("Actives: "), actives.toList(), 4, 3));
-            tooltip.add(Text.empty());
             tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives.toList(), 4, 3));
         });
 
@@ -239,7 +235,6 @@ public class TooltipHelper {
             List<Passive> passives = self.get().getPassives().values().stream().filter(p -> p.getSpec() == AbilitySpec.PRISMATIC).toList();
 
             tooltip.addAll(createAbilityList(Text.literal("Actives: "), actives, 4, 3));
-            tooltip.add(Text.empty());
             tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives, 4, 3));
         });
 
@@ -248,14 +243,13 @@ public class TooltipHelper {
             if (self.isEmpty()) return;
             Spec.SpecComparator specSorter = Spec.SpecComparator.fromAbilitySpec(Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null)).specPriority);
 
-            tooltip.add(Text.literal("Current trees"));
+            tooltip.add(Text.literal("Current trees:").styled(s -> s.withUnderline(true)));
             self.get().getSpecs().stream().sorted(specSorter)
                     .forEach(s -> {
                         tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
                     });
-            tooltip.add(Text.empty());
-            tooltip.add(Text.literal("Available trees"));
 
+            tooltip.add(Text.literal("New trees:").styled(s -> s.withUnderline(true)));
             EnumSet.complementOf(self.get().getSpecs()).stream().sorted(specSorter)
                     .forEach(s -> {
                         tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), self.get()));
@@ -267,7 +261,6 @@ public class TooltipHelper {
             if (self.isEmpty()) return;
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
-            tooltip.add(Text.literal("Available replacements:"));
             self.get().getActives().keySet().stream().filter(a -> a.getSpec() != AbilitySpec.PRISMATIC).sorted(new Actives.ActiveSlotComparator(config.slotPriority))
                     .forEach(a -> {
                         Set<Actives> replacements = Actives.getActives(a.getSlot()).get(AbilitySpec.PRISMATIC);
@@ -311,7 +304,7 @@ public class TooltipHelper {
         abilitySelectOperations.put(Gifts.VENOM_OF_THE_BROODMOTHER, (tooltip, api) -> {
             Optional<PartyMember> self = api.getSelf();
             if (self.isEmpty()) return;
-            tooltip.add(Text.literal("Current grave timer: " + self.get().getGraveTimer()));
+            tooltip.add(Text.literal("Grave timer: " + self.get().getGraveTimer()));
         });
     }
 }
