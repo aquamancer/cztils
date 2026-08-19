@@ -15,16 +15,13 @@ import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 public class TooltipHelper {
     private static final Text ANCHOR = Text.literal(new String(Character.toChars(0x2693)));
 
-    private static final Map<Ability<?>, BiConsumer<List<Text>, ZenithApi>> abilitySelectOperations = new HashMap<>();
+    private static final Map<Ability<?>, Consumer<List<Text>>> abilitySelectOperations = new HashMap<>();
 
     public static void onTooltip(ItemStack stack, TooltipContext context, List<Text> lines) {
         if (lines.isEmpty()) return;
@@ -37,9 +34,9 @@ public class TooltipHelper {
             case "Select an Ability":
                 Optional<Ability<?>> ability = AbilityUtils.fromString(lines.get(0).getString());
                 if (ability.isEmpty()) return;
-                BiConsumer<List<Text>, ZenithApi> operation = abilitySelectOperations.get(ability.get());
+                Consumer<List<Text>> operation = abilitySelectOperations.get(ability.get());
                 if (operation != null) {
-                    operation.accept(lines, ZenithApi.getInstance());
+                    operation.accept(lines);
                 }
                 break;
         }
@@ -71,7 +68,7 @@ public class TooltipHelper {
         return getSpecColor(spec.toSpec().orElse(null));
     }
 
-    public static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, Collection<T> abilities, int width, int firstLineWidth) {
+    private static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, Collection<T> abilities, int width, int firstLineWidth) {
         return createAbilityList(prefix, abilities, width, firstLineWidth, (a, t) -> {});
     }
 
@@ -143,8 +140,8 @@ public class TooltipHelper {
 
     static {
         // gifts
-        abilitySelectOperations.put(Gifts.BROODMOTHERS_WEBBING, (tooltip, api) -> {
-            api.getParty().values().stream()
+        abilitySelectOperations.put(Gifts.BROODMOTHERS_WEBBING, (tooltip) -> {
+            ZenithApi.getInstance().getParty().values().stream()
                     .sorted(Comparator.comparingDouble(PartyMember::getGraveTimer))
                     .forEach(player -> {
                         Spec spec = player.getCharmedSpec().orElse(null);
@@ -157,8 +154,8 @@ public class TooltipHelper {
                     }
             );
         });
-        abilitySelectOperations.put(Gifts.CALLICARPAS_POINTED_HAT, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.CALLICARPAS_POINTED_HAT, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
@@ -169,8 +166,8 @@ public class TooltipHelper {
                     });
             // todo add curse of pride
         });
-        abilitySelectOperations.put(Gifts.FORSAKEN_GRIMOIRE, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.FORSAKEN_GRIMOIRE, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
@@ -189,8 +186,8 @@ public class TooltipHelper {
                         tooltip.addAll(createAbilityList(prefix, eligible, 4, 3));
                     });
         });
-        abilitySelectOperations.put(Gifts.KALEIDOSCOPIC_LENS, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.KALEIDOSCOPIC_LENS, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
             Spec.SpecComparator specSorter = Spec.SpecComparator.fromAbilitySpec(Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null)).specPriority);
 
@@ -207,8 +204,8 @@ public class TooltipHelper {
                     });
         });
 
-        abilitySelectOperations.put(Gifts.MEGA_HAMMER, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.MEGA_HAMMER, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
             Comparator<Active> activeSorter = config.getActiveSorter();
@@ -227,8 +224,8 @@ public class TooltipHelper {
             tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives.toList(), 4, 3));
         });
 
-        abilitySelectOperations.put(Gifts.ORB_OF_DARKNESS, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.ORB_OF_DARKNESS, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
 
             List<Active> actives = self.get().getActives().values().stream().filter(a -> a.getSpec() == AbilitySpec.PRISMATIC).toList();
@@ -238,8 +235,8 @@ public class TooltipHelper {
             tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives, 4, 3));
         });
 
-        abilitySelectOperations.put(Gifts.POETS_QUILL, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.POETS_QUILL, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
             Spec.SpecComparator specSorter = Spec.SpecComparator.fromAbilitySpec(Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null)).specPriority);
 
@@ -256,8 +253,8 @@ public class TooltipHelper {
                     });
         });
 
-        abilitySelectOperations.put(Gifts.PRISMATIC_CUBE, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.PRISMATIC_CUBE, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
             SpecConfig config = Cztils.config.specConfigs.get(self.get().getCharmedSpec().orElse(null));
 
@@ -275,8 +272,8 @@ public class TooltipHelper {
                     });
         });
 
-        abilitySelectOperations.put(Gifts.PURGING_STONE, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.PURGING_STONE, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
             tooltip.addAll(createAbilityList(
                     Text.literal("Current curses: "),
@@ -288,8 +285,8 @@ public class TooltipHelper {
             ));
         });
 
-        abilitySelectOperations.put(Gifts.STATUE_OF_REGRET, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.STATUE_OF_REGRET, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
             tooltip.addAll(createAbilityList(
                     Text.literal("Current curses: "),
@@ -301,8 +298,8 @@ public class TooltipHelper {
             ));
         });
 
-        abilitySelectOperations.put(Gifts.VENOM_OF_THE_BROODMOTHER, (tooltip, api) -> {
-            Optional<PartyMember> self = api.getSelf();
+        abilitySelectOperations.put(Gifts.VENOM_OF_THE_BROODMOTHER, (tooltip) -> {
+            Optional<PartyMember> self = ZenithApi.getInstance().getSelf();
             if (self.isEmpty()) return;
             tooltip.add(Text.literal("Grave timer: " + self.get().getGraveTimer()));
         });
