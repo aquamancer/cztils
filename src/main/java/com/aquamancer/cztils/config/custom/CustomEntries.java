@@ -85,7 +85,7 @@ public class CustomEntries {
                 .setSaveConsumer(updated -> {
                     configRef.clear();
                     updated.forEach(e -> {
-                        Optional<Ability<?>> ability = AbilityUtils.fromString(e);
+                        Optional<Ability<?>> ability = Ability.fromString(e);
                         if (ability.isPresent()) {
                             configRef.add(e);
                         }

@@ -214,11 +214,11 @@ public class Player extends HudElement {
         );
         int borderColor = Cztils.config.grayedOut;
         if (ability instanceof Gift) {
-            borderColor = AbilityIcon.GIFT_COLOR;
+            borderColor = 0xff000000 | Gifts.COLOR;
         } else if (ability instanceof HasRarity a && a.getRarity() != null) {
-            borderColor = AbilityIcon.RARITY_COLORS.get(a.getRarity());
+            borderColor = 0xff000000 | a.getRarity().getColor();
         } else if (ability instanceof Curse) {
-            borderColor = AbilityIcon.CURSE_COLOR;
+            borderColor = 0xff000000 | Curse.COLOR;
         }
         icon.setBorderColor(borderColor);
         icon.setBackgroundFill(Cztils.config.backgroundFill);

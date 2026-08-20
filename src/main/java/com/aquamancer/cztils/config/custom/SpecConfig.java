@@ -70,7 +70,7 @@ public class SpecConfig {
     private static Set<Ability<?>> fillAbilitySet(List<String> names, Function<Ability<?>, Boolean> excludeIf) {
         Set<Ability<?>> set = new HashSet<>();
         for (String name : names) {
-            Optional<Ability<?>> ability = AbilityUtils.fromString(name);
+            Optional<Ability<?>> ability = Ability.fromString(name);
             if (ability.isEmpty()) continue;
             if (!excludeIf.apply(ability.get())) {
                 set.add(ability.get());
@@ -82,7 +82,7 @@ public class SpecConfig {
     private static <E extends Enum<E>> Set<E> fillAbilitySet(List<String> names, Class<E> type, boolean invert) {
         EnumSet<E> result = EnumSet.noneOf(type);
         for (String name : names) {
-            Optional<Ability<?>> ability = AbilityUtils.fromString(name);
+            Optional<Ability<?>> ability = Ability.fromString(name);
             if (ability.isEmpty()) continue;
             if (type.isInstance(ability.get())) {
                 result.add(type.cast(ability.get()));

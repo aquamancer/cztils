@@ -6,17 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public abstract class AbilityIcon extends HudElement {
-    public static final Map<Rarity, Integer> RARITY_COLORS = Map.of(
-            Rarity.COMMON, 0xff9f929c,
-            Rarity.UNCOMMON, 0xff70bc6d,
-            Rarity.RARE, 0xff705eca,
-            Rarity.EPIC, 0xffcd5eca,
-            Rarity.LEGENDARY, 0xffe49b20,
-            Rarity.TWISTED, 0xff703663
-    );
-    public static final int CURSE_COLOR = 0xffc41300;
-    public static final int GIFT_COLOR = 0xff25f6f5;
-
     protected int w, h;
     protected int borderWidth;
     protected int borderColor;
