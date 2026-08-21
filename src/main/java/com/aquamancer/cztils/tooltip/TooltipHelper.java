@@ -85,6 +85,12 @@ public class TooltipHelper {
                 .add(modifier);
     }
 
+    private static void registerGlobalTooltip(Collection<ZenithScreens> screens, Consumer<List<Text>> modifier) {
+        for (ZenithScreens screen : screens) {
+            registerGlobalTooltip(screen, modifier);
+        }
+    }
+
     private static void registerGlobalTooltip(ZenithScreens screen, Consumer<List<Text>> modifier) {
         globalTooltips.computeIfAbsent(screen, k -> new ArrayList<>())
                 .add(modifier);
@@ -342,20 +348,55 @@ public class TooltipHelper {
     }
 
     static {
-        // abilities
-        registerGlobalTooltip(ZenithScreens.CLEANSE, ifHasThen(Passives.GENEROSITY, (tooltip) -> {
-            if (ZenithApi.getInstance().hasRemovedAbilityForFloor()) return;
+        // generosity
+        registerGlobalTooltip(List.of(ZenithScreens.CLEANSE, ZenithScreens.MUTATE), ifHasThen(Passives.GENEROSITY, (tooltip) -> {
+            if (ZenithApi.getInstance().hasCleansed() || ZenithApi.getInstance().hasMutated()) return;
             if (tooltip.isEmpty()) return;
             Ability<?> ability = Ability.fromString(tooltip.get(0).getString()).orElse(null);
-            if (ability == null || ability instanceof Curse || ability instanceof Gifts) return;
+            if (!(ability instanceof Actives || ability instanceof Passives)) return;
 
-            List<PartyMember> receivers = ZenithApi.getInstance().getParty().values().stream()
+            List<PartyMember> recipients = ZenithApi.getInstance().getParty().values().stream()
                     .filter(p -> !p.isSelf())
-                    .filter(p -> !(ability instanceof Actives a) || p.isBlocked(a, Cztils.config.a14) == PartyMember.BlockReason.NOT_BLOCKED)
+                    .filter(p -> !(ability instanceof Actives a) || p.isBlocked(a, Cztils.config.a14) != PartyMember.BlockReason.SLOT_TAKEN)
                     .toList();
-            tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(Text.literal(":")));
-            tooltip.addAll(createPlayerList(receivers));
+            tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(Text.literal(" donates to:")));
+            tooltip.addAll(createPlayerList(recipients));
         }));
+        // diversity
+        Consumer<List<Text>> diversitySummary = (tooltip) -> {
+            PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
+            if (self == null) return;
+            Map<AbilitySpec, Long> counts = self.getAbilityCounts();
+            long unique = counts.entrySet().stream()
+                    .filter(e -> e.getValue() > 0)
+                    .count();
+
+            List<AbilitySpec> achieved = counts.entrySet().stream()
+                    .filter(e -> e.getValue() > 0)
+                    .map(Map.Entry::getKey)
+                    .toList();
+            EnumSet<AbilitySpec> remaining = EnumSet.noneOf(AbilitySpec.class);
+            remaining.addAll(achieved);
+            remaining = EnumSet.complementOf(remaining);
+
+            tooltip.add(Text.empty().append(Text.literal("Progress: " + unique + "/6")));
+            tooltip.add(createAbilitySpecList(Text.literal("Remaining: "), remaining));
+        };
+        registerAbilityTooltip(Passives.DIVERSITY, List.of(ZenithScreens.ABILITY, ZenithScreens.TRINKET), diversitySummary);
+        registerGlobalTooltip(ZenithScreens.GRIMOIRE_TREE, ifHasThen(Passives.DIVERSITY, (tooltip) -> {
+            if (tooltip.isEmpty()) return;
+            Spec spec = Spec.fromString(tooltip.get(0).getString()).orElse(null);
+            if (spec == null) return;
+            createDiversityLine(1).accept(spec.toAbilitySpec(), tooltip);
+        }));
+        registerGlobalTooltip(ZenithScreens.POINTED_HAT, ifHasThen(Passives.DIVERSITY, (tooltip) -> {
+            if (tooltip.isEmpty()) return;
+            Spec spec = Spec.fromString(tooltip.get(0).getString()).orElse(null);
+            if (spec == null) return;
+            createDiversityLine(3).accept(spec.toAbilitySpec(), tooltip);
+        }));
+        registerSpecTooltip(List.of(ZenithScreens.ABILITY, ZenithScreens.GENEROSITY, ZenithScreens.GRIMOIRE_ABILITY), ifHasThen(Passives.DIVERSITY, createDiversityLine(1)));
+        registerSpecTooltip(List.of(ZenithScreens.CLEANSE, ZenithScreens.MUTATE), ifHasThen(Passives.DIVERSITY, createDiversityLine(-1)));
     }
 
     public static void onTooltip(ItemStack stack, TooltipContext context, List<Text> lines) {
@@ -382,11 +423,11 @@ public class TooltipHelper {
             AbilitySpec spec = specAndRarity.spec().orElse(null);
             Rarity rarity = specAndRarity.rarity().orElse(null);
             List<BiConsumer<AbilitySpec, List<Text>>> specOps = specTooltips.get(screen);
-            if (specOps != null) {
+            if (spec != null && specOps != null) {
                 specOps.forEach(op -> op.accept(spec, lines));
             }
             List<BiConsumer<Rarity, List<Text>>> rarityOps = rarityTooltips.get(screen);
-            if (rarityOps != null) {
+            if (rarity != null && rarityOps != null) {
                 rarityOps.forEach(op -> op.accept(rarity, lines));
             }
         }
@@ -530,6 +571,15 @@ public class TooltipHelper {
     }
 
     private static MutableText createSpecList(MutableText prefix, Collection<Spec> specs, BiFunction<Spec, MutableText, MutableText> postOperator) {
+        List<AbilitySpec> converted = specs.stream().map(Spec::toAbilitySpec).toList();
+        return createAbilitySpecList(prefix, converted, (s, t) -> (s.toSpec().isPresent()) ? postOperator.apply(s.toSpec().get(), t) : t);
+    }
+
+    private static MutableText createAbilitySpecList(MutableText prefix, Collection<AbilitySpec> specs) {
+        return createAbilitySpecList(prefix, specs, (s, t) -> t);
+    }
+
+    private static MutableText createAbilitySpecList(MutableText prefix, Collection<AbilitySpec> specs, BiFunction<AbilitySpec, MutableText, MutableText> postOperator) {
         if (specs.isEmpty()) {
             return prefix;
         }
@@ -537,11 +587,11 @@ public class TooltipHelper {
         line.append(prefix);
 
         int i = 0;
-        for (Spec spec : specs) {
+        for (AbilitySpec spec : specs) {
             if (i != 0) {
                 line.append(", ");
             }
-            MutableText name = Text.literal(spec.getDisplayName()).withColor(getSpecColor(spec));
+            MutableText name = getSpecName(spec);
             line.append(postOperator.apply(spec, name));
             i++;
         }
@@ -600,11 +650,42 @@ public class TooltipHelper {
             long beforeAbilities = 4 - self.getAbilityCount(spec);
             long afterAbilities = beforeAbilities + delta;
             MutableText beforeText = Text.literal(String.valueOf(beforeAbilities)).formatted((beforeAbilities < 0) ? Formatting.RED : Formatting.GREEN);
-            MutableText afterText = Text.literal(String.valueOf(afterAbilities).formatted((afterAbilities < 0) ? Formatting.RED : Formatting.GREEN));
+            MutableText afterText = Text.literal(String.valueOf(afterAbilities)).formatted((afterAbilities < 0) ? Formatting.RED : Formatting.GREEN);
 
             MutableText line = Text.empty();
-            line.append(Curse.PRIDE.getText()).append(": ").append(getSpecName(spec)).append(" remaining: ");
+            line.append(Curse.PRIDE.getText()).append(": ").append(getSpecName(spec)).append(" ");
             line.append(beforeText).append(" -> ").append(afterText);
+            line.append(" abilities remaining");
+            tooltip.add(line);
+        };
+    }
+
+    private static BiConsumer<AbilitySpec, List<Text>> createDiversityLine(int delta) {
+        return (spec, tooltip) -> {
+            if (ZenithApi.getInstance().hasAchievedDiversity()) return;
+            PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
+            if (self == null) return;
+            Map<AbilitySpec, Long> abilityCounts = self.getAbilityCounts();
+            long abilities = abilityCounts.getOrDefault(spec, 0L);
+            long result = abilities + delta;
+            // only show on thresholds
+            if (delta >= 0 && abilities > 0) return;
+            if (delta < 0 && result > 0) return;
+            long unique = abilityCounts.values().stream().filter(c -> c > 0).count();
+
+            List<AbilitySpec> achieved = abilityCounts.entrySet().stream()
+                    .filter(e -> e.getValue() > 0)
+                    .map(Map.Entry::getKey)
+                    .toList();
+            EnumSet<AbilitySpec> remaining = EnumSet.noneOf(AbilitySpec.class);
+            remaining.addAll(achieved);
+            remaining = EnumSet.complementOf(remaining);
+
+            MutableText line = Text.empty();
+            line.append(Passives.DIVERSITY.getText()).append(" (" + unique + "/6): ").append(getSpecName(spec));
+            line.append(" " + abilities + " -> ").append(Text.literal(String.valueOf(result)).formatted(result == 1 ? Formatting.GREEN : Formatting.RED));
+            line.append(" (").append(createAbilitySpecList(Text.empty(), remaining)).append(" remaining)");
+
             tooltip.add(line);
         };
     }
