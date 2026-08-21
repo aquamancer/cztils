@@ -43,18 +43,6 @@ public class Cztils implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		HudRenderCallback.EVENT.register(((context, tickDelta) -> {
-			if (!Cztils.config.hudEnabled) return;
-			MinecraftClient client = MinecraftClient.getInstance();
-			if (client.currentScreen instanceof HandledScreen<?>) return;
-
-			if (client.options.playerListKey.isPressed()) {
-				hud.render(context, Cztils.config.tabPressedRenderMode);
-			} else {
-				hud.render(context, Cztils.config.inGameRenderMode);
-			}
-		}));
-
 		ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
 			if (Cztils.config.tooltipsEnabled) {
 				TooltipHelper.onTooltip(lines);

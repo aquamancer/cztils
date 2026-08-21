@@ -31,7 +31,7 @@ public class ModConfig implements ConfigData {
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
-    public float verticalPos = 0.45f;
+    public float verticalPos = 0.5f;
 
     @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
@@ -51,6 +51,9 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public Player.RenderMode inventoryRenderMode = Player.RenderMode.ALL;
+
+    @ConfigEntry.Category("hud")
+    public boolean renderOverChat = false;
 
     @ConfigEntry.Gui.CollapsibleObject
     @ConfigEntry.Category("hud")

@@ -32,6 +32,8 @@
   "text.autoconfig.cztils.option.inventoryRenderMode": "Inventory render mode",
   "text.autoconfig.cztils.option.inventoryRenderMode.@Tooltip": "Elements to be displayed in an inventory screen\nALL - Nametag and icons\nNAMETAG - Nametag\nOFF - None",
 
+  "text.autoconfig.cztils.option.renderOverChat": "Render in front of chat",
+
   "text.autoconfig.cztils.option.nametag": "Nametag settings",
   "text.autoconfig.cztils.option.nametag.nametagFormat": "Nametag format string",
   "text.autoconfig.cztils.option.nametag.nametagFormat.@Tooltip": "Supports the following replacements:\n    {name}\n    {spec}\n    {hp}\n    {grave}",

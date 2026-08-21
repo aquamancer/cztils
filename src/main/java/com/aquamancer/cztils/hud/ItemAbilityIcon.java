@@ -26,24 +26,30 @@ public class ItemAbilityIcon extends AbilityIcon {
 
         matrices.push();
         matrices.translate(this.x, this.y, 0f);
-        context.fill(RenderLayer.getGuiOverlay(), 0, 0, this.w, this.h, borderColor);
+        context.fill(0, 0, this.w, this.h, borderColor);
         matrices.translate(borderWidth, borderWidth, 0f);
         if (backgroundFill != 0) {
-            context.fill(RenderLayer.getGuiOverlay(), 0, 0, this.w - borderWidth*2, this.h - borderWidth*2, backgroundFill);
+            matrices.translate(0f, 0f, 1f);
+            context.fill(0, 0, this.w - borderWidth*2, this.h - borderWidth*2, backgroundFill);
         }
 
+        matrices.translate(0f, 0f, 1f);
         matrices.push();
+        matrices.translate(0f, 0f, -150f);
         matrices.scale(this.scaleX, this.scaleY, 1.0f);
-        context.drawItem(this.item, 0, 0);
+//        context.drawItem(this.item, 0, 0);
+        context.drawItemWithoutEntity(this.item, 0, 0);
         matrices.pop();
 
         if (grayedOut != 0) {
-            context.fill(RenderLayer.getGuiOverlay(), 0, 0, this.w - borderWidth*2, this.h - borderWidth*2, grayedOut);
+            matrices.translate(0f, 0f, 16f);
+            context.fill(0, 0, this.w - borderWidth*2, this.h - borderWidth*2, grayedOut);
         }
-        // draw subscript over gray-out so you can actually see it
         if (this.subscript != null) {
+            matrices.translate(0f, 0f, 1f);
             matrices.push();
-            matrices.scale(this.scaleX, this.scaleY, 1.0f);
+            matrices.translate(0f, 0f, -200f);
+            matrices.scale(this.scaleX, this.scaleY, 1f);
             context.drawItemInSlot(
                     MinecraftClient.getInstance().textRenderer,
                     this.item,

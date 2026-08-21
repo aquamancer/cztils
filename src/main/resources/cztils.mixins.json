@@ -3,6 +3,7 @@
 	"package": "com.aquamancer.cztils.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
+		"InGameHudMixin",
 		"ScreenMixin"
 	],
 	"injectors": {
