@@ -370,11 +370,11 @@ public class TooltipHelper {
             if (spec == null) return;
             createDiversityLine(1).accept(spec.toAbilitySpec(), unused, tooltip);
         }));
-        registerGlobalTooltip(ZenithScreens.POINTED_HAT, ifHasThen(Passives.DIVERSITY, (unused, tooltip) -> {
+        registerGlobalTooltip(ZenithScreens.POINTED_HAT, ifHasThen(Passives.DIVERSITY, (player, tooltip) -> {
             if (tooltip.isEmpty()) return;
             Spec spec = Spec.fromString(tooltip.get(0).getString()).orElse(null);
             if (spec == null) return;
-            createDiversityLine(3).accept(spec.toAbilitySpec(), unused, tooltip);
+            createDiversityLine(3).accept(spec.toAbilitySpec(), player, tooltip);
         }));
         registerSpecTooltip(List.of(ZenithScreens.ABILITY, ZenithScreens.GENEROSITY, ZenithScreens.GRIMOIRE_ABILITY), ifHasThen(Passives.DIVERSITY, createDiversityLine(1)));
         registerSpecTooltip(List.of(ZenithScreens.CLEANSE, ZenithScreens.MUTATE), ifHasThen(Passives.DIVERSITY, createDiversityLine(-1)));
@@ -623,11 +623,10 @@ public class TooltipHelper {
 
     private static TriConsumer<AbilitySpec, PartyMember, List<Text>> createDiversityLine(int delta) {
         return (spec, player, tooltip) -> {
-            if (!player.isSelf()) return;
+            if (!player.isSelf()) return;  // currently only works for self
             if (ZenithApi.getInstance().hasAchievedDiversity()) return;
-            PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
-            if (self == null) return;
-            Map<AbilitySpec, Long> abilityCounts = self.getAbilityCounts();
+
+            Map<AbilitySpec, Long> abilityCounts = player.getAbilityCounts();
             long abilities = abilityCounts.getOrDefault(spec, 0L);
             long result = abilities + delta;
             // only show on thresholds
