@@ -41,12 +41,11 @@ public class ItemAbilityIcon extends AbilityIcon {
         context.drawItemWithoutEntity(this.item, 0, 0);
         matrices.pop();
 
+        matrices.translate(0f, 0f, 16f);
         if (grayedOut != 0) {
-            matrices.translate(0f, 0f, 16f);
             context.fill(0, 0, this.w - borderWidth*2, this.h - borderWidth*2, grayedOut);
         }
         if (this.subscript != null) {
-            matrices.translate(0f, 0f, 1f);
             matrices.push();
             matrices.translate(0f, 0f, -200f);
             matrices.scale(this.scaleX, this.scaleY, 1f);

@@ -183,10 +183,7 @@ public class TooltipHelper {
             tooltip.addAll(createPlayerList(hasPessimism));
         });
 
-        BiConsumer<PartyMember, List<Text>> prideList = (player, tooltip) -> {
-            long amount = player.getPrideAmount()*10;
-            tooltip.add(Text.empty().append("Amount: +").append(String.valueOf(amount)).append("%"));
-
+        BiConsumer<PartyMember, List<Text>> prideListForTrinket = (player, tooltip) -> {
             player.getAbilityCounts().entrySet().stream()
                     .filter(e -> e.getKey() != AbilitySpec.PRISMATIC)
                     .sorted(Comparator.comparingLong((Map.Entry<AbilitySpec, Long> e) -> e.getValue()).reversed())
@@ -204,7 +201,13 @@ public class TooltipHelper {
                         }
                     });
         };
-        registerAbilityTooltip(Curse.PRIDE, List.of(ZenithScreens.ABILITY, ZenithScreens.STATUE_OF_REGRET_REMOVE, ZenithScreens.STATUE_OF_REGRET_ADD, ZenithScreens.TRINKET), prideList);
+        BiConsumer<PartyMember, List<Text>> prideList = (player, tooltip) -> {
+            long amount = player.getPrideAmount()*10;
+            tooltip.add(Text.empty().append(Curse.PRIDE.getText()).append(": +").append(String.valueOf(amount)).append("%"));
+            prideListForTrinket.accept(player, tooltip);
+        };
+        registerAbilityTooltip(Curse.PRIDE, ZenithScreens.TRINKET, prideListForTrinket);
+        registerAbilityTooltip(Curse.PRIDE, List.of(ZenithScreens.ABILITY, ZenithScreens.STATUE_OF_REGRET_REMOVE, ZenithScreens.STATUE_OF_REGRET_ADD), prideList);
         registerAbilityTooltip(List.of(Gifts.FORSAKEN_GRIMOIRE, Gifts.CALLICARPAS_POINTED_HAT), ZenithScreens.ABILITY, ifHasThen(Curse.PRIDE, prideList));
         registerAbilityTooltip(Aspect.BOX, ZenithScreens.ASPECT, ifHasThen(Curse.PRIDE, prideList));
         registerSpecTooltip(List.of(ZenithScreens.ABILITY, ZenithScreens.GENEROSITY), ifHasThen(Curse.PRIDE, createPrideLine(-1)));
