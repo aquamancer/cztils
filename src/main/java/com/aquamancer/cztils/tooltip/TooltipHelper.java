@@ -4,6 +4,7 @@ import com.aquamancer.czlib.api.PartyMember;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.screens.ZenithScreens;
+import com.aquamancer.czlib.internal.TooltipParser;
 import com.aquamancer.cztils.Cztils;
 import com.aquamancer.cztils.config.custom.SpecConfig;
 import net.minecraft.client.MinecraftClient;
@@ -25,9 +26,21 @@ public class TooltipHelper {
     private static final int MAX_WORD_WIDTH = 4;
     private static final int FIRST_LINE_WIDTH = 3;
 
-    private static final Map<ZenithScreens, Map<Ability<?>, Consumer<List<Text>>>> tooltips = new EnumMap<>(ZenithScreens.class);
-    private static final Map<ZenithScreens, List<BiConsumer<Rarity, List<Text>>>> rarityTooltips = new EnumMap<>(ZenithScreens.class);
+    private static final Map<ZenithScreens, Map<String, List<Consumer<List<Text>>>>> tooltips = new EnumMap<>(ZenithScreens.class);
     private static final Map<ZenithScreens, List<BiConsumer<AbilitySpec, List<Text>>>> specTooltips = new EnumMap<>(ZenithScreens.class);
+    private static final Map<ZenithScreens, List<BiConsumer<Rarity, List<Text>>>> rarityTooltips = new EnumMap<>(ZenithScreens.class);
+
+    private static void registerAbilityTooltip(Collection<Ability<?>> abilities, Collection<ZenithScreens> screens, Consumer<List<Text>> modifier) {
+        for (ZenithScreens screen : screens) {
+            registerAbilityTooltip(abilities, screen, modifier);
+        }
+    }
+
+    private static void registerAbilityTooltip(Collection<Ability<?>> abilities, ZenithScreens screen, Consumer<List<Text>> modifier) {
+        for (Ability<?> ability : abilities) {
+            registerAbilityTooltip(ability, screen, modifier);
+        }
+    }
 
     private static void registerAbilityTooltip(Ability<?> ability, Collection<ZenithScreens> screens, Consumer<List<Text>> modifier) {
         for (ZenithScreens screen : screens) {
@@ -36,8 +49,19 @@ public class TooltipHelper {
     }
 
     private static void registerAbilityTooltip(Ability<?> ability, ZenithScreens screen, Consumer<List<Text>> modifier) {
+        registerAbilityTooltip(ability.getDisplayName(), screen, modifier);
+    }
+
+    private static void registerAbilityTooltip(String firstLine, Collection<ZenithScreens> screens, Consumer<List<Text>> modifier) {
+        for (ZenithScreens screen : screens) {
+            registerAbilityTooltip(firstLine, screen, modifier);
+        }
+    }
+
+    private static void registerAbilityTooltip(String firstLine, ZenithScreens screen, Consumer<List<Text>> modifier) {
         tooltips.computeIfAbsent(screen, k -> new HashMap<>())
-                .put(ability, modifier);
+                .computeIfAbsent(firstLine, k -> new ArrayList<>())
+                .add(modifier);
     }
 
     private static void registerRarityTooltip(Collection<ZenithScreens> screens, BiConsumer<Rarity, List<Text>> modifier) {
@@ -153,7 +177,7 @@ public class TooltipHelper {
             tooltip.addAll(createPlayerList(hasPessimism));
         });
 
-        registerAbilityTooltip(Curse.PRIDE, List.of(ZenithScreens.ABILITY, ZenithScreens.STATUE_OF_REGRET_REMOVE, ZenithScreens.STATUE_OF_REGRET_ADD, ZenithScreens.TRINKET), (tooltip) -> {
+        Consumer<List<Text>> prideList = (tooltip) -> {
             PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
             if (self == null) return;
             long amount = self.getPrideAmount()*10;
@@ -169,12 +193,21 @@ public class TooltipHelper {
 
                         MutableText prefix = Text.empty();
                         prefix.append(getSpecName(spec));
-                        prefix.append(" - ").append(count);
+                        prefix.append(" ").append(count);
                         if (abilityCount > 0) {
                             prefix.append(": ");
                             tooltip.addAll(createAbilityList(prefix, getSortedAbilities(self, spec)));
                         }
                     });
+        };
+        registerAbilityTooltip(Curse.PRIDE, List.of(ZenithScreens.ABILITY, ZenithScreens.STATUE_OF_REGRET_REMOVE, ZenithScreens.STATUE_OF_REGRET_ADD, ZenithScreens.TRINKET), prideList);
+        registerAbilityTooltip(List.of(Gifts.FORSAKEN_GRIMOIRE, Gifts.CALLICARPAS_POINTED_HAT), ZenithScreens.ABILITY, ifHas(prideList, Curse.PRIDE));
+        registerAbilityTooltip(Aspect.BOX, ZenithScreens.ASPECT, ifHas(prideList, Curse.PRIDE));
+        registerSpecTooltip(List.of(ZenithScreens.ABILITY, ZenithScreens.GENEROSITY), ifHas(createPrideLine(-1), Curse.PRIDE));
+        registerSpecTooltip(ZenithScreens.CLEANSE, ifHas(createPrideLine(1), Curse.PRIDE));
+        registerSpecTooltip(ZenithScreens.MUTATE, (spec, tooltip) -> {
+            ifHas(createPrideLine(1), Curse.PRIDE).accept(spec, tooltip);
+            ifHas(prideList, Curse.PRIDE).accept(tooltip);
         });
     }
 
@@ -313,16 +346,29 @@ public class TooltipHelper {
         ZenithScreens screen = ZenithScreens.fromString(screenTitle).orElse(null);
         if (screen == null) return;
 
-        Ability<?> ability = Ability.fromString(lines.get(0).getString()).orElse(null);
-        if (ability == null) return;
-        tooltips.get(ZenithScreens.ABILITY).get(Curse.GREED).accept(lines);
-        tooltips.get(ZenithScreens.ABILITY).get(Curse.GLUTTONY).accept(lines);
-        tooltips.get(ZenithScreens.ABILITY).get(Curse.PRIDE).accept(lines);
+        tooltips.computeIfPresent(screen, (s, m) -> {
+            m.computeIfPresent(lines.get(0).getString(), (line, ops) -> {
+                ops.forEach(op -> {
+                    op.accept(lines);
+                });
+                return ops;
+            });
+            return m;
+        });
 
-//        Consumer<List<Text>> operation = tooltips.get(screen).get(ability);
-//        if (operation != null) {
-//            operation.accept(lines);
-//        }
+        if (lines.size() > 1) {
+            TooltipParser.SpecRarityParseResult specAndRarity = TooltipParser.parseSpecRarity(lines.get(1).getString());
+            AbilitySpec spec = specAndRarity.spec().orElse(null);
+            Rarity rarity = specAndRarity.rarity().orElse(null);
+            List<BiConsumer<AbilitySpec, List<Text>>> specOps = specTooltips.get(screen);
+            if (specOps != null) {
+                specOps.forEach(op -> op.accept(spec, lines));
+            }
+            List<BiConsumer<Rarity, List<Text>>> rarityOps = rarityTooltips.get(screen);
+            if (rarityOps != null) {
+                rarityOps.forEach(op -> op.accept(rarity, lines));
+            }
+        }
     }
 
     private static MutableText getSpecName(@Nullable Spec spec) {
@@ -490,6 +536,24 @@ public class TooltipHelper {
         return result;
     }
 
+    private static Consumer<List<Text>> ifHas(Consumer<List<Text>> operator, Ability<?> ability) {
+        return (t) -> {
+            PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
+            if (self == null) return;
+            if (!self.hasAbility(ability)) return;
+            operator.accept(t);
+        };
+    }
+
+    private static <T> BiConsumer<T, List<Text>> ifHas(BiConsumer<T, List<Text>> operator, Ability<?> ability) {
+        return (a, b) -> {
+            PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
+            if (self == null) return;
+            if (!self.hasAbility(ability)) return;
+            operator.accept(a, b);
+        };
+    }
+
     private static MutableText createGreedLine(int delta) {
         PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
         if (self == null) return Text.empty();
@@ -501,5 +565,21 @@ public class TooltipHelper {
         line.append(": ");
         line.append(String.valueOf(before*5)).append(" -> ").append(String.valueOf(after*5)).append("%");
         return line;
+    }
+
+    private static BiConsumer<AbilitySpec, List<Text>> createPrideLine(int delta) {
+        return (spec, tooltip) -> {
+            PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
+            if (self == null) return;
+            long beforeAbilities = 4 - self.getAbilityCount(spec);
+            long afterAbilities = beforeAbilities + delta;
+            MutableText beforeText = Text.literal(String.valueOf(beforeAbilities)).formatted((beforeAbilities < 0) ? Formatting.RED : Formatting.GREEN);
+            MutableText afterText = Text.literal(String.valueOf(afterAbilities).formatted((afterAbilities < 0) ? Formatting.RED : Formatting.GREEN));
+
+            MutableText line = Text.empty();
+            line.append(Curse.PRIDE.getText()).append(": ").append(getSpecName(spec)).append(" remaining: ");
+            line.append(beforeText).append(" -> ").append(afterText);
+            tooltip.add(line);
+        };
     }
 }
