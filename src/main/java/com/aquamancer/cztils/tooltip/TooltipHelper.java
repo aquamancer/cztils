@@ -622,7 +622,8 @@ public class TooltipHelper {
     }
 
     private static TriConsumer<AbilitySpec, PartyMember, List<Text>> createDiversityLine(int delta) {
-        return (spec, unused, tooltip) -> {
+        return (spec, player, tooltip) -> {
+            if (!player.isSelf()) return;
             if (ZenithApi.getInstance().hasAchievedDiversity()) return;
             PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
             if (self == null) return;
