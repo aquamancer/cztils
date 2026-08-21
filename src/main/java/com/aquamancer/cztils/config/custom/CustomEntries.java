@@ -29,7 +29,7 @@ public class CustomEntries {
         ConfigEntryBuilder builder = ConfigEntryBuilder.create();
         for (AbilitySpec spec : AbilitySpec.values()) {
             AbstractConfigListEntry input = builder
-                    .startIntField(Text.literal(spec.name()), config.specPriority.get(spec))
+                    .startIntField(Text.literal(spec.getDisplayName()), config.specPriority.get(spec))
                     .setSaveConsumer(v -> config.specPriority.put(spec, v))
                     .build();
             inputs.add(input);
