@@ -56,7 +56,9 @@ public class Cztils implements ModInitializer {
 		}));
 
 		ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
-			TooltipHelper.onTooltip(stack, context, lines);
+			if (Cztils.config.tooltipsEnabled) {
+				TooltipHelper.onTooltip(stack, context, lines);
+			}
 		});
 	}
 

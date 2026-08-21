@@ -9,6 +9,7 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,8 @@ public class CustomAnnots {
                             ConfigEntryBuilder builder = ConfigEntryBuilder.create();
 
                             List<AbstractConfigListEntry> specs = new ArrayList<>();
-                            for (Map.Entry<Spec, SpecConfig> pair : values.entrySet()) {
+                            for (Map.Entry<Spec, SpecConfig> pair : values.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.nullsLast(Comparator
+                                    .naturalOrder()))).toList()) {
                                 Spec spec = pair.getKey();
                                 if (spec == null) continue;
                                 SpecConfig specConfig = pair.getValue();

@@ -23,8 +23,6 @@ public class TooltipHelper {
 //    private static final Text ANCHOR = Text.literal(new String(Character.toChars(0x2693)));
     private static final Text CROSS_MARK = Text.literal("✗").formatted(Formatting.RED);
     private static final Text CHECK_MARK = Text.literal("✓").formatted(Formatting.GREEN);
-    private static final int MAX_WORD_WIDTH = 4;
-    private static final int FIRST_LINE_WIDTH = 3;
 
     private static final Map<ZenithScreens, Map<String, List<Consumer<List<Text>>>>> tooltips = new EnumMap<>(ZenithScreens.class);
     private static final Map<ZenithScreens, List<BiConsumer<AbilitySpec, List<Text>>>> specTooltips = new EnumMap<>(ZenithScreens.class);
@@ -436,7 +434,7 @@ public class TooltipHelper {
         for (T ability : abilities) {
             if (i != 0) {
                 line.append(Text.literal(", "));
-                if ((i - FIRST_LINE_WIDTH) % MAX_WORD_WIDTH == 0) {
+                if ((i - Cztils.config.firstLineWidth) % Cztils.config.lineWidth == 0) {
                     result.add(line);
                     line = Text.empty();
                 }

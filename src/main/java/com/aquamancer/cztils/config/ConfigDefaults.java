@@ -65,12 +65,12 @@ public final class ConfigDefaults {
         for (Spec spec : Spec.values()) {
             Map<Spec, Integer> teammates = new EnumMap<>(Spec.class);
             teammates.put(Spec.STEEL, 0);
-            teammates.put(Spec.SHADOW, 0);
-            teammates.put(Spec.FLAME, 1);
-            teammates.put(Spec.FROST, 1);
-            teammates.put(Spec.WIND, 2);
-            teammates.put(Spec.EARTH, 3);
-            teammates.put(Spec.DAWN, 5);
+            teammates.put(Spec.SHADOW, 1);
+            teammates.put(Spec.FLAME, 3);
+            teammates.put(Spec.FROST, 4);
+            teammates.put(Spec.WIND, 5);
+            teammates.put(Spec.EARTH, 6);
+            teammates.put(Spec.DAWN, 7);
             teammatePriority.put(spec, teammates);
         }
         // specPriority

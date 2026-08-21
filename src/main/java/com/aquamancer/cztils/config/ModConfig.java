@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Config(name = Cztils.MOD_ID)
 public class ModConfig implements ConfigData {
-    @ConfigEntry.Category("hud")
+    @ConfigEntry.Category("general")
     @ConfigEntry.Gui.Tooltip
     public boolean a14 = true;
 
@@ -137,8 +137,19 @@ public class ModConfig implements ConfigData {
 
 
     @ConfigEntry.Category("tooltip")
+    public boolean tooltipsEnabled = true;
+
+    @ConfigEntry.Category("tooltip")
     @ConfigEntry.Gui.Tooltip
     public boolean useConfigForTooltips = true;
+
+    @ConfigEntry.Category("tooltip")
+    @ConfigEntry.Gui.Tooltip
+    public int lineWidth = 4;
+
+    @ConfigEntry.Category("tooltip")
+    @ConfigEntry.Gui.Tooltip
+    public int firstLineWidth = 3;
 
     public ModConfig() {}
 }

@@ -1,8 +1,16 @@
 {
   "text.autoconfig.cztils.title": "Configuring cztils",
 
+
+  "text.autoconfig.cztils.category.general": "General",
   "text.autoconfig.cztils.category.hud": "Hud",
   "text.autoconfig.cztils.category.specs": "Specs",
+  "text.autoconfig.cztils.category.tooltip": "Tooltips",
+
+
+  "text.autoconfig.cztils.option.a14": "Ascension 14+",
+  "text.autoconfig.cztils.option.a14.@Tooltip": "Enable blocked indicators for the 4 active cap",
+
 
   "text.autoconfig.cztils.option.hudEnabled": "Enabled",
 
@@ -108,5 +116,17 @@
   "text.autoconfig.cztils.option.specConfig.iconList.giftMode": "List mode for gifts",
   "text.autoconfig.cztils.option.specConfig.iconList.gifts": "Gifts",
   "text.autoconfig.cztils.option.specConfig.iconList.curseMode": "List mode for curses",
-  "text.autoconfig.cztils.option.specConfig.iconList.curses": "Curses"
+  "text.autoconfig.cztils.option.specConfig.iconList.curses": "Curses",
+
+
+  "text.autoconfig.cztils.option.tooltipsEnabled": "Enabled",
+
+  "text.autoconfig.cztils.option.useConfigForTooltips": "Use config settings for tooltips",
+  "text.autoconfig.cztils.option.useConfigForTooltips.@Tooltip": "Use spec config settings over default names and colors for tooltip formatting",
+
+  "text.autoconfig.cztils.option.lineWidth": "Max line width",
+  "text.autoconfig.cztils.option.lineWidth.@Tooltip": "Max words per line for ability lists",
+
+  "text.autoconfig.cztils.option.firstLineWidth": "First line max width",
+  "text.autoconfig.cztils.option.firstLineWidth.@Tooltip": "Max words for the first line for ability lists"
 }
