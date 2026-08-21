@@ -27,6 +27,7 @@ public class TooltipHelper {
     private static final Map<ZenithScreens, Map<String, List<Consumer<List<Text>>>>> tooltips = new EnumMap<>(ZenithScreens.class);
     private static final Map<ZenithScreens, List<BiConsumer<AbilitySpec, List<Text>>>> specTooltips = new EnumMap<>(ZenithScreens.class);
     private static final Map<ZenithScreens, List<BiConsumer<Rarity, List<Text>>>> rarityTooltips = new EnumMap<>(ZenithScreens.class);
+    private static final Map<ZenithScreens, List<Consumer<List<Text>>>> globalTooltips = new EnumMap<>(ZenithScreens.class);
 
     private static void registerAbilityTooltip(Collection<Ability<?>> abilities, Collection<ZenithScreens> screens, Consumer<List<Text>> modifier) {
         for (ZenithScreens screen : screens) {
@@ -81,6 +82,11 @@ public class TooltipHelper {
 
     private static void registerSpecTooltip(ZenithScreens screen, BiConsumer<AbilitySpec, List<Text>> modifier) {
         specTooltips.computeIfAbsent(screen, k -> new ArrayList<>())
+                .add(modifier);
+    }
+
+    private static void registerGlobalTooltip(ZenithScreens screen, Consumer<List<Text>> modifier) {
+        globalTooltips.computeIfAbsent(screen, k -> new ArrayList<>())
                 .add(modifier);
     }
 
@@ -167,7 +173,7 @@ public class TooltipHelper {
             Collection<PartyMember> party = ZenithApi.getInstance().getParty().values();
             List<PartyMember> hasPessimism = party.stream()
                     .filter(p -> p.getCurses().contains(Curse.PESSIMISM))
-                    .filter(p -> !ZenithApi.getInstance().isSelf(p))
+                    .filter(p -> !p.isSelf())
                     .toList();
             if (hasPessimism.isEmpty()) return;
 
@@ -199,13 +205,13 @@ public class TooltipHelper {
                     });
         };
         registerAbilityTooltip(Curse.PRIDE, List.of(ZenithScreens.ABILITY, ZenithScreens.STATUE_OF_REGRET_REMOVE, ZenithScreens.STATUE_OF_REGRET_ADD, ZenithScreens.TRINKET), prideList);
-        registerAbilityTooltip(List.of(Gifts.FORSAKEN_GRIMOIRE, Gifts.CALLICARPAS_POINTED_HAT), ZenithScreens.ABILITY, ifHas(prideList, Curse.PRIDE));
-        registerAbilityTooltip(Aspect.BOX, ZenithScreens.ASPECT, ifHas(prideList, Curse.PRIDE));
-        registerSpecTooltip(List.of(ZenithScreens.ABILITY, ZenithScreens.GENEROSITY), ifHas(createPrideLine(-1), Curse.PRIDE));
-        registerSpecTooltip(ZenithScreens.CLEANSE, ifHas(createPrideLine(1), Curse.PRIDE));
+        registerAbilityTooltip(List.of(Gifts.FORSAKEN_GRIMOIRE, Gifts.CALLICARPAS_POINTED_HAT), ZenithScreens.ABILITY, ifHasThen(Curse.PRIDE, prideList));
+        registerAbilityTooltip(Aspect.BOX, ZenithScreens.ASPECT, ifHasThen(Curse.PRIDE, prideList));
+        registerSpecTooltip(List.of(ZenithScreens.ABILITY, ZenithScreens.GENEROSITY), ifHasThen(Curse.PRIDE, createPrideLine(-1)));
+        registerSpecTooltip(ZenithScreens.CLEANSE, ifHasThen(Curse.PRIDE, createPrideLine(1)));
         registerSpecTooltip(ZenithScreens.MUTATE, (spec, tooltip) -> {
-            ifHas(createPrideLine(1), Curse.PRIDE).accept(spec, tooltip);
-            ifHas(prideList, Curse.PRIDE).accept(tooltip);
+            ifHasThen(Curse.PRIDE, createPrideLine(1)).accept(spec, tooltip);
+            ifHasThen(Curse.PRIDE, prideList).accept(tooltip);
         });
     }
 
@@ -335,6 +341,23 @@ public class TooltipHelper {
         });
     }
 
+    static {
+        // abilities
+        registerGlobalTooltip(ZenithScreens.CLEANSE, ifHasThen(Passives.GENEROSITY, (tooltip) -> {
+            if (ZenithApi.getInstance().hasRemovedAbilityForFloor()) return;
+            if (tooltip.isEmpty()) return;
+            Ability<?> ability = Ability.fromString(tooltip.get(0).getString()).orElse(null);
+            if (ability == null || ability instanceof Curse || ability instanceof Gifts) return;
+
+            List<PartyMember> receivers = ZenithApi.getInstance().getParty().values().stream()
+                    .filter(p -> !p.isSelf())
+                    .filter(p -> !(ability instanceof Actives a) || p.isBlocked(a, Cztils.config.a14) == PartyMember.BlockReason.NOT_BLOCKED)
+                    .toList();
+            tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(Text.literal(":")));
+            tooltip.addAll(createPlayerList(receivers));
+        }));
+    }
+
     public static void onTooltip(ItemStack stack, TooltipContext context, List<Text> lines) {
         if (lines.isEmpty()) return;
         Map<String, PartyMember> party = ZenithApi.getInstance().getParty();
@@ -366,6 +389,11 @@ public class TooltipHelper {
             if (rarityOps != null) {
                 rarityOps.forEach(op -> op.accept(rarity, lines));
             }
+        }
+
+        List<Consumer<List<Text>>> globalOps = globalTooltips.get(screen);
+        if (globalOps != null) {
+            globalOps.forEach((op) -> op.accept(lines));
         }
     }
 
@@ -534,7 +562,7 @@ public class TooltipHelper {
         return result;
     }
 
-    private static Consumer<List<Text>> ifHas(Consumer<List<Text>> operator, Ability<?> ability) {
+    private static Consumer<List<Text>> ifHasThen(Ability<?> ability, Consumer<List<Text>> operator) {
         return (t) -> {
             PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
             if (self == null) return;
@@ -543,7 +571,7 @@ public class TooltipHelper {
         };
     }
 
-    private static <T> BiConsumer<T, List<Text>> ifHas(BiConsumer<T, List<Text>> operator, Ability<?> ability) {
+    private static <T> BiConsumer<T, List<Text>> ifHasThen(Ability<?> ability, BiConsumer<T, List<Text>> operator) {
         return (a, b) -> {
             PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
             if (self == null) return;
