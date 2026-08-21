@@ -357,9 +357,10 @@ public class TooltipHelper {
 
             List<PartyMember> recipients = ZenithApi.getInstance().getParty().values().stream()
                     .filter(p -> !p.isSelf())
+                    .filter(p -> !p.getActives().containsKey(ability) && !p.getPassives().containsKey(ability))
                     .filter(p -> !(ability instanceof Actives a) || p.isBlocked(a, Cztils.config.a14) != PartyMember.BlockReason.SLOT_TAKEN)
                     .toList();
-            tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(Text.literal(" donates to:")));
+            tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(Text.literal(" will offer to:")));
             tooltip.addAll(createPlayerList(recipients));
         }));
         // diversity
@@ -535,7 +536,7 @@ public class TooltipHelper {
                 true
         );
         remainingAbilities.removeIf(a -> (a instanceof Actives active) && (player.isBlocked(active, Cztils.config.a14) == PartyMember.BlockReason.SLOT_TAKEN));
-//        remainingAbilities.removeAll(player.getActiveSet(spec));  // slot taken should handle this
+        remainingAbilities.removeAll(player.getActiveSet(spec));  // for convergence
         remainingAbilities.removeAll(player.getPassiveSet(spec));
 
         MutableText prefix = Text.empty();
@@ -645,6 +646,7 @@ public class TooltipHelper {
 
     private static BiConsumer<AbilitySpec, List<Text>> createPrideLine(int delta) {
         return (spec, tooltip) -> {
+            if (spec == AbilitySpec.PRISMATIC) return;
             PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
             if (self == null) return;
             long beforeAbilities = 4 - self.getAbilityCount(spec);
