@@ -3,6 +3,8 @@
 
   "text.autoconfig.cztils.category.hud": "HUD",
   "text.autoconfig.cztils.category.specs": "专精",
+  "text.autoconfig.cztils.category.tooltip": "工具提示",
+  "text.autoconfig.cztils.category.general": "通用",
 
   "text.autoconfig.cztils.option.hudEnabled": "启用",
 
@@ -23,6 +25,8 @@
 
   "text.autoconfig.cztils.option.inventoryRenderMode": "背包界面显示模式",
   "text.autoconfig.cztils.option.inventoryRenderMode.@Tooltip": "在背包界面中显示的元素\nALL - 名称标签和图标\nNAMETAG - 仅名称标签\nOFF - 不显示",
+
+  "text.autoconfig.cztils.option.renderOverChat": "在聊天框前显示",
 
   "text.autoconfig.cztils.option.nametag": "名称标签设置",
   "text.autoconfig.cztils.option.nametag.nametagFormat": "名称标签格式",
@@ -68,8 +72,6 @@
   "text.autoconfig.cztils.option.showSelf": "显示自己",
   "text.autoconfig.cztils.option.showSelf.@Tooltip": "在 HUD 中显示自己",
 
-
-
   "text.autoconfig.cztils.option.showMissingLifelines": "始终显示未获得的保命道具",
   "text.autoconfig.cztils.option.showMissingLifelines.@Tooltip": "以不死图腾显示",
 
@@ -108,5 +110,19 @@
   "text.autoconfig.cztils.option.specConfig.iconList.giftMode": "天赋列表模式",
   "text.autoconfig.cztils.option.specConfig.iconList.gifts": "天赋",
   "text.autoconfig.cztils.option.specConfig.iconList.curseMode": "诅咒列表模式",
-  "text.autoconfig.cztils.option.specConfig.iconList.curses": "诅咒"
+  "text.autoconfig.cztils.option.specConfig.iconList.curses": "诅咒",
+
+  "text.autoconfig.cztils.option.tooltipsEnabled": "启用",
+
+  "text.autoconfig.cztils.option.useConfigForTooltips": "工具提示使用配置设置",
+  "text.autoconfig.cztils.option.useConfigForTooltips.@Tooltip": "工具提示格式使用专精配置中的名称和颜色，而不是默认名称和颜色",
+
+  "text.autoconfig.cztils.option.lineWidth": "最大行宽",
+  "text.autoconfig.cztils.option.lineWidth.@Tooltip": "技能列表每行最多显示的词数",
+
+  "text.autoconfig.cztils.option.firstLineWidth": "首行最大宽度",
+  "text.autoconfig.cztils.option.firstLineWidth.@Tooltip": "技能列表首行最多显示的词数",
+
+  "text.autoconfig.cztils.option.a14": "飞升 14+",
+  "text.autoconfig.cztils.option.a14.@Tooltip": "启用 4 个主动技能上限的封锁指示器"
 }

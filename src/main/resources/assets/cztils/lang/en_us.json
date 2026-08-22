@@ -1,11 +1,10 @@
 {
   "text.autoconfig.cztils.title": "Configuring cztils",
 
-
-  "text.autoconfig.cztils.category.general": "General",
   "text.autoconfig.cztils.category.hud": "Hud",
   "text.autoconfig.cztils.category.specs": "Specs",
   "text.autoconfig.cztils.category.tooltip": "Tooltips",
+  "text.autoconfig.cztils.category.general": "General",
 
 
   "text.autoconfig.cztils.option.hudEnabled": "Enabled",
