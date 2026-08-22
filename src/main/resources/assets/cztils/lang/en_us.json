@@ -8,10 +8,6 @@
   "text.autoconfig.cztils.category.tooltip": "Tooltips",
 
 
-  "text.autoconfig.cztils.option.a14": "Ascension 14+",
-  "text.autoconfig.cztils.option.a14.@Tooltip": "Enable blocked indicators for the 4 active cap",
-
-
   "text.autoconfig.cztils.option.hudEnabled": "Enabled",
 
   "text.autoconfig.cztils.option.positionAnchor": "Anchor position",
@@ -130,5 +126,9 @@
   "text.autoconfig.cztils.option.lineWidth.@Tooltip": "Max words per line for ability lists",
 
   "text.autoconfig.cztils.option.firstLineWidth": "First line max width",
-  "text.autoconfig.cztils.option.firstLineWidth.@Tooltip": "Max words for the first line for ability lists"
+  "text.autoconfig.cztils.option.firstLineWidth.@Tooltip": "Max words for the first line for ability lists",
+
+
+  "text.autoconfig.cztils.option.a14": "Ascension 14+",
+  "text.autoconfig.cztils.option.a14.@Tooltip": "Enable blocked indicators for the 4 active cap"
 }
