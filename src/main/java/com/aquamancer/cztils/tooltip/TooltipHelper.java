@@ -101,6 +101,114 @@ public class TooltipHelper {
     }
 
     static {
+        // gifts
+        registerAbilityTooltip(Gifts.BROODMOTHERS_WEBBING, ZenithScreens.ABILITY, (player, tooltip) -> {
+            List<PartyMember> players = ZenithApi.getInstance().getParty().values().stream()
+                    .sorted(Comparator.comparingDouble(PartyMember::getGraveTimer))
+                    .toList();
+            tooltip.addAll(createPlayerList(players));
+        });
+
+        registerAbilityTooltip(Gifts.CALLICARPAS_POINTED_HAT, ZenithScreens.ABILITY, (player, tooltip) -> {
+            SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
+
+            player.getSpecs().stream()
+                    .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
+                    .forEach(s -> {
+                        tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), player));
+                    });
+        });
+        registerAbilityTooltip(Gifts.FORSAKEN_GRIMOIRE, ZenithScreens.ABILITY, (player, tooltip) -> {
+            SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
+
+            player.getSpecs().stream()
+                    .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
+                    .forEach(s -> {
+                        AbilitySpec spec = s.toAbilitySpec();
+
+                        EnumSet<Actives> actives = AbilitySpec.getActives(spec);
+                        Collection<Actives> eligible = actives.stream()
+                                .filter(a -> player.isBlocked(a, false) == PartyMember.BlockReason.NOT_BLOCKED)
+                                .sorted(new Actives.ActiveSlotComparator(config.slotPriority))
+                                .toList();
+
+                        MutableText prefix = getSpecName(s).append(Text.literal(": "));
+                        tooltip.addAll(createAbilityList(prefix, eligible));
+                    });
+        });
+
+        registerAbilityTooltip(Gifts.KALEIDOSCOPIC_LENS, ZenithScreens.ABILITY, TooltipHelper::createEnvyList);
+
+        registerAbilityTooltip(Gifts.MEGA_HAMMER, ZenithScreens.ABILITY, (player, tooltip) -> {
+            SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
+            Comparator<Active> activeSorter = config.getActiveSorter();
+            Comparator<Passive> passiveSorter = config.getPassiveSorter();
+
+            Stream<Active> actives = player.getActives().values().stream().filter(a -> a.getRarity().getLevel() <= Rarity.UNCOMMON.getLevel());
+            if (activeSorter != null) {
+                actives = actives.sorted(activeSorter);
+            }
+            Stream<Passive> passives = player.getPassives().values().stream().filter(p -> p.getRarity().getLevel() <= Rarity.UNCOMMON.getLevel());
+            if (passiveSorter != null) {
+                passives = passives.sorted(passiveSorter);
+            }
+
+            tooltip.addAll(createAbilityList(Text.literal("Actives: "), actives.toList()));
+            tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives.toList()));
+        });
+
+        registerAbilityTooltip(Gifts.ORB_OF_DARKNESS, ZenithScreens.ABILITY, (player, tooltip) -> {
+            List<Active> actives = player.getActives().values().stream().filter(a -> a.getSpec() == AbilitySpec.PRISMATIC).toList();
+            List<Passive> passives = player.getPassives().values().stream().filter(p -> p.getSpec() == AbilitySpec.PRISMATIC).toList();
+
+            tooltip.addAll(createAbilityList(Text.literal("Actives: "), actives));
+            tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives));
+        });
+
+        registerAbilityTooltip(Gifts.POETS_QUILL, ZenithScreens.ABILITY, TooltipHelper::createEnvyList);
+
+        registerAbilityTooltip(Gifts.PRISMATIC_CUBE, ZenithScreens.ABILITY, (player, tooltip) -> {
+            SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
+
+            player.getActives().keySet().stream().filter(a -> a.getSpec() != AbilitySpec.PRISMATIC).sorted(new Actives.ActiveSlotComparator(config.slotPriority))
+                    .forEach(a -> {
+                        Set<Actives> replacements = Actives.getActives(a.getSlot()).get(AbilitySpec.PRISMATIC);
+                        if (replacements.isEmpty()) return;
+                        tooltip.addAll(
+                                createAbilityList(
+                                        Text.literal(a.getDisplayName()).withColor(getSpecColor(a.getSpec())).append(" -> "),
+                                        replacements
+                                )
+                        );
+                    });
+        });
+
+        registerAbilityTooltip(Gifts.PURGING_STONE, ZenithScreens.ABILITY, (player, tooltip) -> {
+            tooltip.addAll(createAbilityList(
+                    Text.literal("Current curses: "),
+                    player.getCurses(),
+                    (c, t) -> {
+                        t.withColor(Curse.COLOR);
+                    }
+            ));
+        });
+
+        registerAbilityTooltip(Gifts.STATUE_OF_REGRET, ZenithScreens.ABILITY, (player, tooltip) -> {
+            tooltip.addAll(createAbilityList(
+                    Text.literal("Current curses: "),
+                    player.getCurses(),
+                    (c, t) -> {
+                        t.withColor(Curse.COLOR);
+                    }
+            ));
+        });
+
+        registerAbilityTooltip(Gifts.VENOM_OF_THE_BROODMOTHER, ZenithScreens.ABILITY, (player, tooltip) -> {
+            tooltip.add(Text.literal("Grave timer: " + player.getGraveTimer()));
+        });
+    }
+
+    static {
         // curses
         // todo test removing envy
         registerAbilityTooltip(Curse.ENVY, List.of(ZenithScreens.ABILITY, ZenithScreens.STATUE_OF_REGRET_ADD), (player, tooltip) -> {
@@ -217,114 +325,6 @@ public class TooltipHelper {
             ifHasThen(Curse.PRIDE, prideList).accept(player, tooltip);
         });
         registerAbilityTooltip(Gifts.PRISMATIC_CUBE, ZenithScreens.ABILITY, ifHasThen(Curse.PRIDE, prideList));
-    }
-
-    static {
-        // gifts
-        registerAbilityTooltip(Gifts.BROODMOTHERS_WEBBING, ZenithScreens.ABILITY, (player, tooltip) -> {
-            List<PartyMember> players = ZenithApi.getInstance().getParty().values().stream()
-                    .sorted(Comparator.comparingDouble(PartyMember::getGraveTimer))
-                    .toList();
-            tooltip.addAll(createPlayerList(players));
-        });
-
-        registerAbilityTooltip(Gifts.CALLICARPAS_POINTED_HAT, ZenithScreens.ABILITY, (player, tooltip) -> {
-            SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
-
-            player.getSpecs().stream()
-                    .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
-                    .forEach(s -> {
-                        tooltip.addAll(createRemainingAbilityList(s.toAbilitySpec(), player));
-                    });
-        });
-        registerAbilityTooltip(Gifts.FORSAKEN_GRIMOIRE, ZenithScreens.ABILITY, (player, tooltip) -> {
-            SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
-
-            player.getSpecs().stream()
-                    .sorted(Spec.SpecComparator.fromAbilitySpec(config.specPriority))
-                    .forEach(s -> {
-                        AbilitySpec spec = s.toAbilitySpec();
-
-                        EnumSet<Actives> actives = AbilitySpec.getActives(spec);
-                        Collection<Actives> eligible = actives.stream()
-                                .filter(a -> player.isBlocked(a, false) == PartyMember.BlockReason.NOT_BLOCKED)
-                                .sorted(new Actives.ActiveSlotComparator(config.slotPriority))
-                                .toList();
-
-                        MutableText prefix = getSpecName(s).append(Text.literal(": "));
-                        tooltip.addAll(createAbilityList(prefix, eligible));
-                    });
-        });
-
-        registerAbilityTooltip(Gifts.KALEIDOSCOPIC_LENS, ZenithScreens.ABILITY, TooltipHelper::createEnvyList);
-
-        registerAbilityTooltip(Gifts.MEGA_HAMMER, ZenithScreens.ABILITY, (player, tooltip) -> {
-            SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
-            Comparator<Active> activeSorter = config.getActiveSorter();
-            Comparator<Passive> passiveSorter = config.getPassiveSorter();
-
-            Stream<Active> actives = player.getActives().values().stream().filter(a -> a.getRarity().getLevel() <= Rarity.UNCOMMON.getLevel());
-            if (activeSorter != null) {
-                actives = actives.sorted(activeSorter);
-            }
-            Stream<Passive> passives = player.getPassives().values().stream().filter(p -> p.getRarity().getLevel() <= Rarity.UNCOMMON.getLevel());
-            if (passiveSorter != null) {
-                passives = passives.sorted(passiveSorter);
-            }
-
-            tooltip.addAll(createAbilityList(Text.literal("Actives: "), actives.toList()));
-            tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives.toList()));
-        });
-
-        registerAbilityTooltip(Gifts.ORB_OF_DARKNESS, ZenithScreens.ABILITY, (player, tooltip) -> {
-            List<Active> actives = player.getActives().values().stream().filter(a -> a.getSpec() == AbilitySpec.PRISMATIC).toList();
-            List<Passive> passives = player.getPassives().values().stream().filter(p -> p.getSpec() == AbilitySpec.PRISMATIC).toList();
-
-            tooltip.addAll(createAbilityList(Text.literal("Actives: "), actives));
-            tooltip.addAll(createAbilityList(Text.literal("Passives: "), passives));
-        });
-
-        registerAbilityTooltip(Gifts.POETS_QUILL, ZenithScreens.ABILITY, TooltipHelper::createEnvyList);
-
-        registerAbilityTooltip(Gifts.PRISMATIC_CUBE, ZenithScreens.ABILITY, (player, tooltip) -> {
-            SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
-
-            player.getActives().keySet().stream().filter(a -> a.getSpec() != AbilitySpec.PRISMATIC).sorted(new Actives.ActiveSlotComparator(config.slotPriority))
-                    .forEach(a -> {
-                        Set<Actives> replacements = Actives.getActives(a.getSlot()).get(AbilitySpec.PRISMATIC);
-                        if (replacements.isEmpty()) return;
-                        tooltip.addAll(
-                                createAbilityList(
-                                        Text.literal(a.getDisplayName()).withColor(getSpecColor(a.getSpec())).append(" -> "),
-                                        replacements
-                                )
-                        );
-                    });
-        });
-
-        registerAbilityTooltip(Gifts.PURGING_STONE, ZenithScreens.ABILITY, (player, tooltip) -> {
-            tooltip.addAll(createAbilityList(
-                    Text.literal("Current curses: "),
-                    player.getCurses(),
-                    (c, t) -> {
-                        t.withColor(Curse.COLOR);
-                    }
-            ));
-        });
-
-        registerAbilityTooltip(Gifts.STATUE_OF_REGRET, ZenithScreens.ABILITY, (player, tooltip) -> {
-            tooltip.addAll(createAbilityList(
-                    Text.literal("Current curses: "),
-                    player.getCurses(),
-                    (c, t) -> {
-                        t.withColor(Curse.COLOR);
-                    }
-            ));
-        });
-
-        registerAbilityTooltip(Gifts.VENOM_OF_THE_BROODMOTHER, ZenithScreens.ABILITY, (player, tooltip) -> {
-            tooltip.add(Text.literal("Grave timer: " + player.getGraveTimer()));
-        });
     }
 
     static {
