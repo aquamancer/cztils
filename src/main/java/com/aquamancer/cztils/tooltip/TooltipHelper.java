@@ -216,6 +216,7 @@ public class TooltipHelper {
             ifHasThen(Curse.PRIDE, createPrideLine(1)).accept(spec, player, tooltip);
             ifHasThen(Curse.PRIDE, prideList).accept(player, tooltip);
         });
+        registerAbilityTooltip(Gifts.PRISMATIC_CUBE, ZenithScreens.ABILITY, ifHasThen(Curse.PRIDE, prideList));
     }
 
     static {
@@ -378,6 +379,7 @@ public class TooltipHelper {
         }));
         registerSpecTooltip(List.of(ZenithScreens.ABILITY, ZenithScreens.GENEROSITY, ZenithScreens.GRIMOIRE_ABILITY), ifHasThen(Passives.DIVERSITY, createDiversityLine(1)));
         registerSpecTooltip(List.of(ZenithScreens.CLEANSE, ZenithScreens.MUTATE), ifHasThen(Passives.DIVERSITY, createDiversityLine(-1)));
+        registerAbilityTooltip(Gifts.PRISMATIC_CUBE, ZenithScreens.ABILITY, ifHasThen(Passives.DIVERSITY, diversitySummary));
     }
 
     public static void onTooltip(List<Text> lines) {
