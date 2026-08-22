@@ -1,6 +1,7 @@
 package com.aquamancer.cztils.config.custom;
 
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;

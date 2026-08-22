@@ -2,6 +2,8 @@ package com.aquamancer.cztils.hud;
 
 import com.aquamancer.czlib.api.PartyMember;
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.gifts.Gift;
+import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import com.aquamancer.czlib.api.textures.ZenithTextures;
 import com.aquamancer.cztils.Cztils;
 import com.aquamancer.cztils.config.custom.SpecConfig;

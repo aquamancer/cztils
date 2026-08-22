@@ -3,6 +3,7 @@ package com.aquamancer.cztils.tooltip;
 import com.aquamancer.czlib.api.PartyMember;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import com.aquamancer.czlib.api.screens.ZenithScreens;
 import com.aquamancer.czlib.internal.TooltipParser;
 import com.aquamancer.cztils.Cztils;
