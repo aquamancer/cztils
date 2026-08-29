@@ -55,6 +55,11 @@ public class Hud {
                     party.get(player.getName()).setPassives(player);
                     party.get(player.getName()).setCurses(player);  // for greed/pride
                 },
+                ZenithApiUpdateEvents.SPEC, player -> {
+                    // to update grayed out icons
+                    party.get(player.getName()).setActives(player);
+                    party.get(player.getName()).setPassives(player);
+                },
                 ZenithApiUpdateEvents.CURSE, player -> party.get(player.getName()).setCurses(player),
                 ZenithApiUpdateEvents.GIFT, player -> party.get(player.getName()).setGifts(player),
                 ZenithApiUpdateEvents.GRAVE_TIMER, player -> party.get(player.getName()).setGraveTimer(player.getGraveTimer()),
