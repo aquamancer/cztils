@@ -324,7 +324,7 @@ public final class ConfigDefaults {
     }
     // config for null spec
     static {
-        names.put(null, "Charmless");
+        names.put(null, "?");
         nameColors.put(null, 0xffffff);
         specColors.put(null, 0xffffff);
 
