@@ -589,7 +589,8 @@ public class TooltipHelper {
                     .append(" - ")
                     .append(getSpecName(spec))
                     .append(": ")
-                    .append(String.valueOf(player.getGraveTimer())));
+                    .append(String.valueOf(player.getGraveTimer()))
+                    .append("s"));
         }
         return result;
     }
