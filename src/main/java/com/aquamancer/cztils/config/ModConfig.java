@@ -57,7 +57,7 @@ public class ModConfig implements ConfigData {
 
     public static class NametagEntry {
         @ConfigEntry.Gui.Tooltip
-        public String nametagFormat = "{name} {spec} - {grave}: {hp}";
+        public String nametagFormat = "{name} {spec} {grave}: {hp}";
         public float textScale = 1.0f;
         public boolean showHpAsPercentage = false;
         public double midHp = 0.7;
