@@ -257,7 +257,6 @@ public final class ConfigDefaults {
                     actives.add("Flame Spirit");
                     actives.add("Pyroblast");
                     actives.add("Solar Ray");
-                    ifHasSpec.add("Dethroner");
                     break;
                 case FROST:
                     always.add("Snowstorm");
@@ -270,7 +269,6 @@ public final class ConfigDefaults {
                     actives.add("Permafrost");
                     actives.add("Piercing Cold");
                     actives.add("Solar Ray");
-                    ifHasSpec.add("Dethroner");
                     ifHasSpec.add("Detonation");
                     ifHasSpec.add("Primordial Mastery");
                     break;
@@ -283,7 +281,6 @@ public final class ConfigDefaults {
                     actives.add("Windswept Combos");
                     actives.add("Wind Walk");
                     actives.add("Whirlwind");
-                    ifHasSpec.add("Dethroner");
                     ifHasSpec.add("Primordial Mastery");
                     break;
                 case EARTH:
@@ -294,7 +291,6 @@ public final class ConfigDefaults {
                     actives.add("Earthen Combos");
                     actives.add("Entrench");
                     actives.add("Earthquake");
-                    ifHasSpec.add("Dethroner");
                     break;
                 case DAWN:
                     always.add("Soothing Combos");
