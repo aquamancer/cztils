@@ -358,9 +358,7 @@ public class TooltipHelper {
                     .filter(e -> e.getValue() > 0)
                     .map(Map.Entry::getKey)
                     .toList();
-            EnumSet<AbilitySpec> remaining = EnumSet.noneOf(AbilitySpec.class);
-            remaining.addAll(achieved);
-            remaining = EnumSet.complementOf(remaining);
+            EnumSet<AbilitySpec> remaining = AbilitySpec.getComplement(achieved);
 
             tooltip.add(Text.empty().append(Text.literal("Progress: " + unique + "/6")));
             tooltip.add(createAbilitySpecList(Text.literal("Remaining: "), remaining));
@@ -642,9 +640,7 @@ public class TooltipHelper {
                     .filter(e -> e.getValue() > 0)
                     .map(Map.Entry::getKey)
                     .toList();
-            EnumSet<AbilitySpec> remaining = EnumSet.noneOf(AbilitySpec.class);
-            remaining.addAll(achieved);
-            remaining = EnumSet.complementOf(remaining);
+            EnumSet<AbilitySpec> remaining = AbilitySpec.getComplement(achieved);
 
             MutableText line = Text.empty();
             line.append(Passives.DIVERSITY.getText()).append(" (" + unique + "/6): ").append(getSpecName(spec));
