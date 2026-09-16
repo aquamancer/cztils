@@ -33,7 +33,7 @@ public class Hud {
             }
         });
 
-        ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> {
+        ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.register((p, c) -> {
             party.clear();
             sorted = List.of();
         });
