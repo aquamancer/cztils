@@ -89,11 +89,10 @@ public class Hud {
         this.sorted = this.party.entrySet().stream()
                 .filter(p -> Cztils.config.showSelf || !p.getKey().equals(selfName))
                 .map(Map.Entry::getValue).sorted(
-                        Comparator.nullsLast(Comparator.comparing(
+                        Comparator.comparing(
                                 Player::getSpec,
-                                new Spec.SpecComparator(Cztils.config.specConfigs.get(selfSpec).teammatePriority
-                        ))
-                )
+                                Comparator.nullsLast(new Spec.SpecComparator(Cztils.config.specConfigs.get(selfSpec).teammatePriority))
+                        )
         ).toList();
     }
 
