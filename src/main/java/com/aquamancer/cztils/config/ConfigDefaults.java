@@ -229,7 +229,7 @@ public final class ConfigDefaults {
                     actives.add("Firework Blast");
                     actives.add("Volley");
                     actives.add("Gravity Bomb");
-                    passives.add("Split Arrow");
+//                    passives.add("Split Arrow");
                     ifHasSpec.add("Dethroner");
                     ifHasSpec.add("Primordial Mastery");
                     break;
@@ -257,6 +257,7 @@ public final class ConfigDefaults {
                     actives.add("Flame Spirit");
                     actives.add("Pyroblast");
                     actives.add("Solar Ray");
+                    ifHasSpec.add("Dethroner");
                     break;
                 case FROST:
                     always.add("Snowstorm");
@@ -271,6 +272,7 @@ public final class ConfigDefaults {
                     actives.add("Solar Ray");
                     ifHasSpec.add("Detonation");
                     ifHasSpec.add("Primordial Mastery");
+                    ifHasSpec.add("Dethroner");
                     break;
                 case WIND:
                     always.add("Guarding Bolt");
@@ -282,6 +284,7 @@ public final class ConfigDefaults {
                     actives.add("Wind Walk");
                     actives.add("Whirlwind");
                     ifHasSpec.add("Primordial Mastery");
+                    ifHasSpec.add("Dethroner");
                     break;
                 case EARTH:
                     always.add("Beast's Claw");
