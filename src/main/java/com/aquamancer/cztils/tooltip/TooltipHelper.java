@@ -347,6 +347,7 @@ public class TooltipHelper {
         }));
         // diversity
         BiConsumer<PartyMember, List<Text>> diversitySummary = (unused, tooltip) -> {
+            if (ZenithApi.getInstance().hasAchievedDiversity()) return;
             PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
             if (self == null) return;
             Map<AbilitySpec, Long> counts = self.getAbilityCounts();
@@ -365,12 +366,14 @@ public class TooltipHelper {
         };
         registerAbilityTooltip(Passives.DIVERSITY, List.of(ZenithScreen.ABILITY, ZenithScreen.TRINKET), diversitySummary);
         registerGlobalTooltip(ZenithScreen.GRIMOIRE_TREE, ifHasThen(Passives.DIVERSITY, (unused, tooltip) -> {
+            if (ZenithApi.getInstance().hasAchievedDiversity()) return;
             if (tooltip.isEmpty()) return;
             Spec spec = Spec.fromString(tooltip.get(0).getString()).orElse(null);
             if (spec == null) return;
             createDiversityLine(1).accept(spec.toAbilitySpec(), unused, tooltip);
         }));
         registerGlobalTooltip(ZenithScreen.POINTED_HAT, ifHasThen(Passives.DIVERSITY, (player, tooltip) -> {
+            if (ZenithApi.getInstance().hasAchievedDiversity()) return;
             if (tooltip.isEmpty()) return;
             Spec spec = Spec.fromString(tooltip.get(0).getString()).orElse(null);
             if (spec == null) return;
