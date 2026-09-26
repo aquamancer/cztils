@@ -4,6 +4,7 @@ import com.aquamancer.czlib.api.PartyMember;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.gifts.Gifts;
+import com.aquamancer.czlib.api.rooms.Room;
 import com.aquamancer.czlib.api.screens.ZenithScreen;
 import com.aquamancer.czlib.internal.TooltipParser;
 import com.aquamancer.cztils.Cztils;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TooltipHelper {
@@ -99,6 +101,35 @@ public class TooltipHelper {
     private static void registerGlobalTooltip(ZenithScreen screen, BiConsumer<PartyMember, List<Text>> modifier) {
         globalTooltips.computeIfAbsent(screen, k -> new ArrayList<>())
                 .add(modifier);
+    }
+
+    static {
+        // reroll
+        registerAbilityTooltip("Reroll", ZenithScreen.ABILITY, (player, tooltip) -> {
+            List<ActiveSlot> openSlots = Arrays.stream(ActiveSlot.values())
+                    .filter(slot -> !player.slotTaken(slot))
+                    .toList();
+            if (openSlots.isEmpty()) {
+                tooltip.add(Text.literal("No open active slots"));
+                return;
+            }
+            tooltip.add(Text.literal("Open active slots:").styled(s -> s.withUnderline(true)));
+            Spec spec = player.getCharmedSpec().orElse(null);
+            openSlots.forEach(slot -> {
+                if (spec == null) {
+                    tooltip.add(Text.literal(slot.getDisplayName()));
+                    return;
+                }
+                List<Actives> activeForCharmedSpec = Actives.getActives(slot).get(spec.toAbilitySpec()).stream()
+                        .filter(a -> player.isBlocked(a, Cztils.config.a14) == PartyMember.BlockReason.NOT_BLOCKED)
+                        .toList();
+                if (!activeForCharmedSpec.isEmpty()) {
+                    tooltip.addAll(createAbilityList(Text.literal(slot.getDisplayName() + " ("), Text.literal(")"), activeForCharmedSpec));
+                } else {
+                    tooltip.add(Text.literal(slot.getDisplayName()));
+                }
+            });
+        });
     }
 
     static {
@@ -277,7 +308,9 @@ public class TooltipHelper {
             boolean hasEarthSpec = player.getSpecs().contains(Spec.EARTH);
             Passive toughness = player.getPassives().get(Passives.TOUGHNESS);
             tooltip.add(Text.empty().append(getSpecName(AbilitySpec.EARTH)).append(" tree: ").append(hasEarthSpec ? CHECK_MARK : CROSS_MARK));
-            tooltip.add(Text.empty().append(Text.literal(Passives.TOUGHNESS.getDisplayName()).withColor(getSpecColor(Passives.TOUGHNESS.getSpec()))).append(": ").append((toughness == null) ? CROSS_MARK : toughness.getRarity().getText()));
+            if (ZenithApi.getInstance().getCurrentRoomType() != Room.ABILITY_SELECT) {
+                tooltip.add(Text.empty().append(Text.literal(Passives.TOUGHNESS.getDisplayName()).withColor(getSpecColor(Passives.TOUGHNESS.getSpec()))).append(": ").append((toughness == null) ? CROSS_MARK : toughness.getRarity().getText()));
+            }
         });
 
         registerAbilityTooltip(Curse.PESSIMISM, List.of(ZenithScreen.ABILITY, ZenithScreen.STATUE_OF_REGRET_REMOVE, ZenithScreen.STATUE_OF_REGRET_ADD), (player, tooltip) -> {
@@ -329,8 +362,18 @@ public class TooltipHelper {
     }
 
     static {
+        // convergence
+        registerAbilityTooltip(Actives.CONVERGENCE, ZenithScreen.ABILITY, (player, tooltip) -> {
+            EnumSet<Spec> specs = player.getSpecs();
+            Set<Actives> availableWildcards = specs.stream()
+                    .flatMap((spec) -> Actives.getActives(ActiveSlot.WILDCARD, spec.toAbilitySpec()).stream())
+                    .collect(Collectors.toSet());
+            tooltip.addAll(createAbilityList(Text.literal("Current trees allow: "), availableWildcards));
+        });
         // generosity
-        // todo limitation cant track if other players' reached diversity
+        registerAbilityTooltip(Passives.GENEROSITY, ZenithScreen.ABILITY, (player, tooltip) -> {
+            tooltip.add(createSpecList(Text.literal("Current trees: "), player.getSpecs()));
+        });
         registerGlobalTooltip(List.of(ZenithScreen.CLEANSE, ZenithScreen.MUTATE), ifHasThen(Passives.GENEROSITY, (unused, tooltip) -> {
             if (ZenithApi.getInstance().hasCleansed() || ZenithApi.getInstance().hasMutated()) return;
             if (tooltip.isEmpty()) return;
@@ -346,6 +389,7 @@ public class TooltipHelper {
             tooltip.addAll(createPlayerList(recipients));
         }));
         // diversity
+        // todo currently does not track other players' diversity
         BiConsumer<PartyMember, List<Text>> diversitySummary = (unused, tooltip) -> {
             if (ZenithApi.getInstance().hasAchievedDiversity()) return;
             PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
@@ -469,14 +513,29 @@ public class TooltipHelper {
         return createAbilityList(prefix, abilities, (a, t) -> {});
     }
 
+    private static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, MutableText suffix, Collection<T> abilities) {
+        return createAbilityList(prefix, suffix, abilities, (a, t) -> {});
+    }
+
     private static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, Collection<T> abilities, BiConsumer<T, MutableText> postOperator) {
-        return createAbilityList(prefix, abilities, (a, t) -> {
+        return createAbilityList(prefix, Text.empty(), abilities, (a, t) -> {
+            postOperator.accept(a, t);
+            return t;
+        });
+    }
+
+    private static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, MutableText suffix, Collection<T> abilities, BiConsumer<T, MutableText> postOperator) {
+        return createAbilityList(prefix, suffix, abilities, (a, t) -> {
             postOperator.accept(a, t);
             return t;
         });
     }
 
     private static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, Collection<T> abilities, BiFunction<T, MutableText, MutableText> postOperator) {
+        return createAbilityList(prefix, Text.empty(), abilities, postOperator);
+    }
+
+    private static <T extends Ability<?>> List<MutableText> createAbilityList(MutableText prefix, MutableText suffix, Collection<T> abilities, BiFunction<T, MutableText, MutableText> postOperator) {
         List<MutableText> result = new ArrayList<>();
         MutableText line = Text.empty();
         line.append(prefix);
@@ -503,6 +562,10 @@ public class TooltipHelper {
         }
         if (!line.equals(Text.empty()) && !abilities.isEmpty()) {  // total abilities not divided evenly
             result.add(line);
+        }
+        // append suffix
+        if (!result.isEmpty()) {
+            result.get(result.size() - 1).append(suffix);
         }
         return result;
     }
