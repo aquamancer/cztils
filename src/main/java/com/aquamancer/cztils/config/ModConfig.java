@@ -151,6 +151,22 @@ public class ModConfig implements ConfigData {
     public int firstLineWidth = 3;
 
 
+    @ConfigEntry.Category("healthbar")
+    @ConfigEntry.Gui.Tooltip
+    public boolean lifelineIndicatorEnabled = true;
+
+    @ConfigEntry.Category("healthbar")
+    @ConfigEntry.Gui.CollapsibleObject
+    @ConfigEntry.Gui.Tooltip
+    public HardcoreHeartsEntry hardcoreHearts = new HardcoreHeartsEntry();
+
+    public static class HardcoreHeartsEntry {
+        public boolean enabled = true;
+        public double hardcoreGraveThreshold = 5.15;
+        public boolean showIfLifelineUp = false;
+    }
+
+
     @ConfigEntry.Category("general")
     @ConfigEntry.Gui.Tooltip
     public boolean a14 = true;

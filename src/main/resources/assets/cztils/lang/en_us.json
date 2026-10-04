@@ -4,6 +4,7 @@
   "text.autoconfig.cztils.category.hud": "Hud",
   "text.autoconfig.cztils.category.specs": "Specs",
   "text.autoconfig.cztils.category.tooltip": "Tooltips",
+  "text.autoconfig.cztils.category.healthbar": "Health Bar",
   "text.autoconfig.cztils.category.general": "General",
 
 
@@ -116,6 +117,7 @@
   "text.autoconfig.cztils.option.specConfig.iconList.curses": "Curses",
 
 
+
   "text.autoconfig.cztils.option.tooltipsEnabled": "Enabled",
 
   "text.autoconfig.cztils.option.useConfigForTooltips": "Use config settings for tooltips",
@@ -126,6 +128,18 @@
 
   "text.autoconfig.cztils.option.firstLineWidth": "First line max width",
   "text.autoconfig.cztils.option.firstLineWidth.@Tooltip": "Max words for the first line for ability lists",
+
+
+
+  "text.autoconfig.cztils.option.lifelineIndicatorEnabled": "Lifeline indicator",
+  "text.autoconfig.cztils.option.lifelineIndicatorEnabled.@Tooltip": "Renders an outline over your threshold hearts if your lifeline is up",
+
+  "text.autoconfig.cztils.option.hardcoreHearts": "Hardcore hearts",
+  "text.autoconfig.cztils.option.hardcoreHearts.@Tooltip": "Changes your hearts to hardcore if your grave timer is low",
+  "text.autoconfig.cztils.option.hardcoreHearts.enabled": "Enabled",
+  "text.autoconfig.cztils.option.hardcoreHearts.hardcoreGraveThreshold": "Grave timer threshold",
+  "text.autoconfig.cztils.option.hardcoreHearts.showIfLifelineUp": "Enabled while lifeline is up",
+
 
 
   "text.autoconfig.cztils.option.a14": "Ascension 14+",
