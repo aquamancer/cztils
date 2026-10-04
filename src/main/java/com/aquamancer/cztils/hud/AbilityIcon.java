@@ -1,9 +1,6 @@
 package com.aquamancer.cztils.hud;
 
-import com.aquamancer.czlib.api.abils.Rarity;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public abstract class AbilityIcon extends HudElement {
     protected int w, h;

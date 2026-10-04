@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;

@@ -1,6 +1,9 @@
 package com.aquamancer.cztils.config.custom;
 
-import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.Ability;
+import com.aquamancer.czlib.api.abils.AbilitySpec;
+import com.aquamancer.czlib.api.abils.ActiveSlot;
+import com.aquamancer.czlib.api.abils.Spec;
 import com.aquamancer.cztils.config.ConfigDefaults;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;

@@ -4,7 +4,6 @@ import com.aquamancer.cztils.config.ModConfig;
 import com.aquamancer.cztils.config.custom.CustomAnnots;
 import com.aquamancer.cztils.config.custom.SpecConfig;
 import com.aquamancer.cztils.hud.Hud;
-import com.aquamancer.cztils.lifeline.AbilityPacketHandler;
 import com.aquamancer.cztils.tooltip.TooltipHelper;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
