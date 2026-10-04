@@ -4,9 +4,9 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"AbilityPacketListener",
+		"HealthBarMixin",
 		"InGameHudMixin",
-		"ScreenMixin",
-		"LifelineMixin"
+		"ScreenMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
