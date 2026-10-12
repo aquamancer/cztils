@@ -25,6 +25,8 @@ public class HealthBarMixin {
             ordinal=1
     )
     private boolean modifyHardcore(boolean originalValue) {
+        if (ZenithApi.getInstance().getParty().size() <= 1) return originalValue;
+
         PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
         ModConfig.HardcoreHeartsEntry config = Cztils.config.hardcoreHearts;
         if (
