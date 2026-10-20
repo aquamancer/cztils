@@ -143,5 +143,5 @@
 
 
   "text.autoconfig.cztils.option.a14": "Ascension 14+",
-  "text.autoconfig.cztils.option.a14.@Tooltip": "Enable blocked indicators for the 4 active cap"
+  "text.autoconfig.cztils.option.a14.@Tooltip": "Enable logic regarding the 4 active ability limit"
 }

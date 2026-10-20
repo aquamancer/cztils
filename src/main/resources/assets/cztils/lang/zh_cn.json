@@ -143,5 +143,5 @@
 
 
   "text.autoconfig.cztils.option.a14": "Ascension 14+",
-  "text.autoconfig.cztils.option.a14.@Tooltip": "启用 4 个主动技能上限的封锁指示器"
+  "text.autoconfig.cztils.option.a14.@Tooltip": "启用与主动技能数量上限为 4 个相关的逻辑"
 }
