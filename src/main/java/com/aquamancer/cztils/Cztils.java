@@ -8,14 +8,14 @@ import com.aquamancer.cztils.tooltip.TooltipHelper;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Cztils implements ModInitializer {
+public class Cztils implements ClientModInitializer {
 	public static final String MOD_ID = "cztils";
 	public static ModConfig config;
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -23,7 +23,7 @@ public class Cztils implements ModInitializer {
 	public static final Hud hud = new Hud();
 
 	@Override
-	public void onInitialize() {
+	public void onInitializeClient() {
 		ConfigHolder<ModConfig> configHolder = AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
 		config = configHolder.getConfig();
 		CustomAnnots.init();

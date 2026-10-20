@@ -15,7 +15,7 @@
 	"icon": "assets/cztils/icon.png",
 	"environment": "client",
 	"entrypoints": {
-		"main": [
+		"client": [
 			"com.aquamancer.cztils.Cztils"
 		],
 		"modmenu": [

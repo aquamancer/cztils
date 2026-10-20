@@ -1,6 +1,9 @@
 package com.aquamancer.cztils.lifeline;
 
 import com.aquamancer.czlib.api.abils.Actives;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
@@ -38,8 +41,10 @@ public class LifelineManager {
     ));
 
     private static @Nullable Actives readyLifeline = null;
+    private static boolean silenced = false;
 
     public static void onClassUpdatePacket(AbilityPacketHandler.ClassUpdatePacket.AbilityInfo[] abilities) {
+        silenced = false;  // sent when silence from stasis ends
         readyLifeline = null;
         for (AbilityPacketHandler.ClassUpdatePacket.AbilityInfo ability : abilities) {
             updateLifeline(ability.name, ability.remainingCooldown);
@@ -51,10 +56,11 @@ public class LifelineManager {
     }
 
     public static void onSilenced(AbilityPacketHandler.PlayerStatusPacket packet) {
-        if (packet.silenceDuration > 0) {
-            readyLifeline = null;
-            // when silence ends, a class update packet is sent
-        }
+        // silenceDuration = 0 is sent when non-stasis silence ends
+        // the server has a bug: if a non-stasis silence B occurs while silenced by a long non-stasis silence A,
+        // the server will send a packet silenceDuration = 0 when B expires despite still being silenced by A.
+        // this doesn't handle the bug for now
+        silenced = packet.silenceDuration > 0;
     }
 
     private static void updateLifeline(String ability, int remainingCooldown) {
@@ -70,7 +76,7 @@ public class LifelineManager {
     }
 
     public static boolean isLifelineUp() {
-        return readyLifeline != null;
+        return readyLifeline != null && !silenced;
     }
 
     public static int getHealthThreshold(float maxHealth) {
