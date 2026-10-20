@@ -8,9 +8,9 @@ import net.minecraft.item.ItemStack;
 public class ItemAbilityIcon extends AbilityIcon {
     private static final float DEFAULT_SIZE = 16f;
 
-    private ItemStack item;
-    private float scaleX;
-    private float scaleY;
+    private final ItemStack item;
+    private final float scaleX;
+    private final float scaleY;
 
     public ItemAbilityIcon(int x, int y, int w, int h, int borderWidth, ItemStack item) {
         super(x, y, w, h, borderWidth);

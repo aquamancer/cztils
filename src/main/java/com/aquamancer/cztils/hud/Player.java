@@ -104,7 +104,6 @@ public class Player extends HudElement {
             Active active = entry.getKey();
             Boolean isGrayedOut = entry.getValue();
 
-            int iconY = 0;
             AbilityIcon icon = createIcon(iconX, 0, this.iconSize, active, isGrayedOut);
 
             if (isGrayedOut) {

@@ -95,9 +95,9 @@ public class Nametag extends HudElement {
     private double hp, hpMax, graveTimer;
     private MutableText text = Text.empty();
 
-    private List<StringType> formatOrder = new ArrayList<>();
-    private List<String> literals = new ArrayList<>();
-    private List<PlaceholderType> placeholders = new ArrayList<>();
+    private final List<StringType> formatOrder = new ArrayList<>();
+    private final List<String> literals = new ArrayList<>();
+    private final List<PlaceholderType> placeholders = new ArrayList<>();
 
     public Nametag(int x, int y, SpecConfig config) {
         super(x, y);
