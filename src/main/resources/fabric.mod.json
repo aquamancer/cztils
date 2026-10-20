@@ -8,6 +8,7 @@
 		"aquamancer"
 	],
 	"contact": {
+		"homepage": "https://github.com/aquamancer/cztils",
 		"sources": "https://github.com/aquamancer/cztils"
 	},
 	"license": "MIT",
