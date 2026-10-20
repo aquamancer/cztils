@@ -221,6 +221,7 @@ public final class ConfigDefaults {
 
             switch (spec) {
                 case STEEL:
+                    ifHasSpec.removeIf(s -> s.equals("Skyhook"));
                     always.add("Sidearm");
                     always.add("Scrapshot");
                     always.add("Rapid Fire");
