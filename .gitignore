@@ -1,6 +1,6 @@
 build.sh
-libs/*
 run/
+libs/*sources.jar
 # gradle
 
 .gradle/
