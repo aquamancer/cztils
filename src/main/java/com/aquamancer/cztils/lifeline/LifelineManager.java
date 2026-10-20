@@ -1,9 +1,6 @@
 package com.aquamancer.cztils.lifeline;
 
 import com.aquamancer.czlib.api.abils.Actives;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
