@@ -5,7 +5,7 @@ Quality-of-life features for runs of the Celestial Zenith in Monumenta MMO, powe
 
 ## Features
 * HUD showing all party members' abilities, missing/blocked abilities, charmed tree, and grave timer
-* Ability selection tooltips showing extended information, notably for curses
+* Ability selection tooltips showing extended information, notably for curses and gifts
 * Lifeline indicator hearts overlay
 
 ## Installation
@@ -26,3 +26,8 @@ Windows:
 Linux: `./gradlew build`
 
 Output .jar is located at `build/libs/`
+
+## Screenshots
+![HUD](.screenshots/hud.png)
+![Tooltips](.screenshots/tooltips.png)
+![Lifeline](.screenshots/lifeline.png)
