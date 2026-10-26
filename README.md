@@ -4,7 +4,7 @@ Quality-of-life features for runs of the Celestial Zenith in Monumenta MMO, powe
 **For Fabric 1.20.4 only**
 
 ## Features
-* HUD showing all party members' abilities, missing/blocked abilities, charmed tree, and grave timer
+* HUD showing all party members' abilities, missing/blocked abilities, charmed tree, grave timer, and health
 * Ability selection tooltips showing extended information, notably for curses and gifts
 * Lifeline indicator hearts overlay
 
