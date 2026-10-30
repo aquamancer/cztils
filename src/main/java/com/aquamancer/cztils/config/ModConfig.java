@@ -21,6 +21,9 @@ public class ModConfig implements ConfigData {
     public boolean hudEnabled = true;
 
     @ConfigEntry.Category("hud")
+    public float overallScale = 1.0f;
+
+    @ConfigEntry.Category("hud")
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public Hud.PositionAnchor positionAnchor = Hud.PositionAnchor.CENTERED;

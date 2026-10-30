@@ -10,6 +10,8 @@
 
   "text.autoconfig.cztils.option.hudEnabled": "Enabled",
 
+  "text.autoconfig.cztils.option.overallScale": "Overall Scale",
+
   "text.autoconfig.cztils.option.positionAnchor": "Anchor position",
   "text.autoconfig.cztils.option.positionAnchor.@Tooltip": "CENTERED - The HUD position is always its center, growing equally upward and downward\nTOP - The HUD position is always the top, growing downward",
 

@@ -107,6 +107,7 @@ public class Hud {
         if (renderMode == Player.RenderMode.ALL) {
             playerHeight += 2*Cztils.config.iconSize + Cztils.config.playerSpacing;
         }
+        playerHeight *= Cztils.config.overallScale;
 
         float xi = context.getScaledWindowWidth()*Cztils.config.horizontalPos;
         float yi = context.getScaledWindowHeight()*Cztils.config.verticalPos;
@@ -117,8 +118,9 @@ public class Hud {
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(xi, yi, 0f);
-        for (int i = 0; i < sorted.size(); i++) {
-            sorted.get(i).render(context, renderMode);
+        matrices.scale(Cztils.config.overallScale, Cztils.config.overallScale, 1f);
+        for (Player player : this.sorted) {
+            player.render(context, renderMode);
             matrices.translate(0f, playerHeight, 0f);
         }
         matrices.pop();

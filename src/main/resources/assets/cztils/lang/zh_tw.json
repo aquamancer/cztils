@@ -10,6 +10,8 @@
 
   "text.autoconfig.cztils.option.hudEnabled": "啟用",
 
+  "text.autoconfig.cztils.option.overallScale": "整體縮放",
+
   "text.autoconfig.cztils.option.positionAnchor": "錨點位置",
   "text.autoconfig.cztils.option.positionAnchor.@Tooltip": "CENTERED - HUD 位置始終以中心點為基準，向上與向下等量擴展\nTOP - HUD 位置始終以頂部為基準，向下擴展",
 
