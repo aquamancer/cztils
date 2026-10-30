@@ -246,8 +246,10 @@ public class Player extends HudElement {
         if (mode == RenderMode.ALL) {
             float textHeight = 10 * Cztils.config.nametag.textScale;
             matrices.translate(0f, textHeight, 0f);
+            matrices.push();
             matrices.translate(Cztils.config.activesOffsetX, Cztils.config.activesOffsetY, 0f);
             this.actives.render(context);
+            matrices.pop();
 
             matrices.translate(0f, Cztils.config.iconSize, 0f);
             matrices.translate(Cztils.config.passivesOffsetX, Cztils.config.passivesOffsetY, 0f);
