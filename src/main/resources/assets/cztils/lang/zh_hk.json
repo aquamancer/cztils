@@ -55,8 +55,8 @@
 
   "text.autoconfig.cztils.option.iconSize": "圖示大小（像素）",
   "text.autoconfig.cztils.option.borderWidth": "圖示邊框厚度（像素）",
-  "text.autoconfig.cztils.option.backgroundFill": "背景填滿顏色（ARGB）",
-  "text.autoconfig.cztils.option.grayedOut": "灰顯顏色（ARGB）",
+  "text.autoconfig.cztils.option.backgroundFill": "背景填滿顏色（argb）",
+  "text.autoconfig.cztils.option.grayedOut": "灰顯顏色（argb）",
 
   "text.autoconfig.cztils.option.activesOffsetX": "主動技能偏移 X（像素）",
   "text.autoconfig.cztils.option.activesOffsetX.@Tooltip": "套用於主動技能圖示的水平偏移",

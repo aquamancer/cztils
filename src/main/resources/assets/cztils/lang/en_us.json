@@ -10,15 +10,15 @@
 
   "text.autoconfig.cztils.option.hudEnabled": "Enabled",
 
-  "text.autoconfig.cztils.option.overallScale": "Overall Scale",
+  "text.autoconfig.cztils.option.overallScale": "Overall scale",
 
   "text.autoconfig.cztils.option.positionAnchor": "Anchor position",
   "text.autoconfig.cztils.option.positionAnchor.@Tooltip": "CENTERED - The HUD position is always its center, growing equally upward and downward\nTOP - The HUD position is always the top, growing downward",
 
-  "text.autoconfig.cztils.option.verticalPos": "Vertical Position",
+  "text.autoconfig.cztils.option.verticalPos": "Vertical position",
   "text.autoconfig.cztils.option.verticalPos.@Tooltip": "Vertical screen position as a fraction of screen height",
 
-  "text.autoconfig.cztils.option.horizontalPos": "Horizontal Position",
+  "text.autoconfig.cztils.option.horizontalPos": "Horizontal position",
   "text.autoconfig.cztils.option.horizontalPos.@Tooltip": "Horizontal screen position as a fraction of screen width",
 
   "text.autoconfig.cztils.option.inGameRenderMode": "In-game render mode",
@@ -55,8 +55,8 @@
 
   "text.autoconfig.cztils.option.iconSize": "Icon size (px)",
   "text.autoconfig.cztils.option.borderWidth": "Icon border thickness (px)",
-  "text.autoconfig.cztils.option.backgroundFill": "Background fill color (ARGB)",
-  "text.autoconfig.cztils.option.grayedOut": "Grayed-out color (ARGB)",
+  "text.autoconfig.cztils.option.backgroundFill": "Background fill color (argb)",
+  "text.autoconfig.cztils.option.grayedOut": "Grayed-out color (argb)",
 
   "text.autoconfig.cztils.option.activesOffsetX": "Actives offset X (px)",
   "text.autoconfig.cztils.option.activesOffsetX.@Tooltip": "Horizontal offset applied to active ability icons",
