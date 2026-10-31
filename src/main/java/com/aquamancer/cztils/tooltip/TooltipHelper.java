@@ -271,7 +271,7 @@ public class TooltipHelper {
 
             int remainingToRemove = 2;
             for (int i = Rarity.LEGENDARY.getLevel(); i >= Rarity.COMMON.getLevel(); i--) {
-                Rarity rarity = Rarity.fromInt(i).orElse(null);
+                Rarity rarity = Rarity.from(i).orElse(null);
                 if (rarity == null) break;
                 List<Ability<?>> abilities = sortAbilities(
                         player,
@@ -411,14 +411,14 @@ public class TooltipHelper {
         registerGlobalTooltip(ZenithScreen.GRIMOIRE_TREE, ifHasThen(Passives.DIVERSITY, (unused, tooltip) -> {
             if (ZenithApi.getInstance().hasAchievedDiversity()) return;
             if (tooltip.isEmpty()) return;
-            Spec spec = Spec.fromString(tooltip.get(0).getString()).orElse(null);
+            Spec spec = Spec.from(tooltip.get(0).getString()).orElse(null);
             if (spec == null) return;
             createDiversityLine(1).accept(spec.toAbilitySpec(), unused, tooltip);
         }));
         registerGlobalTooltip(ZenithScreen.POINTED_HAT, ifHasThen(Passives.DIVERSITY, (player, tooltip) -> {
             if (ZenithApi.getInstance().hasAchievedDiversity()) return;
             if (tooltip.isEmpty()) return;
-            Spec spec = Spec.fromString(tooltip.get(0).getString()).orElse(null);
+            Spec spec = Spec.from(tooltip.get(0).getString()).orElse(null);
             if (spec == null) return;
             createDiversityLine(3).accept(spec.toAbilitySpec(), player, tooltip);
         }));
@@ -433,7 +433,7 @@ public class TooltipHelper {
         if (party.isEmpty()) return;
         if (MinecraftClient.getInstance().currentScreen == null) return;
         String screenTitle = MinecraftClient.getInstance().currentScreen.getTitle().getString();
-        ZenithScreen screen = ZenithScreen.fromString(screenTitle).orElse(null);
+        ZenithScreen screen = ZenithScreen.from(screenTitle).orElse(null);
         if (screen == null) return;
 
         PartyMember player = (screen == ZenithScreen.TRINKET) ? ZenithApi.getInstance().getCurrentlySelectedInTrinket().orElse(null) : ZenithApi.getInstance().getSelf().orElse(null);

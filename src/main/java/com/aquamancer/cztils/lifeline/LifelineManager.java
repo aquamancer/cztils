@@ -61,7 +61,7 @@ public class LifelineManager {
     }
 
     private static void updateLifeline(String ability, int remainingCooldown) {
-        Actives active = Actives.fromString(ability).orElse(null);
+        Actives active = Actives.from(ability).orElse(null);
         if (active == null) return;
         if (!lifelines.containsKey(active)) return;
 
