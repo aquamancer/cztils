@@ -80,6 +80,7 @@ class HealthBarMixin {
             boolean isHalfHeart
     ){
         if (!Cztils.config.lifelineIndicatorEnabled) return;
+        if (!LifelineManager.isLifelineUp()) return;
         if (blinking) return;
         int lifelineHealthThreshold = LifelineManager.getHealthThreshold(maxHealth);
         if (lifelineHealthThreshold <= heartHealth) return;
