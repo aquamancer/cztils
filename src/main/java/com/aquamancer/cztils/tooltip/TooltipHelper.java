@@ -139,6 +139,11 @@ public class TooltipHelper {
                     .toList();
             tooltip.addAll(createPlayerList(players));
         });
+        registerGlobalTooltip(ZenithScreen.WEBBING, (player, tooltip) -> {
+            PartyMember teammate = ZenithApi.getInstance().getPlayer(tooltip.get(0).getString()).orElse(null);
+            if (teammate == null) return;
+            tooltip.add(Text.literal("Grave timer: " + teammate.getGraveTimer()));
+        });
 
         registerAbilityTooltip(Gifts.CALLICARPAS_POINTED_HAT, ZenithScreen.ABILITY, (player, tooltip) -> {
             SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
@@ -157,14 +162,24 @@ public class TooltipHelper {
                     .forEach(s -> {
                         AbilitySpec spec = s.toAbilitySpec();
 
-                        EnumSet<Actives> actives = AbilitySpec.getActives(spec);
-                        Collection<Actives> eligible = actives.stream()
+                        Collection<Actives> eligible = AbilitySpec.getActives(spec).stream()
                                 .filter(a -> player.isBlocked(a, false) == PartyMember.BlockReason.NOT_BLOCKED)
                                 .sorted(new Actives.ActiveSlotComparator(config.slotPriority))
                                 .toList();
 
                         MutableText prefix = getSpecName(s).append(Text.literal(": "));
                         tooltip.addAll(createAbilityList(prefix, eligible));
+                    });
+        });
+        registerGlobalTooltip(List.of(ZenithScreen.GRIMOIRE_TREE), (player, tooltip) -> {
+            Spec spec = Spec.from(tooltip.get(0).getString()).orElse(null);
+            if (spec == null) return;
+            SpecConfig config = Cztils.config.specConfigs.get(player.getCharmedSpec().orElse(null));
+            AbilitySpec.getActives(spec.toAbilitySpec()).stream()
+                    .filter(a -> player.isBlocked(a, false) == PartyMember.BlockReason.NOT_BLOCKED)
+                    .sorted(new Actives.ActiveSlotComparator(config.slotPriority))
+                    .forEach(active -> {
+                        tooltip.add(active.getText());
                     });
         });
 
