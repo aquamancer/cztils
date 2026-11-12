@@ -2,6 +2,8 @@ package com.aquamancer.cztils.config.custom;
 
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.gifts.Gifts;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -90,6 +92,10 @@ public class SpecConfig {
             }
         }
         return (invert) ? EnumSet.complementOf(result) : result;
+    }
+
+    public MutableText getSpecName() {
+        return Text.literal(this.name).withColor(this.specColor);
     }
 
     public <E extends Enum<E>> Set<E> getAlwaysShow(Class<E> abilityType) {

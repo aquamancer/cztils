@@ -222,7 +222,7 @@ public class TooltipHelper {
                         if (replacements.isEmpty()) return;
                         tooltip.addAll(
                                 createAbilityList(
-                                        Text.literal(a.getDisplayName()).withColor(getSpecColor(a.getSpec())).append(" -> "),
+                                        getAbilityName(a).append(" -> "),
                                         replacements
                                 )
                         );
@@ -303,7 +303,7 @@ public class TooltipHelper {
                 prefix.append("Lose ");
                 prefix.append(losing);
                 prefix.append(" ");
-                prefix.append(Text.literal(rarity.getDisplayName()).withColor(rarity.getColor()));
+                prefix.append(rarity.getText());
                 prefix.append(" ");
                 prefix.append(plural ? "abilities" : "ability");
                 prefix.append(": ");
@@ -323,7 +323,7 @@ public class TooltipHelper {
             Passive toughness = player.getPassives().get(Passives.TOUGHNESS);
             tooltip.add(Text.empty().append(getSpecName(AbilitySpec.EARTH)).append(" tree: ").append(hasEarthSpec ? CHECK_MARK : CROSS_MARK));
             if (ZenithApi.getInstance().getCurrentRoomType() != Room.ABILITY_SELECT) {
-                tooltip.add(Text.empty().append(Text.literal(Passives.TOUGHNESS.getDisplayName()).withColor(getSpecColor(Passives.TOUGHNESS.getSpec()))).append(": ").append((toughness == null) ? CROSS_MARK : toughness.getRarity().getText()));
+                tooltip.add(Text.empty().append(getAbilityName(Passives.TOUGHNESS)).append(": ").append((toughness == null) ? CROSS_MARK : toughness.getRarity().getText()));
             }
         });
 
@@ -483,29 +483,22 @@ public class TooltipHelper {
     }
 
     private static MutableText getSpecName(@Nullable Spec spec) {
-        if (spec == null) return Text.literal(Cztils.config.specConfigs.get(null).name);
         SpecConfig config = Cztils.config.specConfigs.get(spec);
-        MutableText result = Cztils.config.useConfigForTooltips ? Text.literal(config.name) : Text.literal(spec.getDisplayName());
-
-        return result.withColor(getSpecColor(spec));
+        return (Cztils.config.useConfigForTooltips || spec == null) ? config.getSpecName() : spec.getText();
     }
 
     private static MutableText getSpecName(@Nullable AbilitySpec spec) {
-        if (spec == null) return Text.literal(Cztils.config.specConfigs.get(null).name);
-        if (spec == AbilitySpec.PRISMATIC) return Text.literal(AbilitySpec.PRISMATIC.getDisplayName()).withColor(getSpecColor(AbilitySpec.PRISMATIC));
+        if (spec == null) return getSpecName((Spec) null);
+        if (spec == AbilitySpec.PRISMATIC) {
+            return AbilitySpec.PRISMATIC.getText();
+        }
         return getSpecName(spec.toSpec().orElse(null));
     }
 
-    private static int getSpecColor(@Nullable Spec spec) {
-        if (spec == null) return Cztils.config.specConfigs.get(null).specColor;
-        SpecConfig config = Cztils.config.specConfigs.get(spec);
-        return Cztils.config.useConfigForTooltips ? config.specColor : spec.getColor();
-    }
-
-    private static int getSpecColor(@Nullable AbilitySpec spec) {
-        if (spec == null) return Cztils.config.specConfigs.get(null).specColor;
-        if (spec == AbilitySpec.PRISMATIC) return AbilitySpec.PRISMATIC.getColor();
-        return getSpecColor(spec.toSpec().orElse(null));
+    private static MutableText getAbilityName(Ability<?> ability) {
+        if (!Cztils.config.useConfigForTooltips || !(ability instanceof HasAbilitySpec a) || a.getSpec() == AbilitySpec.PRISMATIC) return ability.getText();
+        SpecConfig config = Cztils.config.specConfigs.get(a.getSpec().toSpec().orElse(null));
+        return Text.literal(ability.getDisplayName()).withColor(config.specColor);
     }
 
     private static List<Ability<?>> getSortedAbilities(PartyMember player, AbilitySpec spec) {
@@ -567,11 +560,7 @@ public class TooltipHelper {
                     line = Text.empty();
                 }
             }
-            MutableText name = Text.literal(ability.getDisplayName());
-            if (ability instanceof HasAbilitySpec hasAbilitySpec) {
-                name.withColor(getSpecColor(hasAbilitySpec.getSpec()));
-            }
-            line.append(postOperator.apply(ability, name));
+            line.append(postOperator.apply(ability, getAbilityName(ability)));
             i++;
         }
         if (!line.equals(Text.empty()) && !abilities.isEmpty()) {  // total abilities not divided evenly
