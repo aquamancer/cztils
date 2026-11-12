@@ -145,5 +145,8 @@
 
 
   "text.autoconfig.cztils.option.a14": "Ascension 14+",
-  "text.autoconfig.cztils.option.a14.@Tooltip": "启用与主动技能数量上限为 4 个相关的逻辑"
+  "text.autoconfig.cztils.option.a14.@Tooltip": "启用与主动技能数量上限为 4 个相关的逻辑",
+
+  "text.autoconfig.cztils.option.rebirthBossBarIndicator": "重生 Boss 血量条指示器",
+  "text.autoconfig.cztils.option.rebirthBossBarIndicator.@Tooltip": "为拥有重生（Rebirth）的玩家更改墓碑计时器 Boss 血量条的标题"
 }

@@ -174,5 +174,9 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean a14 = true;
 
+    @ConfigEntry.Category("general")
+    @ConfigEntry.Gui.Tooltip
+    public boolean rebirthBossBarIndicator = true;
+
     public ModConfig() {}
 }

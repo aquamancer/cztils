@@ -145,5 +145,8 @@
 
 
   "text.autoconfig.cztils.option.a14": "Ascension 14+",
-  "text.autoconfig.cztils.option.a14.@Tooltip": "Enable logic regarding the 4 active ability limit"
+  "text.autoconfig.cztils.option.a14.@Tooltip": "Enable logic regarding the 4 active ability limit",
+
+  "text.autoconfig.cztils.option.rebirthBossBarIndicator": "Rebirth boss bar indicator",
+  "text.autoconfig.cztils.option.rebirthBossBarIndicator.@Tooltip": "Changes the grave boss bar title for players with Rebirth"
 }
