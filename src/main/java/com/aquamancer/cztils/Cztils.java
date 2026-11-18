@@ -1,5 +1,8 @@
 package com.aquamancer.cztils;
 
+import com.aquamancer.czlib.api.PartyMember;
+import com.aquamancer.czlib.api.ZenithApi;
+import com.aquamancer.czlib.api.abils.Spec;
 import com.aquamancer.cztils.config.ModConfig;
 import com.aquamancer.cztils.config.custom.CustomAnnots;
 import com.aquamancer.cztils.config.custom.SpecConfig;
@@ -38,6 +41,14 @@ public class Cztils implements ClientModInitializer {
 				TooltipHelper.onTooltip(lines);
 			}
 		});
+	}
+
+	public static SpecConfig getSelfConfig() {
+		PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
+		if (self == null) return config.specConfigs.get(null);
+		Spec spec = self.getCharmedSpec().orElse(null);
+		if (spec == null) return config.specConfigs.get(null);
+		return config.specConfigs.get(spec);
 	}
 
 	public static Identifier id(String path) {

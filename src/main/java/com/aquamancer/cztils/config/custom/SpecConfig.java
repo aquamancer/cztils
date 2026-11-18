@@ -118,6 +118,10 @@ public class SpecConfig {
         return result;
     }
 
+    public Comparator<Spec> getTeammateSpecSorter() {
+        return new Spec.SpecComparator(this.teammatePriority);
+    }
+
     @Nullable
     public Comparator<Active> getActiveSorter() {
         Comparator<Active> sorter = null;

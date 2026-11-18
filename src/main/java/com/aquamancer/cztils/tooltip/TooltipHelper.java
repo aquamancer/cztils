@@ -391,16 +391,50 @@ public class TooltipHelper {
         registerGlobalTooltip(List.of(ZenithScreen.CLEANSE, ZenithScreen.MUTATE), ifHasThen(Passives.GENEROSITY, (unused, tooltip) -> {
             if (ZenithApi.getInstance().hasCleansed() || ZenithApi.getInstance().hasMutated()) return;
             if (tooltip.isEmpty()) return;
-            Ability<?> ability = Ability.fromString(tooltip.get(0).getString()).orElse(null);
-            if (!(ability instanceof Actives || ability instanceof Passives)) return;
+            SpecConfig config = Cztils.getSelfConfig();
 
-            List<PartyMember> recipients = ZenithApi.getInstance().getParty().values().stream()
-                    .filter(p -> !p.isSelf())
-                    .filter(p -> !p.getActives().containsKey(ability) && !p.getPassives().containsKey(ability))
-                    .filter(p -> !(ability instanceof Actives a) || p.isBlocked(a, false) == PartyMember.BlockReason.NOT_BLOCKED)
-                    .toList();
-            tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(Text.literal(" will offer to:")));
-            tooltip.addAll(createPlayerList(recipients));
+            Active active = Active.from(tooltip).orElse(null);
+            Passive passive = Passive.from(tooltip).orElse(null);
+            Gifts gift = Gifts.from(tooltip).orElse(null);
+            if (active != null) {
+                ZenithApi.getInstance().getPlayers().stream()
+                        .sorted(Comparator.comparing(p -> p.getCharmedSpec().orElse(null), config.getTeammateSpecSorter()))
+                        .forEach(p -> {
+                            Active existing = p.getActives().get(active.getAbility());
+                            if (p.isBlocked(active.getAbility(), false) == PartyMember.BlockReason.NOT_BLOCKED) {
+                                tooltip.add(createPlayerLine(p));
+                            } else if (existing != null) {
+                                Rarity existingRarity = existing.getRarity();
+                                Rarity donatedRarity = active.getRarity();
+                                if (existingRarity.compareTo(donatedRarity) < 0) {
+                                    tooltip.add(createPlayerLine(p).append(Text.literal(": ").append(existingRarity.getText()).append(" -> ").append(donatedRarity.getText())));
+                                }
+                            }
+                        });
+            } else if (passive != null && passive.getAbility() != Passives.GENEROSITY) {
+                ZenithApi.getInstance().getPlayers().stream()
+                        .sorted(Comparator.comparing(p -> p.getCharmedSpec().orElse(null), config.getTeammateSpecSorter()))
+                        .forEach(p -> {
+                            Passive existing = p.getPassives().get(passive.getAbility());
+                            if (existing == null) {
+                                tooltip.add(createPlayerLine(p));
+                            } else {
+                                Rarity existingRarity = existing.getRarity();
+                                Rarity donatedRarity = passive.getRarity();
+                                if (existingRarity.compareTo(donatedRarity) < 0) {
+                                    tooltip.add(createPlayerLine(p).append(Text.literal(": ").append(existingRarity.getText()).append(" -> ").append(donatedRarity.getText())));
+                                }
+                            }
+                        });
+            } else if (gift != null) {
+                ZenithApi.getInstance().getPlayers().stream()
+                        .sorted(Comparator.comparing(p -> p.getCharmedSpec().orElse(null), config.getTeammateSpecSorter()))
+                        .forEach(p -> {
+                            if (!p.getGifts().containsKey(gift)) {
+                                tooltip.add(createPlayerLine(p));
+                            }
+                        });
+            }
         }));
         // diversity
         // todo currently does not track other players' diversity
@@ -647,17 +681,21 @@ public class TooltipHelper {
         return line;
     }
 
+    private static MutableText createPlayerLine(PartyMember player) {
+        Spec spec = player.getCharmedSpec().orElse(null);
+        SpecConfig config = Cztils.config.specConfigs.get(spec);
+        return Text.literal(player.getName()).styled(s -> s.withColor(config.nameColor))
+                .append(" ")
+                .append(getSpecName(spec))
+                .append(" ")
+                .append(String.valueOf(player.getGraveTimer()))
+                .append("s");
+    }
+
     private static List<MutableText> createPlayerList(Collection<PartyMember> players) {
         List<MutableText> result = new ArrayList<>();
         for (PartyMember player : players) {
-            Spec spec = player.getCharmedSpec().orElse(null);
-            SpecConfig config = Cztils.config.specConfigs.get(spec);
-            result.add(Text.literal(player.getName()).styled(s -> s.withColor(config.nameColor))
-                    .append(" - ")
-                    .append(getSpecName(spec))
-                    .append(": ")
-                    .append(String.valueOf(player.getGraveTimer()))
-                    .append("s"));
+            result.add(createPlayerLine(player));
         }
         return result;
     }
