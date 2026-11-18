@@ -397,6 +397,7 @@ public class TooltipHelper {
             Passive passive = Passive.from(tooltip).orElse(null);
             Gifts gift = Gifts.from(tooltip).orElse(null);
             if (active != null) {
+                tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(" will offer to:"));
                 ZenithApi.getInstance().getPlayers().stream()
                         .sorted(Comparator.comparing(p -> p.getCharmedSpec().orElse(null), config.getTeammateSpecSorter()))
                         .forEach(p -> {
@@ -412,6 +413,7 @@ public class TooltipHelper {
                             }
                         });
             } else if (passive != null && passive.getAbility() != Passives.GENEROSITY) {
+                tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(" will offer to:"));
                 ZenithApi.getInstance().getPlayers().stream()
                         .sorted(Comparator.comparing(p -> p.getCharmedSpec().orElse(null), config.getTeammateSpecSorter()))
                         .forEach(p -> {
@@ -427,6 +429,7 @@ public class TooltipHelper {
                             }
                         });
             } else if (gift != null) {
+                tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(" will offer to:"));
                 ZenithApi.getInstance().getPlayers().stream()
                         .sorted(Comparator.comparing(p -> p.getCharmedSpec().orElse(null), config.getTeammateSpecSorter()))
                         .forEach(p -> {
