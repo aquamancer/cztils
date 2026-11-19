@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -23,11 +24,12 @@ public class Hud {
     public Hud() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             for (Map.Entry<String, Player> entry : this.party.entrySet()) {
-                Optional<PartyMember> data = ZenithApi.getInstance().getPlayer(entry.getKey());
-                if (data.isEmpty()) continue;
-                if (data.get().getEntity() == null) continue;
-                entry.getValue().setHp(data.get().getEntity().getHealth() + data.get().getEntity().getAbsorptionAmount());
-                entry.getValue().setHpMax(data.get().getEntity().getMaxHealth());
+                PartyMember data = ZenithApi.getInstance().getPlayer(entry.getKey()).orElse(null);
+                if (data == null) continue;
+                PlayerEntity entity = data.getEntity().orElse(null);
+                if (entity == null) continue;
+                entry.getValue().setHp(entity.getHealth() + entity.getAbsorptionAmount());
+                entry.getValue().setHpMax(entity.getMaxHealth());
             }
         });
 
