@@ -394,6 +394,12 @@ public class TooltipHelper {
             if (tooltip.isEmpty()) return;
             SpecConfig config = Cztils.getSelfConfig();
 
+            PartyMember self = ZenithApi.getInstance().getSelf().orElse(null);
+            if (self == null) return;
+            Passive generosity = self.getPassive(Passives.GENEROSITY).orElse(null);
+            if (generosity == null) return;  // shouldn't happen
+            Rarity donatedRarity = generosity.getRarity();
+
             Active active = Active.from(tooltip).orElse(null);
             Passive passive = Passive.from(tooltip).orElse(null);
             Gifts gift = Gifts.from(tooltip).orElse(null);
@@ -408,7 +414,6 @@ public class TooltipHelper {
                                 tooltip.add(createPlayerLine(p));
                             } else if (existing != null) {
                                 Rarity existingRarity = existing.getRarity();
-                                Rarity donatedRarity = active.getRarity();
                                 if (existingRarity.compareTo(donatedRarity) < 0) {
                                     tooltip.add(Text.empty().append(createPlayerLine(p).append(Text.literal(": "))).append(existingRarity.getText()).append(" -> ").append(donatedRarity.getText()));
                                 }
@@ -425,7 +430,6 @@ public class TooltipHelper {
                                 tooltip.add(createPlayerLine(p));
                             } else {
                                 Rarity existingRarity = existing.getRarity();
-                                Rarity donatedRarity = passive.getRarity();
                                 if (existingRarity.compareTo(donatedRarity) < 0) {
                                     tooltip.add(Text.empty().append(createPlayerLine(p).append(Text.literal(": "))).append(existingRarity.getText()).append(" -> ").append(donatedRarity.getText()));
                                 }
