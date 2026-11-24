@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -399,6 +400,7 @@ public class TooltipHelper {
             if (active != null) {
                 tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(" will offer to:"));
                 ZenithApi.getInstance().getPlayers().stream()
+                        .filter(p -> !p.isSelf())
                         .sorted(Comparator.comparing(p -> p.getCharmedSpec().orElse(null), config.getTeammateSpecSorter()))
                         .forEach(p -> {
                             Active existing = p.getActives().get(active.getAbility());
@@ -408,13 +410,14 @@ public class TooltipHelper {
                                 Rarity existingRarity = existing.getRarity();
                                 Rarity donatedRarity = active.getRarity();
                                 if (existingRarity.compareTo(donatedRarity) < 0) {
-                                    tooltip.add(createPlayerLine(p).append(Text.literal(": ").append(existingRarity.getText()).append(" -> ").append(donatedRarity.getText())));
+                                    tooltip.add(Text.empty().append(createPlayerLine(p).append(Text.literal(": "))).append(existingRarity.getText()).append(" -> ").append(donatedRarity.getText()));
                                 }
                             }
                         });
             } else if (passive != null && passive.getAbility() != Passives.GENEROSITY) {
                 tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(" will offer to:"));
                 ZenithApi.getInstance().getPlayers().stream()
+                        .filter(p -> !p.isSelf())
                         .sorted(Comparator.comparing(p -> p.getCharmedSpec().orElse(null), config.getTeammateSpecSorter()))
                         .forEach(p -> {
                             Passive existing = p.getPassives().get(passive.getAbility());
@@ -424,13 +427,14 @@ public class TooltipHelper {
                                 Rarity existingRarity = existing.getRarity();
                                 Rarity donatedRarity = passive.getRarity();
                                 if (existingRarity.compareTo(donatedRarity) < 0) {
-                                    tooltip.add(createPlayerLine(p).append(Text.literal(": ").append(existingRarity.getText()).append(" -> ").append(donatedRarity.getText())));
+                                    tooltip.add(Text.empty().append(createPlayerLine(p).append(Text.literal(": "))).append(existingRarity.getText()).append(" -> ").append(donatedRarity.getText()));
                                 }
                             }
                         });
             } else if (gift != null) {
                 tooltip.add(Text.empty().append(Passives.GENEROSITY.getText()).append(" will offer to:"));
                 ZenithApi.getInstance().getPlayers().stream()
+                        .filter(p -> !p.isSelf())
                         .sorted(Comparator.comparing(p -> p.getCharmedSpec().orElse(null), config.getTeammateSpecSorter()))
                         .forEach(p -> {
                             if (!p.getGifts().containsKey(gift)) {
